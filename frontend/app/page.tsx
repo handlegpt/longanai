@@ -78,7 +78,39 @@ const translations = {
     // Welcome message
     welcomeTitle: '欢迎使用龙眼AI',
     welcomeSubtitle: '请先登录以开始使用粤语播客生成功能',
-    loginNow: '立即登录'
+    loginNow: '立即登录',
+    
+    // EmailLogin component translations
+    loginTitle: '邮箱登录',
+    verificationTitle: '验证邮箱',
+    loginSubtitle: '输入你嘅邮箱地址开始使用',
+    verificationSubtitle: '请检查邮箱并点击验证链接',
+    emailLabel: '邮箱地址',
+    emailPlaceholder: 'example@gmail.com',
+    loginButton: '登录',
+    loginLoading: '登录中...',
+    orText: '或者',
+    sendVerificationButton: '发送验证邮件',
+    sendLoading: '发送中...',
+    verificationSentTitle: '验证邮件已发送',
+    verificationSentSubtitle: '我们已向 {email} 发送验证邮件',
+    nextStepsTitle: '下一步',
+    step1: '检查你嘅邮箱收件箱',
+    step2: '点击验证链接',
+    step3: '返回呢度继续使用',
+    backToLogin: '返回登录',
+    resendButton: '重新发送验证邮件',
+    resendLoading: '发送中...',
+    termsText: '使用邮箱登录即表示你同意我们嘅',
+    termsLink: '服务条款',
+    privacyLink: '隐私政策',
+    emailRequired: '请输入邮箱地址',
+    invalidEmail: '请输入有效嘅邮箱地址',
+    verificationSent: '验证邮件已发送，请检查你嘅邮箱！',
+    sendFailed: '发送失败',
+    networkError: '网络错误，请重试',
+    loginSuccess: '登录成功！',
+    loginFailed: '登录失败'
   },
   mandarin: {
     // Header
@@ -147,7 +179,39 @@ const translations = {
     // Welcome message
     welcomeTitle: '欢迎使用龙眼AI',
     welcomeSubtitle: '请先登录以开始使用粤语播客生成功能',
-    loginNow: '立即登录'
+    loginNow: '立即登录',
+    
+    // EmailLogin component translations
+    loginTitle: '邮箱登录',
+    verificationTitle: '验证邮箱',
+    loginSubtitle: '输入你嘅邮箱地址开始使用',
+    verificationSubtitle: '请检查邮箱并点击验证链接',
+    emailLabel: '邮箱地址',
+    emailPlaceholder: 'example@gmail.com',
+    loginButton: '登录',
+    loginLoading: '登录中...',
+    orText: '或者',
+    sendVerificationButton: '发送验证邮件',
+    sendLoading: '发送中...',
+    verificationSentTitle: '验证邮件已发送',
+    verificationSentSubtitle: '我们已向 {email} 发送验证邮件',
+    nextStepsTitle: '下一步',
+    step1: '检查你嘅邮箱收件箱',
+    step2: '点击验证链接',
+    step3: '返回呢度继续使用',
+    backToLogin: '返回登录',
+    resendButton: '重新发送验证邮件',
+    resendLoading: '发送中...',
+    termsText: '使用邮箱登录即表示你同意我们嘅',
+    termsLink: '服务条款',
+    privacyLink: '隐私政策',
+    emailRequired: '请输入邮箱地址',
+    invalidEmail: '请输入有效嘅邮箱地址',
+    verificationSent: '验证邮件已发送，请检查你嘅邮箱！',
+    sendFailed: '发送失败',
+    networkError: '网络错误，请重试',
+    loginSuccess: '登录成功！',
+    loginFailed: '登录失败'
   },
   english: {
     // Header
@@ -216,7 +280,39 @@ const translations = {
     // Welcome message
     welcomeTitle: 'Welcome to Longan AI',
     welcomeSubtitle: 'Please login to start using Cantonese podcast generation features',
-    loginNow: 'Login Now'
+    loginNow: 'Login Now',
+    
+    // EmailLogin component translations
+    loginTitle: 'Email Login',
+    verificationTitle: 'Verify Email',
+    loginSubtitle: 'Enter your email address to start using',
+    verificationSubtitle: 'Please check your email and click the verification link',
+    emailLabel: 'Email Address',
+    emailPlaceholder: 'example@gmail.com',
+    loginButton: 'Login',
+    loginLoading: 'Logging in...',
+    orText: 'Or',
+    sendVerificationButton: 'Send Verification Email',
+    sendLoading: 'Sending...',
+    verificationSentTitle: 'Verification Email Sent',
+    verificationSentSubtitle: 'We have sent a verification email to {email}',
+    nextStepsTitle: 'Next Steps',
+    step1: 'Check your email inbox',
+    step2: 'Click the verification link',
+    step3: 'Return here to continue using',
+    backToLogin: 'Back to Login',
+    resendButton: 'Resend Verification Email',
+    resendLoading: 'Sending...',
+    termsText: 'By using email login, you agree to our',
+    termsLink: 'Terms of Service',
+    privacyLink: 'Privacy Policy',
+    emailRequired: 'Please enter an email address',
+    invalidEmail: 'Please enter a valid email address',
+    verificationSent: 'Verification email sent, please check your inbox!',
+    sendFailed: 'Send failed',
+    networkError: 'Network error, please try again',
+    loginSuccess: 'Login successful!',
+    loginFailed: 'Login failed'
   }
 };
 
@@ -319,7 +415,41 @@ export default function Home() {
   if (showLogin) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center p-4">
-        <EmailLogin onLogin={handleLogin} />
+        <EmailLogin 
+          onLogin={handleLogin}
+          translations={{
+            loginTitle: t.loginTitle,
+            verificationTitle: t.verificationTitle,
+            loginSubtitle: t.loginSubtitle,
+            verificationSubtitle: t.verificationSubtitle,
+            emailLabel: t.emailLabel,
+            emailPlaceholder: t.emailPlaceholder,
+            loginButton: t.loginButton,
+            loginLoading: t.loginLoading,
+            orText: t.orText,
+            sendVerificationButton: t.sendVerificationButton,
+            sendLoading: t.sendLoading,
+            verificationSentTitle: t.verificationSentTitle,
+            verificationSentSubtitle: t.verificationSentSubtitle,
+            nextStepsTitle: t.nextStepsTitle,
+            step1: t.step1,
+            step2: t.step2,
+            step3: t.step3,
+            backToLogin: t.backToLogin,
+            resendButton: t.resendButton,
+            resendLoading: t.resendLoading,
+            termsText: t.termsText,
+            termsLink: t.termsLink,
+            privacyLink: t.privacyLink,
+            emailRequired: t.emailRequired,
+            invalidEmail: t.invalidEmail,
+            verificationSent: t.verificationSent,
+            sendFailed: t.sendFailed,
+            networkError: t.networkError,
+            loginSuccess: t.loginSuccess,
+            loginFailed: t.loginFailed,
+          }}
+        />
       </div>
     );
   }
