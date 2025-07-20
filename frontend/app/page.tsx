@@ -513,11 +513,12 @@ export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string; duration?: string } | null>(null);
+  const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string; duration?: string; image?: string } | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
-  const [podcastHistory, setPodcastHistory] = useState<Array<{ id: string; audioUrl: string; title: string; duration?: string; createdAt: string }>>([]);
+  const [podcastHistory, setPodcastHistory] = useState<Array<{ id: string; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string }>>([]);
   const [showAllPodcasts, setShowAllPodcasts] = useState(false);
+  const [podcastImage, setPodcastImage] = useState<string | null>(null);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -543,8 +544,28 @@ export default function Home() {
     }
   }, []);
 
+  // Generate title from content
+  const generateTitleFromContent = (content: string) => {
+    // Remove special characters and get first 50 characters
+    const cleanContent = content.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, '').trim();
+    const title = cleanContent.length > 50 ? cleanContent.substring(0, 50) + '...' : cleanContent;
+    return title || '我的播客';
+  };
+
+  // Handle image upload
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPodcastImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Save podcast to history
-  const savePodcastToHistory = (podcast: { audioUrl: string; title: string; duration?: string }) => {
+  const savePodcastToHistory = (podcast: { audioUrl: string; title: string; duration?: string; image?: string }) => {
     const newPodcast = {
       id: Date.now().toString(),
       ...podcast,
@@ -691,16 +712,21 @@ export default function Home() {
 
       if (response.ok) {
         const data = await response.json();
+        const generatedTitle = generateTitleFromContent(inputText);
         setGeneratedPodcast({
           audioUrl: data.audioUrl,
-          title: data.title || `播客 - ${new Date().toLocaleString()}`,
-          duration: data.duration || '00:00:00'
+          title: generatedTitle,
+          duration: data.duration || '00:00:00',
+          image: podcastImage || null
         });
         savePodcastToHistory({
           audioUrl: data.audioUrl,
-          title: data.title || `播客 - ${new Date().toLocaleString()}`,
-          duration: data.duration || '00:00:00'
+          title: generatedTitle,
+          duration: data.duration || '00:00:00',
+          image: podcastImage || null
         });
+        // Reset image after saving
+        setPodcastImage(null);
       } else {
         const errorData = await response.json();
         alert(`生成失败: ${errorData.detail || '未知错误'}`);
@@ -981,6 +1007,24 @@ export default function Home() {
                     className="w-full h-32 sm:h-48 p-4 sm:p-8 border-2 border-gray-200 rounded-xl sm:rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-base sm:text-lg leading-relaxed"
                   />
                   <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 flex items-center space-x-2 sm:space-x-4">
+                    {/* Image upload button */}
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="image-upload"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                      />
+                      <label
+                        htmlFor="image-upload"
+                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-100 text-blue-700 rounded-lg cursor-pointer hover:bg-blue-200 transition-all duration-200 text-xs sm:text-sm"
+                      >
+                        <span className="text-lg">🖼️</span>
+                        <span>添加封面</span>
+                      </label>
+                    </div>
+                    
                     {/* File upload button */}
                     <div className="relative">
                       <input
@@ -1059,21 +1103,24 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 1.0 }}
                 className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 mt-6"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                      <Play className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{t.generatedPodcastLabel}</h3>
-                      <p className="text-sm text-gray-500">{generatedPodcast.title}</p>
-                    </div>
+                <div className="flex items-start space-x-4 mb-4">
+                  {/* Podcast cover image */}
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    {generatedPodcast.image ? (
+                      <img 
+                        src={generatedPodcast.image} 
+                        alt="播客封面" 
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    ) : (
+                      <Play className="w-8 h-8 text-white" />
+                    )}
                   </div>
-                  <div className="text-right">
-                    <div className="text-sm text-gray-500">{t.durationLabel}</div>
-                    <div className="text-lg font-semibold text-gray-900">
-                      {generatedPodcast.duration || '00:00:00'}
-                    </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{generatedPodcast.title}</h3>
+                    <p className="text-sm text-gray-500 mb-2">刚刚生成</p>
+                    <div className="text-sm text-gray-500">{t.durationLabel}: {generatedPodcast.duration || '00:00:00'}</div>
                   </div>
                 </div>
                 
@@ -1116,10 +1163,6 @@ export default function Home() {
                       <Share2 className="w-4 h-4 text-gray-600" />
                     </button>
                   </div>
-                  
-                  <div className="text-sm text-gray-500">
-                    刚刚生成
-                  </div>
                 </div>
               </motion.div>
             )}
@@ -1145,19 +1188,24 @@ export default function Home() {
                   className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                          <Play className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-900 text-sm truncate">{podcast.title}</h3>
-                          <p className="text-xs text-gray-500">{new Date(podcast.createdAt).toLocaleDateString()}</p>
-                        </div>
+                    <div className="flex items-start space-x-4 mb-4">
+                      {/* Podcast cover image */}
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        {podcast.image ? (
+                          <img 
+                            src={podcast.image} 
+                            alt="播客封面" 
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <Play className="w-6 h-6 text-white" />
+                        )}
                       </div>
-                      <div className="text-right">
-                        <div className="text-xs text-gray-500">时长</div>
-                        <div className="text-sm font-semibold text-gray-900">{podcast.duration || '00:00:00'}</div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">{podcast.title}</h3>
+                        <p className="text-xs text-gray-500 mb-2">{new Date(podcast.createdAt).toLocaleDateString()}</p>
+                        <div className="text-xs text-gray-500">时长: {podcast.duration || '00:00:00'}</div>
                       </div>
                     </div>
                     
