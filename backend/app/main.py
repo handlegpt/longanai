@@ -5,16 +5,18 @@ from contextlib import asynccontextmanager
 import uvicorn
 from app.routers import podcast, auth, files
 from app.core.config import settings
-from app.core.database import engine
-from app.models import Base
-
-# Create database tables
-Base.metadata.create_all(bind=engine)
+from app.core.database import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     print("🚀 Longan AI Backend Starting...")
+    try:
+        # Initialize database tables
+        init_db()
+    except Exception as e:
+        print(f"❌ Failed to initialize database: {e}")
+        raise
     yield
     # Shutdown
     print("👋 Longan AI Backend Shutting down...")

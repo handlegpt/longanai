@@ -3,10 +3,10 @@ from typing import Optional, Dict, ClassVar
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "sqlite:///./longanai.db"
+    DATABASE_URL: str = "postgresql://user:password@db:5432/longanai"
     
     # Redis
-    REDIS_URL: str = "redis://localhost:6379"
+    REDIS_URL: str = "redis://redis:6379"
     
     # Security
     SECRET_KEY: str = "your-secret-key-here"
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     EDGE_TTS_VOICES: ClassVar[Dict[str, str]] = {
         "young-lady": "zh-HK-HiuGaaiNeural",  # Young lady voice
         "young-man": "zh-HK-WanLungNeural",   # Young man voice  
-        "grandma": "zh-HK-HiuGaaiNeural",     # Grandma voice (temporarily using young lady)
+        "elderly-woman": "zh-HK-HiuGaaiNeural",     # Grandma voice (temporarily using young lady)
     }
     
     # API Settings

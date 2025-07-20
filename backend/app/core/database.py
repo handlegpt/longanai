@@ -21,4 +21,19 @@ def get_db():
     try:
         yield db
     finally:
-        db.close() 
+        db.close()
+
+# Initialize database tables
+def init_db():
+    """Initialize database tables"""
+    try:
+        # Import all models to ensure they are registered
+        from app.models.podcast import Podcast
+        from app.models.user import User
+        
+        # Create all tables
+        Base.metadata.create_all(bind=engine)
+        print("✅ Database tables created successfully")
+    except Exception as e:
+        print(f"❌ Error creating database tables: {e}")
+        raise 
