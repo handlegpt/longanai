@@ -6,6 +6,7 @@ import edge_tts
 import asyncio
 import os
 import uuid
+import traceback
 from datetime import datetime
 
 from app.core.database import get_db
@@ -18,7 +19,7 @@ router = APIRouter()
 VOICE_MAPPING = {
     "young-lady": "zh-HK-HiuGaaiNeural",
     "young-man": "zh-HK-WanLungNeural", 
-    "grandma": "zh-HK-HiuGaaiNeural",  # 暂时用靓女声音
+    "elderly-woman": "zh-HK-HiuGaaiNeural",  # 暂时用靓女声音
 }
 
 class PodcastGenerateRequest(BaseModel):
@@ -34,25 +35,38 @@ async def generate_podcast(
 ):
     """Generate podcast from text"""
     try:
+        print(f"🎤 Starting podcast generation with voice: {request.voice}")
+        
         # Validate voice
         if request.voice not in VOICE_MAPPING:
+            print(f"❌ Invalid voice: {request.voice}")
             raise HTTPException(status_code=400, detail="Invalid voice selection")
         
         # Get TTS voice
         tts_voice = VOICE_MAPPING[request.voice]
+        print(f"🎵 Using TTS voice: {tts_voice}")
         
         # Generate audio using Edge TTS
+        print("🔄 Creating Edge TTS communicate object...")
         communicate = edge_tts.Communicate(request.text, tts_voice)
         
         # Create unique filename
         filename = f"podcast_{uuid.uuid4()}.mp3"
         filepath = os.path.join("static", filename)
+        print(f"📁 Audio file path: {filepath}")
         
         # Ensure static directory exists
         os.makedirs("static", exist_ok=True)
+        print("✅ Static directory ensured")
         
         # Generate audio file
+        print("🎵 Generating audio file...")
         await communicate.save(filepath)
+        print("✅ Audio file generated successfully")
+        
+        # Get file size
+        file_size = os.path.getsize(filepath)
+        print(f"📊 File size: {file_size} bytes")
         
         # Create podcast record
         podcast = Podcast(
@@ -63,12 +77,14 @@ async def generate_podcast(
             speed=request.speed,
             audio_url=f"/static/{filename}",
             duration="00:00:00",  # TODO: Calculate actual duration
-            file_size=os.path.getsize(filepath)
+            file_size=file_size
         )
         
+        print("💾 Saving podcast record to database...")
         db.add(podcast)
         db.commit()
         db.refresh(podcast)
+        print(f"✅ Podcast saved with ID: {podcast.id}")
         
         return {
             "id": podcast.id,
@@ -78,6 +94,8 @@ async def generate_podcast(
         }
         
     except Exception as e:
+        print(f"❌ Error during podcast generation: {str(e)}")
+        print(f"🔍 Full traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"生成失败: {str(e)}")
 
 @router.get("/history")
