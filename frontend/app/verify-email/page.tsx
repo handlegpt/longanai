@@ -59,7 +59,7 @@ export default function VerifyEmail() {
 
   const handleResend = async () => {
     // 这里可以添加重新发送验证邮件的功能
-    toast.info('请联系客服重新发送验证邮件');
+    toast('请联系客服重新发送验证邮件');
   };
 
   return (
