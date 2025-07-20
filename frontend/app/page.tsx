@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Download, Share2, History, Upload, User, LogOut, Globe, Play, Pause } from 'lucide-react';
+import { Mic, Download, Share2, History, Upload, User, LogOut, Globe, Play, Pause, Trash2 } from 'lucide-react';
 import PodcastGenerator from '@/components/PodcastGenerator';
 import VoiceSelector from '@/components/VoiceSelector';
 import FileUpload from '@/components/FileUpload';
@@ -522,6 +522,8 @@ export default function Home() {
   const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string; duration?: string } | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
+  const [podcastHistory, setPodcastHistory] = useState<Array<{ id: string; audioUrl: string; title: string; duration?: string; createdAt: string }>>([]);
+  const [showAllPodcasts, setShowAllPodcasts] = useState(false);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -539,6 +541,30 @@ export default function Home() {
 
   // Get current translation based on selected interface language
   const t = translations[selectedLanguage as keyof typeof translations] || translations.cantonese;
+
+  // Load podcast history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('podcast_history');
+    if (savedHistory) {
+      setPodcastHistory(JSON.parse(savedHistory));
+    }
+  }, []);
+
+  // Save podcast to history
+  const savePodcastToHistory = (podcast: { audioUrl: string; title: string; duration?: string }) => {
+    const newPodcast = {
+      id: Date.now().toString(),
+      ...podcast,
+      createdAt: new Date().toISOString()
+    };
+    
+    const updatedHistory = [newPodcast, ...podcastHistory];
+    setPodcastHistory(updatedHistory);
+    localStorage.setItem('podcast_history', JSON.stringify(updatedHistory));
+  };
+
+  // Get displayed podcasts (latest 6 or all)
+  const displayedPodcasts = showAllPodcasts ? podcastHistory : podcastHistory.slice(0, 6);
 
   // Handle audio play
   const handlePlayAudio = () => {
@@ -649,6 +675,11 @@ export default function Home() {
       if (response.ok) {
         const data = await response.json();
         setGeneratedPodcast({
+          audioUrl: data.audioUrl,
+          title: data.title || `播客 - ${new Date().toLocaleString()}`,
+          duration: data.duration || '00:00:00'
+        });
+        savePodcastToHistory({
           audioUrl: data.audioUrl,
           title: data.title || `播客 - ${new Date().toLocaleString()}`,
           duration: data.duration || '00:00:00'
@@ -1009,16 +1040,13 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.0 }}
-                className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8 mt-6 sm:mt-8"
+                className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 mt-6"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <button 
-                      onClick={handlePlayAudio}
-                      className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center hover:scale-105 transition-all duration-200 cursor-pointer"
-                    >
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
                       <Play className="w-6 h-6 text-white" />
-                    </button>
+                    </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{t.generatedPodcastLabel}</h3>
                       <p className="text-sm text-gray-500">{generatedPodcast.title}</p>
@@ -1033,7 +1061,7 @@ export default function Home() {
                 </div>
                 
                 {/* Compact audio player */}
-                <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
                   <audio
                     ref={setAudioRef}
                     controls
@@ -1045,36 +1073,169 @@ export default function Home() {
                 </div>
                 
                 {/* Action buttons in a more compact layout */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <button 
-                    onClick={handlePlayAudio}
-                    className="btn-primary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200"
-                  >
-                    <Play className="w-4 h-4" />
-                    <span>{t.playPodcast}</span>
-                  </button>
+                <div className="flex items-center justify-between">
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={handlePlayAudio}
+                      className="p-2 bg-primary-100 hover:bg-primary-200 rounded-lg transition-colors"
+                      title="播放"
+                    >
+                      <Play className="w-4 h-4 text-primary-600" />
+                    </button>
+                    
+                    <button 
+                      onClick={handleDownloadAudio}
+                      className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                      title="下载"
+                    >
+                      <Download className="w-4 h-4 text-gray-600" />
+                    </button>
+                    
+                    <button 
+                      onClick={handleShareAudio}
+                      className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                      title="分享"
+                    >
+                      <Share2 className="w-4 h-4 text-gray-600" />
+                    </button>
+                  </div>
                   
-                  <button 
-                    onClick={handleDownloadAudio}
-                    className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>{t.downloadPodcast}</span>
-                  </button>
-                  
-                  <button 
-                    onClick={handleShareAudio}
-                    className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    <span>{t.sharePodcast}</span>
-                  </button>
+                  <div className="text-sm text-gray-500">
+                    刚刚生成
+                  </div>
                 </div>
               </motion.div>
             )}
           </div>
         </motion.div>
       </main>
+
+      {/* Podcast History Section */}
+      {podcastHistory.length > 0 && (
+        <section className="bg-gray-50 py-12">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">最新播客</h2>
+              <p className="text-gray-600">你最近生成的播客</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayedPodcasts.map((podcast) => (
+                <motion.div
+                  key={podcast.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
+                          <Play className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 text-sm truncate">{podcast.title}</h3>
+                          <p className="text-xs text-gray-500">{new Date(podcast.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500">时长</div>
+                        <div className="text-sm font-semibold text-gray-900">{podcast.duration || '00:00:00'}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                      <audio
+                        controls
+                        className="w-full h-10 rounded-md"
+                        src={podcast.audioUrl}
+                      >
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex space-x-2">
+                        <button 
+                          onClick={() => {
+                            const audio = document.querySelector(`audio[src="${podcast.audioUrl}"]`) as HTMLAudioElement;
+                            if (audio) audio.play();
+                          }}
+                          className="p-2 bg-primary-100 hover:bg-primary-200 rounded-lg transition-colors"
+                          title="播放"
+                        >
+                          <Play className="w-4 h-4 text-primary-600" />
+                        </button>
+                        
+                        <button 
+                          onClick={() => {
+                            const link = document.createElement('a');
+                            link.href = podcast.audioUrl;
+                            link.download = `${podcast.title}.mp3`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          }}
+                          className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                          title="下载"
+                        >
+                          <Download className="w-4 h-4 text-gray-600" />
+                        </button>
+                        
+                        <button 
+                          onClick={async () => {
+                            try {
+                              if (navigator.share) {
+                                await navigator.share({
+                                  title: '龙眼AI播客',
+                                  text: '我用龙眼AI生成的粤语播客',
+                                  url: window.location.href,
+                                });
+                              } else {
+                                await navigator.clipboard.writeText(window.location.href);
+                                alert('链接已复制到剪贴板');
+                              }
+                            } catch (error) {
+                              console.error('分享失败:', error);
+                            }
+                          }}
+                          className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                          title="分享"
+                        >
+                          <Share2 className="w-4 h-4 text-gray-600" />
+                        </button>
+                      </div>
+                      
+                      <button 
+                        onClick={() => {
+                          const updatedHistory = podcastHistory.filter(p => p.id !== podcast.id);
+                          setPodcastHistory(updatedHistory);
+                          localStorage.setItem('podcast_history', JSON.stringify(updatedHistory));
+                        }}
+                        className="p-2 bg-red-100 hover:bg-red-200 rounded-lg transition-colors"
+                        title="删除"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            {podcastHistory.length > 6 && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setShowAllPodcasts(!showAllPodcasts)}
+                  className="btn-secondary px-6 py-3 text-sm font-medium"
+                >
+                  {showAllPodcasts ? '显示最新6个' : `查看全部 ${podcastHistory.length} 个播客`}
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Buy Me a Coffee section */}
       <section className="bg-gradient-to-r from-yellow-50 to-orange-50 border-t border-yellow-200">
