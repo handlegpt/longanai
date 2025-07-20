@@ -464,7 +464,7 @@ export default function Home() {
   // Website interface language options
   const interfaceLanguages = [
     { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
-    { id: 'mandarin', name: '广东话', flag: '🇨🇳' },
+    { id: 'mandarin', name: '简体中文', flag: '🇨🇳' },
     { id: 'english', name: 'English', flag: '🇺🇸' },
   ];
 
