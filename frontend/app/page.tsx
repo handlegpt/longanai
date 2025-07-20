@@ -15,10 +15,10 @@ const translations = {
     // Header
     title: '龙眼AI',
     subtitle: '智能粤语播客生成平台',
-    generatePodcast: '生成播客',
-    history: '历史记录',
-    login: '登录',
-    logout: '退出',
+    generatePodcast: '制作播客',
+    history: '历史',
+    login: '登入',
+    logout: '登出',
     
     // Hero section
     heroTitle: '用AI生成地道嘅粤语播客',
