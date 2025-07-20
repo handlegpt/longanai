@@ -725,197 +725,244 @@ export default function Home() {
           transition={{ duration: 0.5 }}
         >
           {/* Hero section with main title */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="mb-8"
+              className="mb-12"
             >
-              <h2 className="text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                {t.heroTitle}
-              </h2>
-              <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                {t.heroSubtitle}
-              </p>
+              <div className="mb-8">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary-100 text-primary-700 text-sm font-medium mb-6">
+                  <span className="mr-2">🎙️</span>
+                  AI驱动的粤语播客生成
+                </div>
+                <h2 className="text-6xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-primary-600 via-secondary-600 to-purple-600 bg-clip-text text-transparent">
+                  {t.heroTitle}
+                </h2>
+                <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                  {t.heroSubtitle}
+                </p>
+              </div>
+              
+              {/* Quick start CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
+              >
+                <button className="btn-primary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200 shadow-lg">
+                  <Play className="w-6 h-6" />
+                  <span>立即开始生成</span>
+                </button>
+                <button className="btn-secondary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200">
+                  <Download className="w-6 h-6" />
+                  <span>查看演示</span>
+                </button>
+              </motion.div>
             </motion.div>
             
-            {/* Feature highlights */}
+            {/* Feature highlights with improved design */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
             >
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Mic className="w-6 h-6 text-primary-600" />
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <Mic className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">智能语音合成</h3>
-                <p className="text-gray-600 text-sm">使用先进的Edge TTS技术，生成自然流畅的粤语语音</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">智能语音合成</h3>
+                <p className="text-gray-600 leading-relaxed">使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感</p>
               </div>
               
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <div className="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <User className="w-6 h-6 text-secondary-600" />
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                <div className="w-16 h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <User className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">多种音色选择</h3>
-                <p className="text-gray-600 text-sm">靓女、靓仔、阿嫲三种不同风格的播客主持人</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">多种音色选择</h3>
+                <p className="text-gray-600 leading-relaxed">靓女、靓仔、阿嫲三种不同风格的播客主持人，满足不同内容需求</p>
               </div>
               
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Download className="w-6 h-6 text-purple-600" />
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <Download className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">一键生成下载</h3>
-                <p className="text-gray-600 text-sm">输入文本，选择音色，一键生成并下载播客音频</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">一键生成下载</h3>
+                <p className="text-gray-600 leading-relaxed">输入文本，选择音色，一键生成并下载播客音频，简单高效</p>
               </div>
             </motion.div>
           </div>
 
-          {/* Text input section for podcast content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100"
-          >
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t.inputTitle}</h3>
-              <p className="text-gray-600">{t.inputSubtitle}</p>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="relative">
-                <textarea
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  placeholder={t.inputPlaceholder}
-                  className="w-full h-40 p-6 border-2 border-gray-200 rounded-xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-lg"
-                />
-                <div className="absolute bottom-4 right-4 text-sm text-gray-400">
-                  {inputText.length} / 2000
-                </div>
-              </div>
-              
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  {/* Voice selection - improved version */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                    <span className="text-sm font-medium text-gray-700">选择音色:</span>
-                    <div className="flex flex-wrap gap-2">
-                      {voices.map((voice) => (
-                        <button
-                          key={voice.id}
-                          onClick={() => setSelectedVoice(voice.id)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            selectedVoice === voice.id
-                              ? 'bg-primary-500 text-white shadow-lg scale-105'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
-                          }`}
-                        >
-                          {voice.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !inputText.trim()}
-                  className="btn-primary flex items-center space-x-3 px-8 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200"
-                >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>{t.generating}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-5 h-5" />
-                      <span>{t.generatePodcast}</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* File upload section as alternative */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
-          >
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t.uploadTitle}</h3>
-              <p className="text-gray-600">{t.uploadSubtitle}</p>
-            </div>
-            <FileUpload 
-              translations={{
-                title: t.fileUploadTitle,
-                dragText: t.dragText,
-                dragActiveText: t.dragActiveText,
-                formatText: t.formatText,
-                uploadedFiles: t.uploadedFiles,
-                generateFromFiles: t.generateFromFiles,
-                uploadSuccess: t.uploadSuccess,
-                uploadError: t.uploadError,
-                fileTooLarge: t.fileTooLarge,
-                unsupportedFormat: t.unsupportedFormat,
-                noFilesUploaded: t.noFilesUploaded,
-                generatingFromFiles: t.generatingFromFiles,
-              }}
-            />
-          </motion.div>
-
-          {/* Generated podcast player */}
-          {generatedPodcast && (
+          {/* Main content area with improved design */}
+          <div className="max-w-6xl mx-auto">
+            {/* Text input section for podcast content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl shadow-xl p-8 mt-8 border border-primary-100"
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="bg-white rounded-3xl shadow-2xl p-10 mb-10 border border-gray-100"
             >
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">{t.podcastTitle}</h3>
-                <p className="text-gray-600">{generatedPodcast.title}</p>
+              <div className="mb-8">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
+                    <span className="text-2xl">✍️</span>
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-bold text-gray-900">{t.inputTitle}</h3>
+                    <p className="text-gray-600 mt-2">{t.inputSubtitle}</p>
+                  </div>
+                </div>
               </div>
               
-              <div className="space-y-6">
-                {/* Audio player */}
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                  <audio
-                    controls
-                    className="w-full"
-                    src={generatedPodcast.audioUrl}
-                  >
-                    Your browser does not support the audio element.
-                  </audio>
+              <div className="space-y-8">
+                <div className="relative">
+                  <textarea
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    placeholder={t.inputPlaceholder}
+                    className="w-full h-48 p-8 border-2 border-gray-200 rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-lg leading-relaxed"
+                  />
+                  <div className="absolute bottom-6 right-6 text-sm text-gray-400 bg-white px-3 py-1 rounded-full">
+                    {inputText.length} / 2000
+                  </div>
                 </div>
                 
-                {/* Action buttons */}
-                <div className="flex flex-wrap items-center gap-4">
-                  <button className="btn-primary flex items-center space-x-3 px-6 py-3">
-                    <Play className="w-5 h-5" />
-                    <span>{t.playPodcast}</span>
-                  </button>
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                    {/* Voice selection - improved version */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <span className="text-lg font-semibold text-gray-700">选择音色:</span>
+                      <div className="flex flex-wrap gap-3">
+                        {voices.map((voice) => (
+                          <button
+                            key={voice.id}
+                            onClick={() => setSelectedVoice(voice.id)}
+                            className={`px-6 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                              selectedVoice === voice.id
+                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
+                            }`}
+                          >
+                            {voice.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                   
-                  <button className="btn-secondary flex items-center space-x-3 px-6 py-3">
-                    <Download className="w-5 h-5" />
-                    <span>{t.downloadPodcast}</span>
-                  </button>
-                  
-                  <button className="btn-secondary flex items-center space-x-3 px-6 py-3">
-                    <Share2 className="w-5 h-5" />
-                    <span>{t.sharePodcast}</span>
+                  <button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !inputText.trim()}
+                    className="btn-primary flex items-center space-x-4 px-10 py-5 text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                        <span>{t.generating}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-6 h-6" />
+                        <span>{t.generatePodcast}</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
             </motion.div>
-          )}
+
+            {/* File upload section as alternative */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-3xl shadow-xl p-10 border border-gray-200"
+            >
+              <div className="mb-8">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-secondary-100 rounded-xl flex items-center justify-center mr-4">
+                    <span className="text-2xl">📁</span>
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-bold text-gray-900">{t.uploadTitle}</h3>
+                    <p className="text-gray-600 mt-2">{t.uploadSubtitle}</p>
+                  </div>
+                </div>
+              </div>
+              <FileUpload 
+                translations={{
+                  title: t.fileUploadTitle,
+                  dragText: t.dragText,
+                  dragActiveText: t.dragActiveText,
+                  formatText: t.formatText,
+                  uploadedFiles: t.uploadedFiles,
+                  generateFromFiles: t.generateFromFiles,
+                  uploadSuccess: t.uploadSuccess,
+                  uploadError: t.uploadError,
+                  fileTooLarge: t.fileTooLarge,
+                  unsupportedFormat: t.unsupportedFormat,
+                  noFilesUploaded: t.noFilesUploaded,
+                  generatingFromFiles: t.generatingFromFiles,
+                }}
+              />
+            </motion.div>
+
+            {/* Generated podcast player with improved design */}
+            {generatedPodcast && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.0 }}
+                className="bg-gradient-to-r from-primary-50 via-secondary-50 to-purple-50 rounded-3xl shadow-2xl p-10 mt-10 border border-primary-200"
+              >
+                <div className="mb-8">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
+                      <span className="text-2xl">🎧</span>
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-bold text-gray-900">{t.podcastTitle}</h3>
+                      <p className="text-gray-600 mt-2">{generatedPodcast.title}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-8">
+                  {/* Audio player with improved design */}
+                  <div className="bg-white rounded-2xl p-8 shadow-lg">
+                    <audio
+                      controls
+                      className="w-full"
+                      src={generatedPodcast.audioUrl}
+                    >
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                  
+                  {/* Action buttons with improved design */}
+                  <div className="flex flex-wrap items-center gap-4">
+                    <button className="btn-primary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200 shadow-lg">
+                      <Play className="w-6 h-6" />
+                      <span>{t.playPodcast}</span>
+                    </button>
+                    
+                    <button className="btn-secondary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200">
+                      <Download className="w-6 h-6" />
+                      <span>{t.downloadPodcast}</span>
+                    </button>
+                    
+                    <button className="btn-secondary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200">
+                      <Share2 className="w-6 h-6" />
+                      <span>{t.sharePodcast}</span>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
         </motion.div>
       </main>
 
