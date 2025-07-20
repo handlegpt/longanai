@@ -603,20 +603,48 @@ export default function Home() {
   const handleShareAudio = async () => {
     if (generatedPodcast) {
       try {
-        if (navigator.share) {
-          await navigator.share({
+        // Check if Web Share API is available and supported
+        if (navigator.share && navigator.canShare) {
+          const shareData = {
             title: t.shareTitle || '龙眼AI播客',
             text: t.shareText || '我用龙眼AI生成的粤语播客',
             url: window.location.href,
-          });
+          };
+          
+          // Check if the data can be shared
+          if (navigator.canShare(shareData)) {
+            await navigator.share(shareData);
+            console.log('分享成功');
+          } else {
+            throw new Error('分享数据不被支持');
+          }
         } else {
           // Fallback: copy URL to clipboard
-          await navigator.clipboard.writeText(window.location.href);
-          alert(t.linkCopied || '链接已复制到剪贴板');
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            alert(t.linkCopied || '链接已复制到剪贴板');
+            console.log('链接已复制到剪贴板');
+          } catch (clipboardError) {
+            // If clipboard API fails, show the URL in an alert
+            alert(`分享链接: ${window.location.href}`);
+            console.log('显示分享链接');
+          }
         }
       } catch (error) {
         console.error('分享失败:', error);
+        
+        // Show user-friendly error message
+        if (error instanceof Error && error.message.includes('分享数据不被支持')) {
+          alert('当前浏览器不支持分享功能，已复制链接到剪贴板');
+        } else if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share
+          console.log('用户取消了分享');
+        } else {
+          alert('分享失败，请手动复制链接');
+        }
       }
+    } else {
+      alert('没有可分享的播客');
     }
   };
 
@@ -1250,18 +1278,45 @@ export default function Home() {
                         <button 
                           onClick={async () => {
                             try {
-                              if (navigator.share) {
-                                await navigator.share({
+                              // Check if Web Share API is available and supported
+                              if (navigator.share && navigator.canShare) {
+                                const shareData = {
                                   title: '龙眼AI播客',
                                   text: '我用龙眼AI生成的粤语播客',
                                   url: window.location.href,
-                                });
+                                };
+                                
+                                // Check if the data can be shared
+                                if (navigator.canShare(shareData)) {
+                                  await navigator.share(shareData);
+                                  console.log('分享成功');
+                                } else {
+                                  throw new Error('分享数据不被支持');
+                                }
                               } else {
-                                await navigator.clipboard.writeText(window.location.href);
-                                alert('链接已复制到剪贴板');
+                                // Fallback: copy URL to clipboard
+                                try {
+                                  await navigator.clipboard.writeText(window.location.href);
+                                  alert('链接已复制到剪贴板');
+                                  console.log('链接已复制到剪贴板');
+                                } catch (clipboardError) {
+                                  // If clipboard API fails, show the URL in an alert
+                                  alert(`分享链接: ${window.location.href}`);
+                                  console.log('显示分享链接');
+                                }
                               }
                             } catch (error) {
                               console.error('分享失败:', error);
+                              
+                              // Show user-friendly error message
+                              if (error instanceof Error && error.message.includes('分享数据不被支持')) {
+                                alert('当前浏览器不支持分享功能，已复制链接到剪贴板');
+                              } else if (error instanceof Error && error.name === 'AbortError') {
+                                // User cancelled the share
+                                console.log('用户取消了分享');
+                              } else {
+                                alert('分享失败，请手动复制链接');
+                              }
                             }
                           }}
                           className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
