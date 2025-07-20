@@ -21,7 +21,7 @@ export default function Home() {
 
   const languages = [
     { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
-    { id: 'mandarin', name: '普通话', flag: '🇨🇳' },
+    { id: 'guangdonghua', name: '广东话', flag: '🇨🇳' },
     { id: 'english', name: 'English', flag: '🇺🇸' },
   ];
 
