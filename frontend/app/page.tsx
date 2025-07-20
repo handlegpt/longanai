@@ -50,6 +50,13 @@ const translations = {
     uploadTitle: '或者上传文件',
     uploadSubtitle: '支持TXT、DOC、PDF等格式',
     
+    // Podcast player
+    podcastGenerated: '播客生成完成！',
+    playPodcast: '播放播客',
+    downloadPodcast: '下载播客',
+    sharePodcast: '分享播客',
+    podcastTitle: '生成的播客',
+    
     // Footer
     copyright: '© 2024 龙眼AI. 保留所有权利.',
     slogan: '让AI讲好你嘅粤语故事',
@@ -97,6 +104,13 @@ const translations = {
     // File upload
     uploadTitle: '或者上传文件',
     uploadSubtitle: '支持TXT、DOC、PDF等格式',
+    
+    // Podcast player
+    podcastGenerated: '播客生成完成！',
+    playPodcast: '播放播客',
+    downloadPodcast: '下载播客',
+    sharePodcast: '分享播客',
+    podcastTitle: '生成的播客',
     
     // Footer
     copyright: '© 2024 龙眼AI. 保留所有权利.',
@@ -146,6 +160,13 @@ const translations = {
     uploadTitle: 'Or Upload File',
     uploadSubtitle: 'Supports TXT, DOC, PDF and other formats',
     
+    // Podcast player
+    podcastGenerated: 'Podcast generated!',
+    playPodcast: 'Play Podcast',
+    downloadPodcast: 'Download Podcast',
+    sharePodcast: 'Share Podcast',
+    podcastTitle: 'Generated Podcast',
+    
     // Footer
     copyright: '© 2024 Longan AI. All rights reserved.',
     slogan: 'Let AI tell your Cantonese stories well',
@@ -168,6 +189,7 @@ export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string } | null>(null);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -215,7 +237,11 @@ export default function Home() {
     // TODO: Call API to generate podcast
     setTimeout(() => {
       setIsGenerating(false);
-      alert('播客生成完成！');
+      // Simulate generated podcast
+      setGeneratedPodcast({
+        audioUrl: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', // Demo audio
+        title: `播客 - ${new Date().toLocaleString()}`
+      });
     }, 3000);
   };
 
@@ -452,6 +478,52 @@ export default function Home() {
             </div>
             <FileUpload />
           </div>
+
+          {/* Generated podcast player */}
+          {generatedPodcast && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-white rounded-xl shadow-lg p-6 mt-8"
+            >
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.podcastTitle}</h3>
+                <p className="text-sm text-gray-600">{generatedPodcast.title}</p>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Audio player */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <audio
+                    controls
+                    className="w-full"
+                    src={generatedPodcast.audioUrl}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                
+                {/* Action buttons */}
+                <div className="flex items-center space-x-4">
+                  <button className="btn-primary flex items-center space-x-2">
+                    <Play className="w-4 h-4" />
+                    <span>{t.playPodcast}</span>
+                  </button>
+                  
+                  <button className="btn-secondary flex items-center space-x-2">
+                    <Download className="w-4 h-4" />
+                    <span>{t.downloadPodcast}</span>
+                  </button>
+                  
+                  <button className="btn-secondary flex items-center space-x-2">
+                    <Share2 className="w-4 h-4" />
+                    <span>{t.sharePodcast}</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </motion.div>
       </main>
 
