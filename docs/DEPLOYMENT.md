@@ -223,7 +223,7 @@ format=%(asctime)s - %(name)s - %(levelname)s - %(message)s
 1. **端口被占用**
 ```bash
 # 查看端口占用
-lsof -i :3000
+lsof -i :3008
 lsof -i :8000
 
 # 杀死进程
