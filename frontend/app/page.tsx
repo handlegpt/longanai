@@ -110,7 +110,30 @@ const translations = {
     sendFailed: '发送失败',
     networkError: '网络错误，请重试',
     loginSuccess: '登录成功！',
-    loginFailed: '登录失败'
+    loginFailed: '登录失败',
+    
+    // HistoryPanel component translations
+    historyTitle: '历史记录',
+    totalPodcasts: '共 {count} 个播客',
+    historyLoading: '加载中...',
+    noHistory: '暂无历史记录',
+    noHistorySubtitle: '生成嘅播客会显示喺呢度',
+    host: '主持人',
+    duration: '时长',
+    created: '创建',
+    play: '播放',
+    download: '下载',
+    share: '分享',
+    delete: '删除',
+    playSuccess: '开始播放',
+    downloadSuccess: '开始下载',
+    shareSuccess: '分享成功',
+    deleteSuccess: '删除成功',
+    deleteFailed: '删除失败',
+    historyNetworkError: '网络错误',
+    shareText: '我用龙眼AI生成嘅粤语播客',
+    shareTitle: '龙眼AI播客',
+    linkCopied: '链接已复制到剪贴板'
   },
   mandarin: {
     // Header
@@ -211,7 +234,30 @@ const translations = {
     sendFailed: '发送失败',
     networkError: '网络错误，请重试',
     loginSuccess: '登录成功！',
-    loginFailed: '登录失败'
+    loginFailed: '登录失败',
+    
+    // HistoryPanel component translations
+    historyTitle: '历史记录',
+    totalPodcasts: '共 {count} 个播客',
+    historyLoading: '加载中...',
+    noHistory: '暂无历史记录',
+    noHistorySubtitle: '生成嘅播客会显示喺呢度',
+    host: '主持人',
+    duration: '时长',
+    created: '创建',
+    play: '播放',
+    download: '下载',
+    share: '分享',
+    delete: '删除',
+    playSuccess: '开始播放',
+    downloadSuccess: '开始下载',
+    shareSuccess: '分享成功',
+    deleteSuccess: '删除成功',
+    deleteFailed: '删除失败',
+    historyNetworkError: '网络错误',
+    shareText: '我用龙眼AI生成嘅粤语播客',
+    shareTitle: '龙眼AI播客',
+    linkCopied: '链接已复制到剪贴板'
   },
   english: {
     // Header
@@ -312,7 +358,30 @@ const translations = {
     sendFailed: 'Send failed',
     networkError: 'Network error, please try again',
     loginSuccess: 'Login successful!',
-    loginFailed: 'Login failed'
+    loginFailed: 'Login failed',
+    
+    // HistoryPanel component translations
+    historyTitle: 'History',
+    totalPodcasts: 'Total {count} podcasts',
+    historyLoading: 'Loading...',
+    noHistory: 'No history yet',
+    noHistorySubtitle: 'Generated podcasts will appear here',
+    host: 'Host',
+    duration: 'Duration',
+    created: 'Created',
+    play: 'Play',
+    download: 'Download',
+    share: 'Share',
+    delete: 'Delete',
+    playSuccess: 'Playing...',
+    downloadSuccess: 'Downloading...',
+    shareSuccess: 'Shared successfully',
+    deleteSuccess: 'Deleted successfully',
+    deleteFailed: 'Delete failed',
+    historyNetworkError: 'Network error',
+    shareText: 'I generated a Cantonese podcast with Longan AI',
+    shareTitle: 'Longan AI Podcast',
+    linkCopied: 'Link copied to clipboard'
   }
 };
 
