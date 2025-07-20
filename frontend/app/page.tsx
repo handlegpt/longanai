@@ -460,6 +460,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string } | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -477,6 +478,30 @@ export default function Home() {
 
   // Get current translation based on selected interface language
   const t = translations[selectedLanguage as keyof typeof translations] || translations.cantonese;
+
+  // Handle file upload
+  const handleFileUpload = (event: any) => {
+    const files = event.target.files;
+    if (!files) return;
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const validTypes = ['.txt', '.doc', '.docx', '.pdf', '.md'];
+      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+      
+      if (validTypes.indexOf(fileExtension) !== -1 && file.size <= 10 * 1024 * 1024) {
+        setUploadedFiles(prev => [...prev, file]);
+        
+        // Read file content and add to text input
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target?.result as string;
+          setInputText(prev => prev + (prev ? '\n\n' : '') + `[来自文件: ${file.name}]\n${content}`);
+        };
+        reader.readAsText(file);
+      }
+    }
+  };
 
   // Handle user login
   const handleLogin = (token: string, email: string) => {
@@ -825,8 +850,30 @@ export default function Home() {
                     placeholder={t.inputPlaceholder}
                     className="w-full h-48 p-8 border-2 border-gray-200 rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-lg leading-relaxed"
                   />
-                  <div className="absolute bottom-6 right-6 text-sm text-gray-400 bg-white px-3 py-1 rounded-full">
-                    {inputText.length} / 2000
+                  <div className="absolute bottom-6 right-6 flex items-center space-x-4">
+                    {/* File upload button */}
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="file-upload"
+                        className="hidden"
+                        accept=".txt,.doc,.docx,.pdf,.md"
+                        multiple
+                        onChange={handleFileUpload}
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 transition-all duration-200 text-sm"
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span>上传文件</span>
+                      </label>
+                    </div>
+                    
+                    {/* Character count */}
+                    <div className="text-sm text-gray-400 bg-white px-3 py-1 rounded-full">
+                      {inputText.length} / 2000
+                    </div>
                   </div>
                 </div>
                 
@@ -872,42 +919,6 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-            </motion.div>
-
-            {/* File upload section as alternative */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-3xl shadow-xl p-10 border border-gray-200"
-            >
-              <div className="mb-8">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-secondary-100 rounded-xl flex items-center justify-center mr-4">
-                    <span className="text-2xl">📁</span>
-                  </div>
-                  <div>
-                    <h3 className="text-3xl font-bold text-gray-900">{t.uploadTitle}</h3>
-                    <p className="text-gray-600 mt-2">{t.uploadSubtitle}</p>
-                  </div>
-                </div>
-              </div>
-              <FileUpload 
-                translations={{
-                  title: t.fileUploadTitle,
-                  dragText: t.dragText,
-                  dragActiveText: t.dragActiveText,
-                  formatText: t.formatText,
-                  uploadedFiles: t.uploadedFiles,
-                  generateFromFiles: t.generateFromFiles,
-                  uploadSuccess: t.uploadSuccess,
-                  uploadError: t.uploadError,
-                  fileTooLarge: t.fileTooLarge,
-                  unsupportedFormat: t.unsupportedFormat,
-                  noFilesUploaded: t.noFilesUploaded,
-                  generatingFromFiles: t.generatingFromFiles,
-                }}
-              />
             </motion.div>
 
             {/* Generated podcast player with improved design */}
