@@ -9,6 +9,154 @@ import FileUpload from '@/components/FileUpload';
 import HistoryPanel from '@/components/HistoryPanel';
 import EmailLogin from '@/components/EmailLogin';
 
+// Interface language translations
+const translations = {
+  cantonese: {
+    // Header
+    title: '龙眼AI',
+    subtitle: '智能粤语播客生成平台',
+    generatePodcast: '生成播客',
+    history: '历史记录',
+    login: '登录',
+    logout: '退出',
+    
+    // Hero section
+    heroTitle: '用AI生成地道嘅粤语播客',
+    heroSubtitle: '选择你嘅播客主持人，输入内容，一键生成专业级嘅粤语播客',
+    
+    // Language selection
+    selectLanguage: '选择语言',
+    cantoneseLang: '粤语',
+    guangdonghuaLang: '广东话',
+    englishLang: 'English',
+    
+    // Voice selection
+    selectVoice: '选择声音',
+    youngLady: '靓女',
+    youngLadyDesc: '年轻女性声音',
+    youngMan: '靓仔',
+    youngManDesc: '年轻男性声音',
+    elderlyWoman: '阿嫲',
+    elderlyWomanDesc: '年长女性声音',
+    
+    // Text input
+    inputTitle: '输入要转换的文本',
+    inputSubtitle: '支持中文、英文等多种语言',
+    inputPlaceholder: '请输入要转换为播客的文本内容...',
+    characterCount: '字符数',
+    generating: '生成中...',
+    
+    // File upload
+    uploadTitle: '或者上传文件',
+    uploadSubtitle: '支持TXT、DOC、PDF等格式',
+    
+    // Footer
+    copyright: '© 2024 龙眼AI. 保留所有权利.',
+    slogan: '让AI讲好你嘅粤语故事',
+    
+    // Welcome message
+    welcomeTitle: '欢迎使用龙眼AI',
+    welcomeSubtitle: '请先登录以开始使用粤语播客生成功能',
+    loginNow: '立即登录'
+  },
+  mandarin: {
+    // Header
+    title: '龙眼AI',
+    subtitle: '智能粤语播客生成平台',
+    generatePodcast: '生成播客',
+    history: '历史记录',
+    login: '登录',
+    logout: '退出',
+    
+    // Hero section
+    heroTitle: '用AI生成地道的粤语播客',
+    heroSubtitle: '选择你的播客主持人，输入内容，一键生成专业级的粤语播客',
+    
+    // Language selection
+    selectLanguage: '选择语言',
+    cantoneseLang: '粤语',
+    guangdonghuaLang: '广东话',
+    englishLang: 'English',
+    
+    // Voice selection
+    selectVoice: '选择声音',
+    youngLady: '靓女',
+    youngLadyDesc: '年轻女性声音',
+    youngMan: '靓仔',
+    youngManDesc: '年轻男性声音',
+    elderlyWoman: '阿嫲',
+    elderlyWomanDesc: '年长女性声音',
+    
+    // Text input
+    inputTitle: '输入要转换的文本',
+    inputSubtitle: '支持中文、英文等多种语言',
+    inputPlaceholder: '请输入要转换为播客的文本内容...',
+    characterCount: '字符数',
+    generating: '生成中...',
+    
+    // File upload
+    uploadTitle: '或者上传文件',
+    uploadSubtitle: '支持TXT、DOC、PDF等格式',
+    
+    // Footer
+    copyright: '© 2024 龙眼AI. 保留所有权利.',
+    slogan: '让AI讲好你的粤语故事',
+    
+    // Welcome message
+    welcomeTitle: '欢迎使用龙眼AI',
+    welcomeSubtitle: '请先登录以开始使用粤语播客生成功能',
+    loginNow: '立即登录'
+  },
+  english: {
+    // Header
+    title: 'Longan AI',
+    subtitle: 'Intelligent Cantonese Podcast Generation Platform',
+    generatePodcast: 'Generate Podcast',
+    history: 'History',
+    login: 'Login',
+    logout: 'Logout',
+    
+    // Hero section
+    heroTitle: 'Generate Authentic Cantonese Podcasts with AI',
+    heroSubtitle: 'Choose your podcast host, input content, and generate professional Cantonese podcasts with one click',
+    
+    // Language selection
+    selectLanguage: 'Select Language',
+    cantoneseLang: 'Cantonese',
+    guangdonghuaLang: 'Guangdong Dialect',
+    englishLang: 'English',
+    
+    // Voice selection
+    selectVoice: 'Select Voice',
+    youngLady: 'Young Lady',
+    youngLadyDesc: 'Young female voice',
+    youngMan: 'Young Man',
+    youngManDesc: 'Young male voice',
+    elderlyWoman: 'Elderly Woman',
+    elderlyWomanDesc: 'Elderly female voice',
+    
+    // Text input
+    inputTitle: 'Enter Text to Convert',
+    inputSubtitle: 'Supports Chinese, English and other languages',
+    inputPlaceholder: 'Enter text content to convert to podcast...',
+    characterCount: 'Characters',
+    generating: 'Generating...',
+    
+    // File upload
+    uploadTitle: 'Or Upload File',
+    uploadSubtitle: 'Supports TXT, DOC, PDF and other formats',
+    
+    // Footer
+    copyright: '© 2024 Longan AI. All rights reserved.',
+    slogan: 'Let AI tell your Cantonese stories well',
+    
+    // Welcome message
+    welcomeTitle: 'Welcome to Longan AI',
+    welcomeSubtitle: 'Please login to start using Cantonese podcast generation features',
+    loginNow: 'Login Now'
+  }
+};
+
 export default function Home() {
   // State management for UI components
   const [activeTab, setActiveTab] = useState('generate');
@@ -20,10 +168,10 @@ export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Language options for podcast generation
-  const languages = [
+  // Website interface language options
+  const interfaceLanguages = [
     { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
-    { id: 'guangdonghua', name: '广东话', flag: '🇨🇳' },
+    { id: 'mandarin', name: '普通话', flag: '🇨🇳' },
     { id: 'english', name: 'English', flag: '🇺🇸' },
   ];
 
@@ -33,6 +181,9 @@ export default function Home() {
     { id: 'young-man', name: '靓仔', description: '年轻男性声音' },
     { id: 'elderly-woman', name: '阿嫲', description: '年长女性声音' },
   ];
+
+  // Get current translation based on selected interface language
+  const t = translations[selectedLanguage as keyof typeof translations] || translations.cantonese;
 
   // Handle user login
   const handleLogin = (token: string, email: string) => {
@@ -98,8 +249,8 @@ export default function Home() {
                 <span className="text-white font-bold text-xl">龙</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">龙眼AI</h1>
-                <p className="text-sm text-gray-600">智能粤语播客生成平台</p>
+                <h1 className="text-2xl font-bold text-gray-900">{t.title}</h1>
+                <p className="text-sm text-gray-600">{t.subtitle}</p>
               </div>
             </div>
             
@@ -114,7 +265,7 @@ export default function Home() {
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  生成播客
+                  {t.generatePodcast}
                 </button>
                 <button
                   onClick={() => setActiveTab('history')}
@@ -124,7 +275,7 @@ export default function Home() {
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  历史记录
+                  {t.history}
                 </button>
               </nav>
 
@@ -140,7 +291,7 @@ export default function Home() {
                     className="btn-secondary flex items-center space-x-2"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>退出</span>
+                    <span>{t.logout}</span>
                   </button>
                 </div>
               ) : (
@@ -149,7 +300,7 @@ export default function Home() {
                   className="btn-primary flex items-center space-x-2"
                 >
                   <User className="w-4 h-4" />
-                  <span>登录</span>
+                  <span>{t.login}</span>
                 </button>
               )}
             </div>
@@ -168,23 +319,23 @@ export default function Home() {
           {/* Hero section with main title */}
           <div className="text-center mb-8">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              用AI生成地道嘅粤语播客
+              {t.heroTitle}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              选择你嘅播客主持人，输入内容，一键生成专业级嘅粤语播客
+              {t.heroSubtitle}
             </p>
           </div>
 
-          {/* Language and voice selection cards */}
+          {/* Interface language and voice selection cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Language selection card */}
+            {/* Interface language selection card */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <Globe className="w-5 h-5 text-primary-500" />
-                <h3 className="text-lg font-semibold text-gray-900">选择语言</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t.selectLanguage}</h3>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                {languages.map((language) => (
+                {interfaceLanguages.map((language) => (
                   <button
                     key={language.id}
                     onClick={() => setSelectedLanguage(language.id)}
@@ -205,7 +356,7 @@ export default function Home() {
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center space-x-2 mb-4">
                 <Mic className="w-5 h-5 text-primary-500" />
-                <h3 className="text-lg font-semibold text-gray-900">选择声音</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t.selectVoice}</h3>
               </div>
               <div className="space-y-3">
                 {voices.map((voice) => (
@@ -229,21 +380,21 @@ export default function Home() {
           {/* Text input section for podcast content */}
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">输入要转换的文本</h3>
-              <p className="text-sm text-gray-600">支持中文、英文等多种语言</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.inputTitle}</h3>
+              <p className="text-sm text-gray-600">{t.inputSubtitle}</p>
             </div>
             
             <div className="space-y-4">
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="请输入要转换为播客的文本内容..."
+                placeholder={t.inputPlaceholder}
                 className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
               
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-500">
-                  字符数: {inputText.length}
+                  {t.characterCount}: {inputText.length}
                 </div>
                 <button
                   onClick={handleGenerate}
@@ -253,12 +404,12 @@ export default function Home() {
                   {isGenerating ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      <span>生成中...</span>
+                      <span>{t.generating}</span>
                     </>
                   ) : (
                     <>
                       <Play className="w-4 h-4" />
-                      <span>生成播客</span>
+                      <span>{t.generatePodcast}</span>
                     </>
                   )}
                 </button>
@@ -269,8 +420,8 @@ export default function Home() {
           {/* File upload section as alternative */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">或者上传文件</h3>
-              <p className="text-sm text-gray-600">支持TXT、DOC、PDF等格式</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.uploadTitle}</h3>
+              <p className="text-sm text-gray-600">{t.uploadSubtitle}</p>
             </div>
             <FileUpload />
           </div>
@@ -281,8 +432,8 @@ export default function Home() {
       <footer className="bg-white border-t mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-600">
-            <p>&copy; 2024 龙眼AI. 保留所有权利.</p>
-            <p className="mt-2">让AI讲好你嘅粤语故事</p>
+            <p>{t.copyright}</p>
+            <p className="mt-2">{t.slogan}</p>
           </div>
         </div>
       </footer>
