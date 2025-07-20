@@ -8,6 +8,7 @@ import os
 import uuid
 import traceback
 from datetime import datetime
+from pydub import AudioSegment
 
 from app.core.database import get_db
 from app.core.config import settings
@@ -27,6 +28,13 @@ class PodcastGenerateRequest(BaseModel):
     voice: str = "young-lady"
     emotion: str = "normal"
     speed: float = 1.0
+
+def format_duration(seconds):
+    """Format duration in seconds to HH:MM:SS"""
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    seconds = int(seconds % 60)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 @router.post("/generate")
 async def generate_podcast(
@@ -64,6 +72,16 @@ async def generate_podcast(
         await communicate.save(filepath)
         print("✅ Audio file generated successfully")
         
+        # Calculate audio duration
+        try:
+            audio = AudioSegment.from_mp3(filepath)
+            duration_seconds = len(audio) / 1000.0  # Convert milliseconds to seconds
+            duration_str = format_duration(duration_seconds)
+            print(f"⏱️ Audio duration: {duration_str}")
+        except Exception as e:
+            print(f"⚠️ Could not calculate duration: {e}")
+            duration_str = "00:00:00"
+        
         # Get file size
         file_size = os.path.getsize(filepath)
         print(f"📊 File size: {file_size} bytes")
@@ -76,7 +94,7 @@ async def generate_podcast(
             emotion=request.emotion,
             speed=request.speed,
             audio_url=f"/static/{filename}",
-            duration="00:00:00",  # TODO: Calculate actual duration
+            duration=duration_str,
             file_size=file_size
         )
         
@@ -90,6 +108,7 @@ async def generate_podcast(
             "id": podcast.id,
             "audioUrl": podcast.audio_url,
             "title": podcast.title,
+            "duration": duration_str,
             "message": "播客生成成功"
         }
         

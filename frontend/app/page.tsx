@@ -501,7 +501,7 @@ export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string } | null>(null);
+  const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string; duration?: string } | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   // Website interface language options
@@ -591,7 +591,8 @@ export default function Home() {
         const data = await response.json();
         setGeneratedPodcast({
           audioUrl: data.audioUrl,
-          title: data.title || `播客 - ${new Date().toLocaleString()}`
+          title: data.title || `播客 - ${new Date().toLocaleString()}`,
+          duration: data.duration || '00:00:00'
         });
       } else {
         const errorData = await response.json();
@@ -966,9 +967,27 @@ export default function Home() {
                 <div className="space-y-8">
                   {/* Audio player with improved design */}
                   <div className="bg-white rounded-2xl p-8 shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center">
+                          <Play className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-900">生成的播客</h4>
+                          <p className="text-sm text-gray-500">点击播放按钮开始收听</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500">时长</div>
+                        <div className="text-lg font-semibold text-gray-900">
+                          {generatedPodcast.duration || '00:00:00'}
+                        </div>
+                      </div>
+                    </div>
+                    
                     <audio
                       controls
-                      className="w-full"
+                      className="w-full h-16 rounded-xl"
                       src={generatedPodcast.audioUrl}
                     >
                       Your browser does not support the audio element.
