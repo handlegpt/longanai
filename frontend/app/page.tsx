@@ -32,12 +32,12 @@ const translations = {
     
     // Voice selection
     selectVoice: '选择声音',
-    youngLady: '靓女',
-    youngLadyDesc: '年轻女性声音',
-    youngMan: '靓仔',
-    youngManDesc: '年轻男性声音',
-    elderlyWoman: '阿嫲',
-    elderlyWomanDesc: '年长女性声音',
+    youngLady: 'Mia',
+    youngLadyDesc: '年轻女性声音 - 温柔甜美',
+    youngMan: 'Mars',
+    youngManDesc: '年轻男性声音 - 活力四射',
+    elderlyWoman: 'David',
+    elderlyWomanDesc: '成熟男性声音 - 稳重专业',
     
     // Text input
     inputTitle: '输入要转换的文本',
@@ -80,12 +80,12 @@ const translations = {
     
     // Voice selection
     selectVoice: '选择声音',
-    youngLady: '靓女',
-    youngLadyDesc: '年轻女性声音',
-    youngMan: '靓仔',
-    youngManDesc: '年轻男性声音',
-    elderlyWoman: '阿嫲',
-    elderlyWomanDesc: '年长女性声音',
+    youngLady: 'Mia',
+    youngLadyDesc: '年轻女性声音 - 温柔甜美',
+    youngMan: 'Mars',
+    youngManDesc: '年轻男性声音 - 活力四射',
+    elderlyWoman: 'David',
+    elderlyWomanDesc: '成熟男性声音 - 稳重专业',
     
     // Text input
     inputTitle: '输入要转换的文本',
@@ -128,12 +128,12 @@ const translations = {
     
     // Voice selection
     selectVoice: 'Select Voice',
-    youngLady: 'Young Lady',
-    youngLadyDesc: 'Young female voice',
-    youngMan: 'Young Man',
-    youngManDesc: 'Young male voice',
-    elderlyWoman: 'Elderly Woman',
-    elderlyWomanDesc: 'Elderly female voice',
+    youngLady: 'Mia',
+    youngLadyDesc: 'Young female voice - Soft and sweet',
+    youngMan: 'Mars',
+    youngManDesc: 'Young male voice - Full of energy',
+    elderlyWoman: 'David',
+    elderlyWomanDesc: 'Mature male voice - Steady and professional',
     
     // Text input
     inputTitle: 'Enter Text to Convert',
@@ -279,6 +279,21 @@ export default function Home() {
                 </button>
               </nav>
 
+              {/* Language selector */}
+              <div className="relative">
+                <button
+                  onClick={() => setSelectedLanguage(selectedLanguage === 'cantonese' ? 'mandarin' : selectedLanguage === 'mandarin' ? 'english' : 'cantonese')}
+                  className="flex items-center space-x-1 px-2 py-1 rounded-md text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  <span className="text-lg">
+                    {interfaceLanguages.find(lang => lang.id === selectedLanguage)?.flag}
+                  </span>
+                  <span className="text-xs">
+                    {interfaceLanguages.find(lang => lang.id === selectedLanguage)?.name}
+                  </span>
+                </button>
+              </div>
+
               {/* User authentication section */}
               {isLoggedIn ? (
                 <div className="flex items-center space-x-3">
@@ -326,54 +341,27 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Interface language and voice selection cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Interface language selection card */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <Globe className="w-5 h-5 text-primary-500" />
-                <h3 className="text-lg font-semibold text-gray-900">{t.selectLanguage}</h3>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {interfaceLanguages.map((language) => (
-                  <button
-                    key={language.id}
-                    onClick={() => setSelectedLanguage(language.id)}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      selectedLanguage === language.id
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="text-2xl mb-1">{language.flag}</div>
-                    <div className="text-sm font-medium">{language.name}</div>
-                  </button>
-                ))}
-              </div>
+          {/* Voice selection card */}
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div className="flex items-center space-x-2 mb-4">
+              <Mic className="w-5 h-5 text-primary-500" />
+              <h3 className="text-lg font-semibold text-gray-900">{t.selectVoice}</h3>
             </div>
-
-            {/* Voice selection card */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <Mic className="w-5 h-5 text-primary-500" />
-                <h3 className="text-lg font-semibold text-gray-900">{t.selectVoice}</h3>
-              </div>
-              <div className="space-y-3">
-                {voices.map((voice) => (
-                  <button
-                    key={voice.id}
-                    onClick={() => setSelectedVoice(voice.id)}
-                    className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
-                      selectedVoice === voice.id
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="font-medium">{voice.name}</div>
-                    <div className="text-sm text-gray-500">{voice.description}</div>
-                  </button>
-                ))}
-              </div>
+            <div className="space-y-3">
+              {voices.map((voice) => (
+                <button
+                  key={voice.id}
+                  onClick={() => setSelectedVoice(voice.id)}
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                    selectedVoice === voice.id
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="font-medium">{voice.name}</div>
+                  <div className="text-sm text-gray-500">{voice.description}</div>
+                </button>
+              ))}
             </div>
           </div>
 
