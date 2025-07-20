@@ -167,6 +167,7 @@ export default function Home() {
   const [showLogin, setShowLogin] = useState(false);
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -228,6 +229,24 @@ export default function Home() {
     }
   }, []);
 
+  // Close language dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.language-dropdown')) {
+        setShowLanguageDropdown(false);
+      }
+    };
+
+    if (showLanguageDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLanguageDropdown]);
+
   // Show login modal if login is requested
   if (showLogin) {
     return (
@@ -280,9 +299,9 @@ export default function Home() {
               </nav>
 
               {/* Language selector */}
-              <div className="relative">
+              <div className="relative language-dropdown">
                 <button
-                  onClick={() => setSelectedLanguage(selectedLanguage === 'cantonese' ? 'mandarin' : selectedLanguage === 'mandarin' ? 'english' : 'cantonese')}
+                  onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
                   className="flex items-center space-x-1 px-2 py-1 rounded-md text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 >
                   <span className="text-lg">
@@ -292,6 +311,27 @@ export default function Home() {
                     {interfaceLanguages.find(lang => lang.id === selectedLanguage)?.name}
                   </span>
                 </button>
+                
+                {/* Language dropdown menu */}
+                {showLanguageDropdown && (
+                  <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-32">
+                    {interfaceLanguages.map((language) => (
+                      <button
+                        key={language.id}
+                        onClick={() => {
+                          setSelectedLanguage(language.id);
+                          setShowLanguageDropdown(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2 ${
+                          selectedLanguage === language.id ? 'bg-primary-50 text-primary-700' : 'text-gray-700'
+                        }`}
+                      >
+                        <span className="text-lg">{language.flag}</span>
+                        <span>{language.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* User authentication section */}
