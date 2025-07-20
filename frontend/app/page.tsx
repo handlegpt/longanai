@@ -40,9 +40,9 @@ const translations = {
     elderlyWomanDesc: '成熟男性声音 - 稳重专业',
     
     // Text input
-    inputTitle: '输入要转换的文本',
+    inputTitle: '输入要转换嘅文本',
     inputSubtitle: '支持中文、英文等多种语言',
-    inputPlaceholder: '请输入要转换为播客的文本内容...',
+    inputPlaceholder: '请输入要转换为播客嘅文本内容...',
     characterCount: '字符数',
     generating: '生成中...',
     
@@ -69,7 +69,7 @@ const translations = {
     playPodcast: '播放播客',
     downloadPodcast: '下载播客',
     sharePodcast: '分享播客',
-    podcastTitle: '生成的播客',
+    podcastTitle: '生成嘅播客',
     
     // Footer
     copyright: '© 2024 龙眼AI. 保留所有权利.',
