@@ -32,12 +32,6 @@ const translations = {
     
     // Voice selection
     selectVoice: '选择声音',
-    youngLady: 'Mia',
-    youngLadyDesc: '年轻女性声音 - 温柔甜美',
-    youngMan: 'Mars',
-    youngManDesc: '年轻男性声音 - 活力四射',
-    elderlyWoman: 'David',
-    elderlyWomanDesc: '成熟男性声音 - 稳重专业',
     
     // Text input
     inputTitle: '输入要转换嘅文本',
@@ -156,14 +150,11 @@ const translations = {
     excited: '兴奋',
     calm: '平静',
     generateButton: '生成播客',
-    generating: '生成中...',
     generateSuccess: '播客生成成功！',
     generateFailed: '生成失败，请重试',
     podcastNetworkError: '网络错误，请重试',
     contentRequired: '请输入播客内容',
-    generatedResult: '生成结果',
-    download: '下载',
-    share: '分享'
+    generatedResult: '生成结果'
   },
   mandarin: {
     // Header
@@ -183,6 +174,9 @@ const translations = {
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
     englishLang: 'English',
+    
+    // Voice selection
+    selectVoice: '选择声音',
     
     // Text input
     inputTitle: '输入要转换的文本',
@@ -301,14 +295,11 @@ const translations = {
     excited: '兴奋',
     calm: '平静',
     generateButton: '生成播客',
-    generating: '生成中...',
     generateSuccess: '播客生成成功！',
     generateFailed: '生成失败，请重试',
     podcastNetworkError: '网络错误，请重试',
     contentRequired: '请输入播客内容',
-    generatedResult: '生成结果',
-    download: '下载',
-    share: '分享'
+    generatedResult: '生成结果'
   },
   english: {
     // Header
@@ -331,12 +322,6 @@ const translations = {
     
     // Voice selection
     selectVoice: 'Select Voice',
-    youngLady: 'Mia',
-    youngLadyDesc: 'Young female voice - Soft and sweet',
-    youngMan: 'Mars',
-    youngManDesc: 'Young male voice - Full of energy',
-    elderlyWoman: 'David',
-    elderlyWomanDesc: 'Mature male voice - Steady and professional',
     
     // Text input
     inputTitle: 'Enter Text to Convert',
@@ -455,14 +440,11 @@ const translations = {
     excited: 'Excited',
     calm: 'Calm',
     generateButton: 'Generate Podcast',
-    generating: 'Generating...',
     generateSuccess: 'Podcast generated successfully!',
     generateFailed: 'Generation failed, please try again',
     podcastNetworkError: 'Network error, please try again',
     contentRequired: 'Please enter podcast content',
-    generatedResult: 'Generated Result',
-    download: 'Download',
-    share: 'Share'
+    generatedResult: 'Generated Result'
   }
 };
 
