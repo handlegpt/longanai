@@ -341,30 +341,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Voice selection card */}
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div className="flex items-center space-x-2 mb-4">
-              <Mic className="w-5 h-5 text-primary-500" />
-              <h3 className="text-lg font-semibold text-gray-900">{t.selectVoice}</h3>
-            </div>
-            <div className="space-y-3">
-              {voices.map((voice) => (
-                <button
-                  key={voice.id}
-                  onClick={() => setSelectedVoice(voice.id)}
-                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
-                    selectedVoice === voice.id
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="font-medium">{voice.name}</div>
-                  <div className="text-sm text-gray-500">{voice.description}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Text input section for podcast content */}
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <div className="mb-4">
@@ -381,9 +357,32 @@ export default function Home() {
               />
               
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500">
-                  {t.characterCount}: {inputText.length}
+                <div className="flex items-center space-x-4">
+                  {/* Voice selection - compact version */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">选择音色:</span>
+                    <div className="flex space-x-2">
+                      {voices.map((voice) => (
+                        <button
+                          key={voice.id}
+                          onClick={() => setSelectedVoice(voice.id)}
+                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                            selectedVoice === voice.id
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                        >
+                          {voice.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="text-sm text-gray-500">
+                    {t.characterCount}: {inputText.length}
+                  </div>
                 </div>
+                
                 <button
                   onClick={handleGenerate}
                   disabled={isGenerating || !inputText.trim()}
