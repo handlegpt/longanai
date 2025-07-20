@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List
+from pydantic import BaseModel
 import edge_tts
 import asyncio
 import os
@@ -20,25 +21,28 @@ VOICE_MAPPING = {
     "grandma": "zh-HK-HiuGaaiNeural",  # 暂时用靓女声音
 }
 
+class PodcastGenerateRequest(BaseModel):
+    text: str
+    voice: str = "young-lady"
+    emotion: str = "normal"
+    speed: float = 1.0
+
 @router.post("/generate")
 async def generate_podcast(
-    text: str,
-    voice: str = "young-lady",
-    emotion: str = "normal",
-    speed: float = 1.0,
+    request: PodcastGenerateRequest,
     db: Session = Depends(get_db)
 ):
     """Generate podcast from text"""
     try:
         # Validate voice
-        if voice not in VOICE_MAPPING:
+        if request.voice not in VOICE_MAPPING:
             raise HTTPException(status_code=400, detail="Invalid voice selection")
         
         # Get TTS voice
-        tts_voice = VOICE_MAPPING[voice]
+        tts_voice = VOICE_MAPPING[request.voice]
         
         # Generate audio using Edge TTS
-        communicate = edge_tts.Communicate(text, tts_voice)
+        communicate = edge_tts.Communicate(request.text, tts_voice)
         
         # Create unique filename
         filename = f"podcast_{uuid.uuid4()}.mp3"
@@ -53,10 +57,10 @@ async def generate_podcast(
         # Create podcast record
         podcast = Podcast(
             title=f"播客_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
-            content=text,
-            voice=voice,
-            emotion=emotion,
-            speed=speed,
+            content=request.text,
+            voice=request.voice,
+            emotion=request.emotion,
+            speed=request.speed,
             audio_url=f"/static/{filename}",
             duration="00:00:00",  # TODO: Calculate actual duration
             file_size=os.path.getsize(filepath)
@@ -69,6 +73,7 @@ async def generate_podcast(
         return {
             "id": podcast.id,
             "audioUrl": podcast.audio_url,
+            "title": podcast.title,
             "message": "播客生成成功"
         }
         
