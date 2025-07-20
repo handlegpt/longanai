@@ -135,8 +135,6 @@ const translations = {
     youngLadyDesc: '温柔亲切，适合生活分享同情感内容',
     youngManName: '靓仔',
     youngManDesc: '活力四射，适合娱乐节目同新闻播报',
-    grandmaName: '阿嫲',
-    grandmaDesc: '慈祥温暖，适合故事讲述同传统文化',
     
     // PodcastGenerator component translations
     podcastGeneratorTitle: '播客内容生成',
@@ -160,7 +158,7 @@ const translations = {
     feature1Title: '智能语音合成',
     feature1Desc: '用先进嘅Edge TTS技术，生成自然流畅嘅粤语语音，等每个字都充满情感',
     feature2Title: '多种音色选择',
-    feature2Desc: '靓女、靓仔、阿嫲三种唔同风格嘅播客主持人，满足唔同内容需求',
+    feature2Desc: '靓女、靓仔两种唔同风格嘅播客主持人，满足唔同内容需求',
     feature3Title: '一键生成下载',
     feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
     
@@ -300,8 +298,6 @@ const translations = {
     youngLadyDesc: '年轻女性声音 - 温柔甜美',
     youngManName: '靓仔',
     youngManDesc: '年轻男性声音 - 活力四射',
-    grandmaName: '阿嫲',
-    grandmaDesc: '成熟男性声音 - 稳重专业',
     
     // PodcastGenerator component translations
     podcastGeneratorTitle: '播客内容生成',
@@ -325,7 +321,7 @@ const translations = {
     feature1Title: '智能语音合成',
     feature1Desc: '使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感',
     feature2Title: '多种音色选择',
-    feature2Desc: '靓女、靓仔、阿嫲三种不同风格的播客主持人，满足不同内容需求',
+    feature2Desc: '靓女、靓仔两种不同风格的播客主持人，满足不同内容需求',
     feature3Title: '一键生成下载',
     feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
     
@@ -465,8 +461,6 @@ const translations = {
     youngLadyDesc: 'Gentle and warm, suitable for life sharing and emotional content',
     youngManName: 'Young Man',
     youngManDesc: 'Full of energy, suitable for entertainment programs and news broadcasts',
-    grandmaName: 'Grandma',
-    grandmaDesc: 'Warm and gentle, suitable for story-telling and traditional culture',
     
     // PodcastGenerator component translations
     podcastGeneratorTitle: 'Podcast Content Generation',
@@ -490,7 +484,7 @@ const translations = {
     feature1Title: 'Intelligent Voice Synthesis',
     feature1Desc: 'Using advanced Edge TTS technology to generate natural and fluent Cantonese speech with emotional depth',
     feature2Title: 'Multiple Voice Options',
-    feature2Desc: 'Three different podcast hosts - Young Lady, Young Man, and Grandma - to meet various content needs',
+    feature2Desc: 'Two different podcast hosts - Young Lady and Young Man - to meet various content needs',
     feature3Title: 'One-Click Generation & Download',
     feature3Desc: 'Input text, select voice, and generate and download podcast audio with one click - simple and efficient',
     
@@ -536,7 +530,6 @@ export default function Home() {
   const voices = [
     { id: 'young-lady', name: '靓女', description: '年轻女性声音' },
     { id: 'young-man', name: '靓仔', description: '年轻男性声音' },
-    { id: 'elderly-woman', name: '阿嫲', description: '年长女性声音' },
   ];
 
   // Get current translation based on selected interface language
@@ -658,6 +651,30 @@ export default function Home() {
     setIsGenerating(true);
     
     try {
+      // First, translate Mandarin to Cantonese if needed
+      let finalText = inputText;
+      if (selectedLanguage === 'mandarin') {
+        try {
+          const translationResponse = await fetch('/api/translate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: inputText,
+              targetLanguage: 'cantonese'
+            }),
+          });
+          
+          if (translationResponse.ok) {
+            const translationData = await translationResponse.json();
+            finalText = translationData.translatedText;
+          }
+        } catch (error) {
+          console.error('翻译失败，使用原文:', error);
+        }
+      }
+      
       // Call real backend API to generate podcast
       const response = await fetch('/api/podcast/generate', {
         method: 'POST',
@@ -665,7 +682,7 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          text: inputText,
+          text: finalText,
           voice: selectedVoice,
           emotion: 'normal',
           speed: 1.0,

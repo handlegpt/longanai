@@ -20,7 +20,6 @@ router = APIRouter()
 VOICE_MAPPING = {
     "young-lady": "zh-HK-HiuGaaiNeural",
     "young-man": "zh-HK-WanLungNeural", 
-    "elderly-woman": "zh-HK-HiuGaaiNeural",  # 暂时用靓女声音
 }
 
 class PodcastGenerateRequest(BaseModel):
