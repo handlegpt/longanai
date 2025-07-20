@@ -72,7 +72,7 @@ const translations = {
     podcastTitle: '生成嘅播客',
     
     // Footer
-    copyright: '© 2024 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龙眼AI. 保留所有权利.',
     slogan: '让AI讲好你嘅粤语故事',
     
     // Welcome message
@@ -141,7 +141,7 @@ const translations = {
     podcastTitle: '生成的播客',
     
     // Footer
-    copyright: '© 2024 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龙眼AI. 保留所有权利.',
     slogan: '让AI讲好你的粤语故事',
     
     // Welcome message
@@ -210,7 +210,7 @@ const translations = {
     podcastTitle: 'Generated Podcast',
     
     // Footer
-    copyright: '© 2024 Longan AI. All rights reserved.',
+    copyright: '© 2025 Longan AI. All rights reserved.',
     slogan: 'Let AI tell your Cantonese stories well',
     
     // Welcome message
