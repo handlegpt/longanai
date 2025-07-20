@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import Optional, Dict, ClassVar
 
 class Settings(BaseSettings):
     # Database
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     FROM_NAME: str = "龙眼AI"
     
     # TTS Settings
-    EDGE_TTS_VOICES = {
+    EDGE_TTS_VOICES: ClassVar[Dict[str, str]] = {
         "young-lady": "zh-HK-HiuGaaiNeural",  # Young lady voice
         "young-man": "zh-HK-WanLungNeural",   # Young man voice  
         "grandma": "zh-HK-HiuGaaiNeural",     # Grandma voice (temporarily using young lady)
