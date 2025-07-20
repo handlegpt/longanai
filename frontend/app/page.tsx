@@ -770,59 +770,39 @@ export default function Home() {
                 </p>
               </div>
               
-              {/* Quick start CTA */}
+              {/* Feature highlights with improved design */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
               >
-                <button className="btn-primary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200 shadow-lg">
-                  <Play className="w-6 h-6" />
-                  <span>立即开始生成</span>
-                </button>
-                <button className="btn-secondary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200">
-                  <Download className="w-6 h-6" />
-                  <span>查看演示</span>
-                </button>
+                <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <Mic className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">智能语音合成</h3>
+                  <p className="text-gray-600 leading-relaxed">使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感</p>
+                </div>
+                
+                <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="w-16 h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <User className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">多种音色选择</h3>
+                  <p className="text-gray-600 leading-relaxed">靓女、靓仔、阿嫲三种不同风格的播客主持人，满足不同内容需求</p>
+                </div>
+                
+                <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <Download className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">一键生成下载</h3>
+                  <p className="text-gray-600 leading-relaxed">输入文本，选择音色，一键生成并下载播客音频，简单高效</p>
+                </div>
               </motion.div>
             </motion.div>
             
-            {/* Feature highlights with improved design */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
-            >
-              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <Mic className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">智能语音合成</h3>
-                <p className="text-gray-600 leading-relaxed">使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                <div className="w-16 h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <User className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">多种音色选择</h3>
-                <p className="text-gray-600 leading-relaxed">靓女、靓仔、阿嫲三种不同风格的播客主持人，满足不同内容需求</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <Download className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">一键生成下载</h3>
-                <p className="text-gray-600 leading-relaxed">输入文本，选择音色，一键生成并下载播客音频，简单高效</p>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Main content area with improved design */}
-          <div className="max-w-6xl mx-auto">
             {/* Text input section for podcast content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
