@@ -163,10 +163,7 @@ const translations = {
     contentRequired: '请输入播客内容',
     generatedResult: '生成结果',
     download: '下载',
-    share: '分享',
-    shareTitle: '龙眼AI播客',
-    shareText: '我用龙眼AI生成嘅粤语播客',
-    linkCopied: '链接已复制到剪贴板'
+    share: '分享'
   },
   mandarin: {
     // Header
@@ -311,10 +308,7 @@ const translations = {
     contentRequired: '请输入播客内容',
     generatedResult: '生成结果',
     download: '下载',
-    share: '分享',
-    shareTitle: '龙眼AI播客',
-    shareText: '我用龙眼AI生成嘅粤语播客',
-    linkCopied: '链接已复制到剪贴板'
+    share: '分享'
   },
   english: {
     // Header
@@ -468,10 +462,7 @@ const translations = {
     contentRequired: 'Please enter podcast content',
     generatedResult: 'Generated Result',
     download: 'Download',
-    share: 'Share',
-    shareTitle: 'Longan AI Podcast',
-    shareText: 'I generated a Cantonese podcast with Longan AI',
-    linkCopied: 'Link copied to clipboard'
+    share: 'Share'
   }
 };
 
