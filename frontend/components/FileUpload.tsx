@@ -6,7 +6,24 @@ import { Upload, FileText, X } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import toast from 'react-hot-toast';
 
-export default function FileUpload() {
+interface FileUploadProps {
+  translations: {
+    title: string;
+    dragText: string;
+    dragActiveText: string;
+    formatText: string;
+    uploadedFiles: string;
+    generateFromFiles: string;
+    uploadSuccess: string;
+    uploadError: string;
+    fileTooLarge: string;
+    unsupportedFormat: string;
+    noFilesUploaded: string;
+    generatingFromFiles: string;
+  };
+}
+
+export default function FileUpload({ translations }: FileUploadProps) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -16,12 +33,12 @@ export default function FileUpload() {
       );
       
       if (!isValidType) {
-        toast.error(`${file.name} 格式不支持`);
+        toast.error(`${file.name} ${translations.unsupportedFormat}`);
         return false;
       }
       
       if (file.size > 10 * 1024 * 1024) { // 10MB
-        toast.error(`${file.name} 文件太大`);
+        toast.error(`${file.name} ${translations.fileTooLarge}`);
         return false;
       }
       
@@ -29,8 +46,8 @@ export default function FileUpload() {
     });
 
     setUploadedFiles(prev => [...prev, ...newFiles]);
-    toast.success(`成功上传 ${newFiles.length} 个文件`);
-  }, []);
+    toast.success(translations.uploadSuccess.replace('{count}', newFiles.length.toString()));
+  }, [translations]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -48,17 +65,17 @@ export default function FileUpload() {
 
   const generateFromFiles = async () => {
     if (uploadedFiles.length === 0) {
-      toast.error('请先上传文件');
+      toast.error(translations.noFilesUploaded);
       return;
     }
 
     // TODO: 实现从文件生成播客的逻辑
-    toast.success('正在从文件生成播客...');
+    toast.success(translations.generatingFromFiles);
   };
 
   return (
     <div className="card">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">文件上传生成</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">{translations.title}</h3>
       
       {/* Drop Zone */}
       <div
@@ -72,10 +89,10 @@ export default function FileUpload() {
         <input {...getInputProps()} />
         <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
         <p className="text-gray-600 mb-2">
-          {isDragActive ? '放开文件以上传' : '拖拽文件到呢度，或者点击选择'}
+          {isDragActive ? translations.dragActiveText : translations.dragText}
         </p>
         <p className="text-sm text-gray-500">
-          支持 TXT, PDF, DOC, DOCX 格式，最大 10MB
+          {translations.formatText}
         </p>
       </div>
 
@@ -86,7 +103,7 @@ export default function FileUpload() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-6"
         >
-          <h4 className="font-medium text-gray-900 mb-3">已上传文件</h4>
+          <h4 className="font-medium text-gray-900 mb-3">{translations.uploadedFiles}</h4>
           <div className="space-y-2">
             {uploadedFiles.map((file, index) => (
               <div
@@ -116,7 +133,7 @@ export default function FileUpload() {
             onClick={generateFromFiles}
             className="w-full btn-primary mt-4"
           >
-            从文件生成播客
+            {translations.generateFromFiles}
           </button>
         </motion.div>
       )}

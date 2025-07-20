@@ -50,6 +50,20 @@ const translations = {
     uploadTitle: '或者上传文件',
     uploadSubtitle: '支持TXT、DOC、PDF等格式',
     
+    // FileUpload component translations
+    fileUploadTitle: '文件上传生成',
+    dragText: '拖拽文件到呢度，或者点击选择',
+    dragActiveText: '放开文件以上传',
+    formatText: '支持 TXT, PDF, DOC, DOCX 格式，最大 10MB',
+    uploadedFiles: '已上传文件',
+    generateFromFiles: '从文件生成播客',
+    uploadSuccess: '成功上传 {count} 个文件',
+    uploadError: '上传失败',
+    fileTooLarge: '文件太大',
+    unsupportedFormat: '格式不支持',
+    noFilesUploaded: '请先上传文件',
+    generatingFromFiles: '正在从文件生成播客...',
+    
     // Podcast player
     podcastGenerated: '播客生成完成！',
     playPodcast: '播放播客',
@@ -104,6 +118,20 @@ const translations = {
     // File upload
     uploadTitle: '或者上传文件',
     uploadSubtitle: '支持TXT、DOC、PDF等格式',
+    
+    // FileUpload component translations
+    fileUploadTitle: '文件上传生成',
+    dragText: '拖拽文件到呢度，或者点击选择',
+    dragActiveText: '放开文件以上传',
+    formatText: '支持 TXT, PDF, DOC, DOCX 格式，最大 10MB',
+    uploadedFiles: '已上传文件',
+    generateFromFiles: '从文件生成播客',
+    uploadSuccess: '成功上传 {count} 个文件',
+    uploadError: '上传失败',
+    fileTooLarge: '文件太大',
+    unsupportedFormat: '格式不支持',
+    noFilesUploaded: '请先上传文件',
+    generatingFromFiles: '正在从文件生成播客...',
     
     // Podcast player
     podcastGenerated: '播客生成完成！',
@@ -160,6 +188,20 @@ const translations = {
     uploadTitle: 'Or Upload File',
     uploadSubtitle: 'Supports TXT, DOC, PDF and other formats',
     
+    // FileUpload component translations
+    fileUploadTitle: 'File Upload Generation',
+    dragText: 'Drag and drop files here, or click to select',
+    dragActiveText: 'Release to upload',
+    formatText: 'Supports TXT, PDF, DOC, DOCX formats, max 10MB',
+    uploadedFiles: 'Uploaded Files',
+    generateFromFiles: 'Generate Podcast from Files',
+    uploadSuccess: 'Successfully uploaded {count} files',
+    uploadError: 'Upload failed',
+    fileTooLarge: 'File too large',
+    unsupportedFormat: 'Unsupported format',
+    noFilesUploaded: 'Please upload files first',
+    generatingFromFiles: 'Generating podcast from files...',
+    
     // Podcast player
     podcastGenerated: 'Podcast generated!',
     playPodcast: 'Play Podcast',
@@ -194,7 +236,7 @@ export default function Home() {
   // Website interface language options
   const interfaceLanguages = [
     { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
-    { id: 'mandarin', name: '普通话', flag: '🇨🇳' },
+    { id: 'mandarin', name: '广东话', flag: '🇨🇳' },
     { id: 'english', name: 'English', flag: '🇺🇸' },
   ];
 
@@ -476,7 +518,22 @@ export default function Home() {
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.uploadTitle}</h3>
               <p className="text-sm text-gray-600">{t.uploadSubtitle}</p>
             </div>
-            <FileUpload />
+            <FileUpload 
+              translations={{
+                title: t.fileUploadTitle,
+                dragText: t.dragText,
+                dragActiveText: t.dragActiveText,
+                formatText: t.formatText,
+                uploadedFiles: t.uploadedFiles,
+                generateFromFiles: t.generateFromFiles,
+                uploadSuccess: t.uploadSuccess,
+                uploadError: t.uploadError,
+                fileTooLarge: t.fileTooLarge,
+                unsupportedFormat: t.unsupportedFormat,
+                noFilesUploaded: t.noFilesUploaded,
+                generatingFromFiles: t.generatingFromFiles,
+              }}
+            />
           </div>
 
           {/* Generated podcast player */}
