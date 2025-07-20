@@ -195,7 +195,7 @@ export default function EmailLogin({ onLogin, translations }: EmailLoginProps) {
               {translations.verificationSentTitle}
             </h3>
             <p className="text-gray-600 mb-4">
-              我们已向 <strong>{email}</strong> 发送验证邮件
+              {translations.verificationSentSubtitle.replace('{email}', email)}
             </p>
           </div>
 

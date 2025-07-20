@@ -38,7 +38,7 @@ const translations = {
     inputSubtitle: '支持中文、英文等多种语言',
     inputPlaceholder: '请输入要转换为播客嘅文本内容...',
     characterCount: '字符数',
-    generating: '生成中...',
+    generating: '生成紧...',
     
     // File upload
     uploadTitle: '或者上传文件',
@@ -168,7 +168,13 @@ const translations = {
     supportTitle: '如果你觉得呢个项目有帮到你，唔该支持吓我哋啦！',
     supportDesc: '如果你觉得呢个龙眼AI 粤语播客生成器对你有帮助，欢迎经 Buy Me a Coffee 支持我哋继续搞落去！',
     buyMeCoffee: 'Buy Me a Coffee',
-    uploadFile: '上传文件'
+    uploadFile: '上传文件',
+    
+    // Additional UI elements
+    selectVoiceLabel: '选择音色:',
+    generatedPodcastLabel: '生成嘅播客',
+    clickToPlayText: '点击播放按钮开始收听',
+    durationLabel: '时长'
   },
   mandarin: {
     // Header
@@ -327,7 +333,13 @@ const translations = {
     supportTitle: '如果这个项目对你有帮助，请考虑支持我们',
     supportDesc: '龙眼AI是一个开源项目，如果你觉得这个粤语播客生成器对你有用，欢迎通过Buy Me a Coffee来支持我们的开发工作。',
     buyMeCoffee: 'Buy Me a Coffee',
-    uploadFile: '上传文件'
+    uploadFile: '上传文件',
+    
+    // Additional UI elements
+    selectVoiceLabel: '选择音色:',
+    generatedPodcastLabel: '生成的播客',
+    clickToPlayText: '点击播放按钮开始收听',
+    durationLabel: '时长'
   },
   english: {
     // Header
@@ -486,7 +498,13 @@ const translations = {
     supportTitle: 'If this project helps you, please consider supporting us',
     supportDesc: 'Longan AI is an open-source project. If you find this Cantonese podcast generator useful, we welcome your support through Buy Me a Coffee to help with our development work.',
     buyMeCoffee: 'Buy Me a Coffee',
-    uploadFile: 'Upload File'
+    uploadFile: 'Upload File',
+    
+    // Additional UI elements
+    selectVoiceLabel: 'Choose Voice',
+    generatedPodcastLabel: 'Generated Podcast',
+    clickToPlayText: 'Click the play button to start listening',
+    durationLabel: 'Duration'
   }
 };
 
@@ -904,7 +922,7 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
                     {/* Voice selection - improved version */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                      <span className="text-sm sm:text-lg font-semibold text-gray-700">选择音色:</span>
+                      <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.selectVoiceLabel}</span>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         {voices.map((voice) => (
                           <button
@@ -973,12 +991,12 @@ export default function Home() {
                           <Play className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                         </div>
                         <div>
-                          <h4 className="text-base sm:text-lg font-semibold text-gray-900">生成的播客</h4>
-                          <p className="text-xs sm:text-sm text-gray-500">点击播放按钮开始收听</p>
+                          <h4 className="text-base sm:text-lg font-semibold text-gray-900">{t.generatedPodcastLabel}</h4>
+                          <p className="text-xs sm:text-sm text-gray-500">{t.clickToPlayText}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs sm:text-sm text-gray-500">时长</div>
+                        <div className="text-xs sm:text-sm text-gray-500">{t.durationLabel}</div>
                         <div className="text-base sm:text-lg font-semibold text-gray-900">
                           {generatedPodcast.duration || '00:00:00'}
                         </div>
