@@ -521,6 +521,7 @@ export default function Home() {
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [generatedPodcast, setGeneratedPodcast] = useState<{ audioUrl: string; title: string; duration?: string } | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -538,6 +539,46 @@ export default function Home() {
 
   // Get current translation based on selected interface language
   const t = translations[selectedLanguage as keyof typeof translations] || translations.cantonese;
+
+  // Handle audio play
+  const handlePlayAudio = () => {
+    if (audioRef) {
+      audioRef.play();
+    }
+  };
+
+  // Handle audio download
+  const handleDownloadAudio = () => {
+    if (generatedPodcast) {
+      const link = document.createElement('a');
+      link.href = generatedPodcast.audioUrl;
+      link.download = `${generatedPodcast.title || 'podcast'}.mp3`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  // Handle audio share
+  const handleShareAudio = async () => {
+    if (generatedPodcast) {
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: t.shareTitle || '龙眼AI播客',
+            text: t.shareText || '我用龙眼AI生成的粤语播客',
+            url: window.location.href,
+          });
+        } else {
+          // Fallback: copy URL to clipboard
+          await navigator.clipboard.writeText(window.location.href);
+          alert(t.linkCopied || '链接已复制到剪贴板');
+        }
+      } catch (error) {
+        console.error('分享失败:', error);
+      }
+    }
+  };
 
   // Handle file upload
   const handleFileUpload = (event: any) => {
@@ -972,9 +1013,12 @@ export default function Home() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                    <button 
+                      onClick={handlePlayAudio}
+                      className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center hover:scale-105 transition-all duration-200 cursor-pointer"
+                    >
                       <Play className="w-6 h-6 text-white" />
-                    </div>
+                    </button>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{t.generatedPodcastLabel}</h3>
                       <p className="text-sm text-gray-500">{generatedPodcast.title}</p>
@@ -991,6 +1035,7 @@ export default function Home() {
                 {/* Compact audio player */}
                 <div className="bg-gray-50 rounded-xl p-4 mb-4">
                   <audio
+                    ref={setAudioRef}
                     controls
                     className="w-full h-12 rounded-lg"
                     src={generatedPodcast.audioUrl}
@@ -1001,17 +1046,26 @@ export default function Home() {
                 
                 {/* Action buttons in a more compact layout */}
                 <div className="flex flex-wrap items-center gap-3">
-                  <button className="btn-primary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200">
+                  <button 
+                    onClick={handlePlayAudio}
+                    className="btn-primary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200"
+                  >
                     <Play className="w-4 h-4" />
                     <span>{t.playPodcast}</span>
                   </button>
                   
-                  <button className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200">
+                  <button 
+                    onClick={handleDownloadAudio}
+                    className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200"
+                  >
                     <Download className="w-4 h-4" />
                     <span>{t.downloadPodcast}</span>
                   </button>
                   
-                  <button className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200">
+                  <button 
+                    onClick={handleShareAudio}
+                    className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200"
+                  >
                     <Share2 className="w-4 h-4" />
                     <span>{t.sharePodcast}</span>
                   </button>
