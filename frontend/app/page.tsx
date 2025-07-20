@@ -682,21 +682,21 @@ export default function Home() {
       {/* Header with navigation and user controls */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center py-4 space-y-4 sm:space-y-0">
             {/* Logo and brand */}
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xs">longan</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{t.title}</h1>
-                <p className="text-sm text-gray-600">{t.subtitle}</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t.title}</h1>
+                <p className="text-xs sm:text-sm text-gray-600">{t.subtitle}</p>
               </div>
             </div>
             
             {/* Navigation and user section */}
-            <div className="flex items-center space-x-4">
-              <nav className="flex space-x-8">
+            <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
+              <nav className="flex space-x-4 sm:space-x-8">
                 <button
                   onClick={() => setActiveTab('generate')}
                   className={`px-3 py-2 rounded-md text-sm font-medium ${
@@ -757,14 +757,14 @@ export default function Home() {
 
               {/* User authentication section */}
               {isLoggedIn ? (
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
                   <div className="flex items-center space-x-2">
                     <User className="w-5 h-5 text-gray-500" />
-                    <span className="text-sm text-gray-700">{userEmail}</span>
+                    <span className="text-sm text-gray-700 truncate max-w-32">{userEmail}</span>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="btn-secondary flex items-center space-x-2"
+                    className="btn-secondary flex items-center space-x-2 text-sm"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>{t.logout}</span>
@@ -773,7 +773,7 @@ export default function Home() {
               ) : (
                 <button
                   onClick={() => setShowLogin(true)}
-                  className="btn-primary flex items-center space-x-2"
+                  className="btn-primary flex items-center space-x-2 text-sm"
                 >
                   <User className="w-4 h-4" />
                   <span>{t.login}</span>
@@ -784,8 +784,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main content area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main content area with improved design */}
+      <main className="max-w-6xl mx-auto">
         {/* Show new interface regardless of login status */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -793,22 +793,22 @@ export default function Home() {
           transition={{ duration: 0.5 }}
         >
           {/* Hero section with main title */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 sm:mb-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="mb-12"
+              className="mb-8 sm:mb-12"
             >
-              <div className="mb-8">
-                <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary-100 text-primary-700 text-sm font-medium mb-6">
+              <div className="mb-6 sm:mb-8">
+                <div className="inline-flex items-center px-3 sm:px-4 py-2 rounded-full bg-primary-100 text-primary-700 text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                   <span className="mr-2">🎙️</span>
                   AI驱动的粤语播客生成
                 </div>
-                <h2 className="text-6xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-primary-600 via-secondary-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 bg-gradient-to-r from-primary-600 via-secondary-600 to-purple-600 bg-clip-text text-transparent">
                   {t.heroTitle}
                 </h2>
-                <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">
                   {t.heroSubtitle}
                 </p>
               </div>
@@ -818,30 +818,30 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mb-8 sm:mb-16"
               >
-                <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                    <Mic className="w-8 h-8 text-white" />
+                <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 mx-auto">
+                    <Mic className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t.feature1Title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{t.feature1Desc}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">{t.feature1Title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{t.feature1Desc}</p>
                 </div>
                 
-                <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                  <div className="w-16 h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                    <User className="w-8 h-8 text-white" />
+                <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 mx-auto">
+                    <User className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t.feature2Title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{t.feature2Desc}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">{t.feature2Title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{t.feature2Desc}</p>
                 </div>
                 
-                <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                    <Download className="w-8 h-8 text-white" />
+                <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 mx-auto">
+                    <Download className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t.feature3Title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{t.feature3Desc}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">{t.feature3Title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{t.feature3Desc}</p>
                 </div>
               </motion.div>
             </motion.div>
@@ -851,29 +851,29 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="bg-white rounded-3xl shadow-2xl p-10 mb-10 border border-gray-100"
+              className="bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-6 sm:p-10 mb-6 sm:mb-10 border border-gray-100"
             >
-              <div className="mb-8">
+              <div className="mb-6 sm:mb-8">
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
-                    <span className="text-2xl">✍️</span>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                    <span className="text-lg sm:text-2xl">✍️</span>
                   </div>
                   <div>
-                    <h3 className="text-3xl font-bold text-gray-900">{t.inputTitle}</h3>
-                    <p className="text-gray-600 mt-2">{t.inputSubtitle}</p>
+                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{t.inputTitle}</h3>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">{t.inputSubtitle}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 <div className="relative">
                   <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder={t.inputPlaceholder}
-                    className="w-full h-48 p-8 border-2 border-gray-200 rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-lg leading-relaxed"
+                    className="w-full h-32 sm:h-48 p-4 sm:p-8 border-2 border-gray-200 rounded-xl sm:rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-base sm:text-lg leading-relaxed"
                   />
-                  <div className="absolute bottom-6 right-6 flex items-center space-x-4">
+                  <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 flex items-center space-x-2 sm:space-x-4">
                     {/* File upload button */}
                     <div className="relative">
                       <input
@@ -886,31 +886,31 @@ export default function Home() {
                       />
                       <label
                         htmlFor="file-upload"
-                        className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 transition-all duration-200 text-sm"
+                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 transition-all duration-200 text-xs sm:text-sm"
                       >
-                        <Upload className="w-4 h-4" />
+                        <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span>{t.uploadFile}</span>
                       </label>
                     </div>
                     
                     {/* Character count */}
-                    <div className="text-sm text-gray-400 bg-white px-3 py-1 rounded-full">
+                    <div className="text-xs sm:text-sm text-gray-400 bg-white px-2 sm:px-3 py-1 rounded-full">
                       {inputText.length} / 2000
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
                     {/* Voice selection - improved version */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      <span className="text-lg font-semibold text-gray-700">选择音色:</span>
-                      <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                      <span className="text-sm sm:text-lg font-semibold text-gray-700">选择音色:</span>
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
                         {voices.map((voice) => (
                           <button
                             key={voice.id}
                             onClick={() => setSelectedVoice(voice.id)}
-                            className={`px-6 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
+                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 ${
                               selectedVoice === voice.id
                                 ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
@@ -926,16 +926,16 @@ export default function Home() {
                   <button
                     onClick={handleGenerate}
                     disabled={isGenerating || !inputText.trim()}
-                    className="btn-primary flex items-center space-x-4 px-10 py-5 text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl"
+                    className="btn-primary flex items-center space-x-3 sm:space-x-4 px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl w-full sm:w-auto"
                   >
                     {isGenerating ? (
                       <>
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-b-2 border-white"></div>
                         <span>{t.generating}</span>
                       </>
                     ) : (
                       <>
-                        <Play className="w-6 h-6" />
+                        <Play className="w-5 h-5 sm:w-6 sm:h-6" />
                         <span>{t.generatePodcast}</span>
                       </>
                     )}
@@ -950,36 +950,36 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.0 }}
-                className="bg-gradient-to-r from-primary-50 via-secondary-50 to-purple-50 rounded-3xl shadow-2xl p-10 mt-10 border border-primary-200"
+                className="bg-gradient-to-r from-primary-50 via-secondary-50 to-purple-50 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-6 sm:p-10 mt-6 sm:mt-10 border border-primary-200"
               >
-                <div className="mb-8">
+                <div className="mb-6 sm:mb-8">
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
-                      <span className="text-2xl">🎧</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                      <span className="text-lg sm:text-2xl">🎧</span>
                     </div>
                     <div>
-                      <h3 className="text-3xl font-bold text-gray-900">{t.podcastTitle}</h3>
-                      <p className="text-gray-600 mt-2">{generatedPodcast.title}</p>
+                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{t.podcastTitle}</h3>
+                      <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">{generatedPodcast.title}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                   {/* Audio player with improved design */}
-                  <div className="bg-white rounded-2xl p-8 shadow-lg">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center">
-                          <Play className="w-8 h-8 text-white" />
+                  <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 space-y-3 sm:space-y-0">
+                      <div className="flex items-center space-x-3 sm:space-x-4">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                          <Play className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                         </div>
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-900">生成的播客</h4>
-                          <p className="text-sm text-gray-500">点击播放按钮开始收听</p>
+                          <h4 className="text-base sm:text-lg font-semibold text-gray-900">生成的播客</h4>
+                          <p className="text-xs sm:text-sm text-gray-500">点击播放按钮开始收听</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm text-gray-500">时长</div>
-                        <div className="text-lg font-semibold text-gray-900">
+                        <div className="text-xs sm:text-sm text-gray-500">时长</div>
+                        <div className="text-base sm:text-lg font-semibold text-gray-900">
                           {generatedPodcast.duration || '00:00:00'}
                         </div>
                       </div>
@@ -987,7 +987,7 @@ export default function Home() {
                     
                     <audio
                       controls
-                      className="w-full h-16 rounded-xl"
+                      className="w-full h-12 sm:h-16 rounded-lg sm:rounded-xl"
                       src={generatedPodcast.audioUrl}
                     >
                       Your browser does not support the audio element.
@@ -995,19 +995,19 @@ export default function Home() {
                   </div>
                   
                   {/* Action buttons with improved design */}
-                  <div className="flex flex-wrap items-center gap-4">
-                    <button className="btn-primary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200 shadow-lg">
-                      <Play className="w-6 h-6" />
+                  <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                    <button className="btn-primary flex items-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold hover:scale-105 transition-all duration-200 shadow-lg w-full sm:w-auto">
+                      <Play className="w-4 h-4 sm:w-6 sm:h-6" />
                       <span>{t.playPodcast}</span>
                     </button>
                     
-                    <button className="btn-secondary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200">
-                      <Download className="w-6 h-6" />
+                    <button className="btn-secondary flex items-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold hover:scale-105 transition-all duration-200 w-full sm:w-auto">
+                      <Download className="w-4 h-4 sm:w-6 sm:h-6" />
                       <span>{t.downloadPodcast}</span>
                     </button>
                     
-                    <button className="btn-secondary flex items-center space-x-3 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-200">
-                      <Share2 className="w-6 h-6" />
+                    <button className="btn-secondary flex items-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold hover:scale-105 transition-all duration-200 w-full sm:w-auto">
+                      <Share2 className="w-4 h-4 sm:w-6 sm:h-6" />
                       <span>{t.sharePodcast}</span>
                     </button>
                   </div>
