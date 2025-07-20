@@ -133,6 +133,39 @@ const translations = {
     historyNetworkError: '网络错误',
     shareText: '我用龙眼AI生成嘅粤语播客',
     shareTitle: '龙眼AI播客',
+    linkCopied: '链接已复制到剪贴板',
+    
+    // VoiceSelector component translations
+    voiceSelectorTitle: '选择播客主持人',
+    youngLadyName: '靓女',
+    youngLadyDesc: '温柔亲切，适合生活分享同情感内容',
+    youngManName: '靓仔',
+    youngManDesc: '活力四射，适合娱乐节目同新闻播报',
+    grandmaName: '阿嫲',
+    grandmaDesc: '慈祥温暖，适合故事讲述同传统文化',
+    
+    // PodcastGenerator component translations
+    podcastGeneratorTitle: '播客内容生成',
+    contentLabel: '播客内容',
+    contentPlaceholder: '输入你嘅播客内容...',
+    emotionLabel: '情感强度',
+    speedLabel: '播放速度',
+    normal: '正常',
+    happy: '开心',
+    sad: '悲伤',
+    excited: '兴奋',
+    calm: '平静',
+    generateButton: '生成播客',
+    generating: '生成中...',
+    generateSuccess: '播客生成成功！',
+    generateFailed: '生成失败，请重试',
+    podcastNetworkError: '网络错误，请重试',
+    contentRequired: '请输入播客内容',
+    generatedResult: '生成结果',
+    download: '下载',
+    share: '分享',
+    shareTitle: '龙眼AI播客',
+    shareText: '我用龙眼AI生成嘅粤语播客',
     linkCopied: '链接已复制到剪贴板'
   },
   mandarin: {
@@ -153,15 +186,6 @@ const translations = {
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
     englishLang: 'English',
-    
-    // Voice selection
-    selectVoice: '选择声音',
-    youngLady: 'Mia',
-    youngLadyDesc: '年轻女性声音 - 温柔甜美',
-    youngMan: 'Mars',
-    youngManDesc: '年轻男性声音 - 活力四射',
-    elderlyWoman: 'David',
-    elderlyWomanDesc: '成熟男性声音 - 稳重专业',
     
     // Text input
     inputTitle: '输入要转换的文本',
@@ -257,6 +281,39 @@ const translations = {
     historyNetworkError: '网络错误',
     shareText: '我用龙眼AI生成嘅粤语播客',
     shareTitle: '龙眼AI播客',
+    linkCopied: '链接已复制到剪贴板',
+    
+    // VoiceSelector component translations
+    voiceSelectorTitle: '选择播客主持人',
+    youngLadyName: '靓女',
+    youngLadyDesc: '年轻女性声音 - 温柔甜美',
+    youngManName: '靓仔',
+    youngManDesc: '年轻男性声音 - 活力四射',
+    grandmaName: '阿嫲',
+    grandmaDesc: '成熟男性声音 - 稳重专业',
+    
+    // PodcastGenerator component translations
+    podcastGeneratorTitle: '播客内容生成',
+    contentLabel: '播客内容',
+    contentPlaceholder: '输入你嘅播客内容...',
+    emotionLabel: '情感强度',
+    speedLabel: '播放速度',
+    normal: '正常',
+    happy: '开心',
+    sad: '悲伤',
+    excited: '兴奋',
+    calm: '平静',
+    generateButton: '生成播客',
+    generating: '生成中...',
+    generateSuccess: '播客生成成功！',
+    generateFailed: '生成失败，请重试',
+    podcastNetworkError: '网络错误，请重试',
+    contentRequired: '请输入播客内容',
+    generatedResult: '生成结果',
+    download: '下载',
+    share: '分享',
+    shareTitle: '龙眼AI播客',
+    shareText: '我用龙眼AI生成嘅粤语播客',
     linkCopied: '链接已复制到剪贴板'
   },
   english: {
@@ -381,6 +438,39 @@ const translations = {
     historyNetworkError: 'Network error',
     shareText: 'I generated a Cantonese podcast with Longan AI',
     shareTitle: 'Longan AI Podcast',
+    linkCopied: 'Link copied to clipboard',
+    
+    // VoiceSelector component translations
+    voiceSelectorTitle: 'Choose Podcast Host',
+    youngLadyName: 'Young Lady',
+    youngLadyDesc: 'Gentle and warm, suitable for life sharing and emotional content',
+    youngManName: 'Young Man',
+    youngManDesc: 'Full of energy, suitable for entertainment programs and news broadcasts',
+    grandmaName: 'Grandma',
+    grandmaDesc: 'Warm and gentle, suitable for story-telling and traditional culture',
+    
+    // PodcastGenerator component translations
+    podcastGeneratorTitle: 'Podcast Content Generation',
+    contentLabel: 'Podcast Content',
+    contentPlaceholder: 'Enter your podcast content...',
+    emotionLabel: 'Emotion Intensity',
+    speedLabel: 'Playback Speed',
+    normal: 'Normal',
+    happy: 'Happy',
+    sad: 'Sad',
+    excited: 'Excited',
+    calm: 'Calm',
+    generateButton: 'Generate Podcast',
+    generating: 'Generating...',
+    generateSuccess: 'Podcast generated successfully!',
+    generateFailed: 'Generation failed, please try again',
+    podcastNetworkError: 'Network error, please try again',
+    contentRequired: 'Please enter podcast content',
+    generatedResult: 'Generated Result',
+    download: 'Download',
+    share: 'Share',
+    shareTitle: 'Longan AI Podcast',
+    shareText: 'I generated a Cantonese podcast with Longan AI',
     linkCopied: 'Link copied to clipboard'
   }
 };

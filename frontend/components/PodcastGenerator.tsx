@@ -7,9 +7,33 @@ import toast from 'react-hot-toast';
 
 interface PodcastGeneratorProps {
   selectedVoice: string;
+  translations: {
+    title: string;
+    contentLabel: string;
+    contentPlaceholder: string;
+    emotionLabel: string;
+    speedLabel: string;
+    normal: string;
+    happy: string;
+    sad: string;
+    excited: string;
+    calm: string;
+    generateButton: string;
+    generating: string;
+    generateSuccess: string;
+    generateFailed: string;
+    networkError: string;
+    contentRequired: string;
+    generatedResult: string;
+    download: string;
+    share: string;
+    shareTitle: string;
+    shareText: string;
+    linkCopied: string;
+  };
 }
 
-export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProps) {
+export default function PodcastGenerator({ selectedVoice, translations }: PodcastGeneratorProps) {
   const [text, setText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -19,7 +43,7 @@ export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProp
 
   const handleGenerate = async () => {
     if (!text.trim()) {
-      toast.error('请输入播客内容');
+      toast.error(translations.contentRequired);
       return;
     }
 
@@ -42,12 +66,12 @@ export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProp
       if (response.ok) {
         const data = await response.json();
         setAudioUrl(data.audioUrl);
-        toast.success('播客生成成功！');
+        toast.success(translations.generateSuccess);
       } else {
-        toast.error('生成失败，请重试');
+        toast.error(translations.generateFailed);
       }
     } catch (error) {
-      toast.error('网络错误，请重试');
+      toast.error(translations.networkError);
     } finally {
       setIsGenerating(false);
     }
@@ -72,30 +96,30 @@ export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProp
   const handleShare = () => {
     if (audioUrl) {
       navigator.share?.({
-        title: '龙眼AI播客',
-        text: '我用龙眼AI生成嘅粤语播客',
+        title: translations.shareTitle,
+        text: translations.shareText,
         url: audioUrl,
       }).catch(() => {
         // 如果不支持原生分享，复制链接
         navigator.clipboard.writeText(audioUrl);
-        toast.success('链接已复制到剪贴板');
+        toast.success(translations.linkCopied);
       });
     }
   };
 
   return (
     <div className="card">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">播客内容生成</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">{translations.title}</h3>
       
       {/* Text Input */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          播客内容
+          {translations.contentLabel}
         </label>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="输入你嘅播客内容..."
+          placeholder={translations.contentPlaceholder}
           className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
         />
       </div>
@@ -104,24 +128,24 @@ export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProp
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            情感强度
+            {translations.emotionLabel}
           </label>
           <select
             value={emotion}
             onChange={(e) => setEmotion(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
           >
-            <option value="normal">正常</option>
-            <option value="happy">开心</option>
-            <option value="sad">悲伤</option>
-            <option value="excited">兴奋</option>
-            <option value="calm">平静</option>
+            <option value="normal">{translations.normal}</option>
+            <option value="happy">{translations.happy}</option>
+            <option value="sad">{translations.sad}</option>
+            <option value="excited">{translations.excited}</option>
+            <option value="calm">{translations.calm}</option>
           </select>
         </div>
         
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            播放速度
+            {translations.speedLabel}
           </label>
           <input
             type="range"
@@ -143,7 +167,7 @@ export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProp
         className="w-full btn-primary flex items-center justify-center space-x-2 mb-4"
       >
         <Mic className="w-5 h-5" />
-        <span>{isGenerating ? '生成中...' : '生成播客'}</span>
+        <span>{isGenerating ? translations.generating : translations.generateButton}</span>
       </button>
 
       {/* Audio Player */}
@@ -153,7 +177,7 @@ export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProp
           animate={{ opacity: 1, y: 0 }}
           className="border-t pt-4"
         >
-          <h4 className="font-medium text-gray-900 mb-3">生成结果</h4>
+          <h4 className="font-medium text-gray-900 mb-3">{translations.generatedResult}</h4>
           <div className="flex items-center space-x-3">
             <button
               onClick={handlePlay}
@@ -176,14 +200,14 @@ export default function PodcastGenerator({ selectedVoice }: PodcastGeneratorProp
               <button
                 onClick={handleDownload}
                 className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
-                title="下载"
+                title={translations.download}
               >
                 <Download className="w-4 h-4 text-gray-600" />
               </button>
               <button
                 onClick={handleShare}
                 className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
-                title="分享"
+                title={translations.share}
               >
                 <Share2 className="w-4 h-4 text-gray-600" />
               </button>
