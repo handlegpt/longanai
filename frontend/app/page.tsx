@@ -977,26 +977,33 @@ export default function Home() {
         </motion.div>
       </main>
 
+      {/* Buy Me a Coffee section */}
+      <section className="bg-gradient-to-r from-yellow-50 to-orange-50 border-t border-yellow-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">如果这个项目对你有帮助，请考虑支持我们</h3>
+            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+              龙眼AI是一个开源项目，如果你觉得这个粤语播客生成器对你有用，欢迎通过Buy Me a Coffee来支持我们的开发工作。
+            </p>
+            <a
+              href="https://buymeacoffee.com/wego"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 text-lg"
+            >
+              <span className="text-2xl">☕</span>
+              <span>Buy Me a Coffee</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Footer with copyright information */}
-      <footer className="bg-white border-t mt-16">
+      <footer className="bg-white border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-600">
             <p>{t.copyright}</p>
             <p className="mt-2">{t.slogan}</p>
-            
-            {/* Buy Me a Coffee section */}
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <p className="text-sm text-gray-500 mb-4">如果这个项目对你有帮助，请考虑支持我们</p>
-              <a
-                href="https://buymeacoffee.com/wego"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-medium hover:shadow-lg hover:scale-105 transition-all duration-200"
-              >
-                <span className="text-xl">☕</span>
-                <span>Buy Me a Coffee</span>
-              </a>
-            </div>
           </div>
         </div>
       </footer>
