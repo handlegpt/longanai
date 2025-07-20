@@ -972,6 +972,20 @@ export default function Home() {
           <div className="text-center text-gray-600">
             <p>{t.copyright}</p>
             <p className="mt-2">{t.slogan}</p>
+            
+            {/* Buy Me a Coffee section */}
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <p className="text-sm text-gray-500 mb-4">如果这个项目对你有帮助，请考虑支持我们</p>
+              <a
+                href="https://buymeacoffee.com/wego"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-medium hover:shadow-lg hover:scale-105 transition-all duration-200"
+              >
+                <span className="text-xl">☕</span>
+                <span>Buy Me a Coffee</span>
+              </a>
+            </div>
           </div>
         </div>
       </footer>
