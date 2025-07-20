@@ -42,10 +42,10 @@ async def generate_podcast(
         
         # Create unique filename
         filename = f"podcast_{uuid.uuid4()}.mp3"
-        filepath = os.path.join(settings.UPLOAD_DIR, filename)
+        filepath = os.path.join("static", filename)
         
-        # Ensure upload directory exists
-        os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+        # Ensure static directory exists
+        os.makedirs("static", exist_ok=True)
         
         # Generate audio file
         await communicate.save(filepath)

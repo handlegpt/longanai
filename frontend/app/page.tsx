@@ -504,15 +504,38 @@ export default function Home() {
     }
     
     setIsGenerating(true);
-    // TODO: Call API to generate podcast
-    setTimeout(() => {
-      setIsGenerating(false);
-      // Simulate generated podcast
-      setGeneratedPodcast({
-        audioUrl: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', // Demo audio
-        title: `播客 - ${new Date().toLocaleString()}`
+    
+    try {
+      // Call real backend API to generate podcast
+      const response = await fetch('/api/podcast/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: inputText,
+          voice: selectedVoice,
+          emotion: 'normal',
+          speed: 1.0,
+        }),
       });
-    }, 3000);
+
+      if (response.ok) {
+        const data = await response.json();
+        setGeneratedPodcast({
+          audioUrl: data.audioUrl,
+          title: data.title || `播客 - ${new Date().toLocaleString()}`
+        });
+      } else {
+        const errorData = await response.json();
+        alert(`生成失败: ${errorData.detail || '未知错误'}`);
+      }
+    } catch (error) {
+      console.error('生成播客时出错:', error);
+      alert('网络错误，请重试');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // Check if user is already logged in on component mount
