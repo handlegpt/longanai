@@ -968,67 +968,53 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.0 }}
-                className="bg-gradient-to-r from-primary-50 via-secondary-50 to-purple-50 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-6 sm:p-10 mt-6 sm:mt-10 border border-primary-200"
+                className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8 mt-6 sm:mt-8"
               >
-                <div className="mb-6 sm:mb-8">
-                  <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4">
-                      <span className="text-lg sm:text-2xl">🎧</span>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                      <Play className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{t.podcastTitle}</h3>
-                      <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">{generatedPodcast.title}</p>
+                      <h3 className="text-lg font-semibold text-gray-900">{t.generatedPodcastLabel}</h3>
+                      <p className="text-sm text-gray-500">{generatedPodcast.title}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-500">{t.durationLabel}</div>
+                    <div className="text-lg font-semibold text-gray-900">
+                      {generatedPodcast.duration || '00:00:00'}
                     </div>
                   </div>
                 </div>
                 
-                <div className="space-y-6 sm:space-y-8">
-                  {/* Audio player with improved design */}
-                  <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 space-y-3 sm:space-y-0">
-                      <div className="flex items-center space-x-3 sm:space-x-4">
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl sm:rounded-2xl flex items-center justify-center">
-                          <Play className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-base sm:text-lg font-semibold text-gray-900">{t.generatedPodcastLabel}</h4>
-                          <p className="text-xs sm:text-sm text-gray-500">{t.clickToPlayText}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs sm:text-sm text-gray-500">{t.durationLabel}</div>
-                        <div className="text-base sm:text-lg font-semibold text-gray-900">
-                          {generatedPodcast.duration || '00:00:00'}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <audio
-                      controls
-                      className="w-full h-12 sm:h-16 rounded-lg sm:rounded-xl"
-                      src={generatedPodcast.audioUrl}
-                    >
-                      Your browser does not support the audio element.
-                    </audio>
-                  </div>
+                {/* Compact audio player */}
+                <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                  <audio
+                    controls
+                    className="w-full h-12 rounded-lg"
+                    src={generatedPodcast.audioUrl}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                
+                {/* Action buttons in a more compact layout */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <button className="btn-primary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200">
+                    <Play className="w-4 h-4" />
+                    <span>{t.playPodcast}</span>
+                  </button>
                   
-                  {/* Action buttons with improved design */}
-                  <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                    <button className="btn-primary flex items-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold hover:scale-105 transition-all duration-200 shadow-lg w-full sm:w-auto">
-                      <Play className="w-4 h-4 sm:w-6 sm:h-6" />
-                      <span>{t.playPodcast}</span>
-                    </button>
-                    
-                    <button className="btn-secondary flex items-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold hover:scale-105 transition-all duration-200 w-full sm:w-auto">
-                      <Download className="w-4 h-4 sm:w-6 sm:h-6" />
-                      <span>{t.downloadPodcast}</span>
-                    </button>
-                    
-                    <button className="btn-secondary flex items-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold hover:scale-105 transition-all duration-200 w-full sm:w-auto">
-                      <Share2 className="w-4 h-4 sm:w-6 sm:h-6" />
-                      <span>{t.sharePodcast}</span>
-                    </button>
-                  </div>
+                  <button className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200">
+                    <Download className="w-4 h-4" />
+                    <span>{t.downloadPodcast}</span>
+                  </button>
+                  
+                  <button className="btn-secondary flex items-center space-x-2 px-4 py-2 text-sm font-medium hover:scale-105 transition-all duration-200">
+                    <Share2 className="w-4 h-4" />
+                    <span>{t.sharePodcast}</span>
+                  </button>
                 </div>
               </motion.div>
             )}
