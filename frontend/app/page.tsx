@@ -165,8 +165,8 @@ const translations = {
     feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
     
     // Buy Me a Coffee section
-    supportTitle: '如果这个项目对你有帮助，请考虑支持我们',
-    supportDesc: '龙眼AI是一个开源项目，如果你觉得这个粤语播客生成器对你有用，欢迎通过Buy Me a Coffee来支持我们的开发工作。',
+    supportTitle: '如果你觉得呢个项目有帮到你，唔该支持吓我哋啦！',
+    supportDesc: '如果你觉得呢个龙眼AI 粤语播客生成器对你有帮助，欢迎经 Buy Me a Coffee 支持我哋继续搞落去！',
     buyMeCoffee: 'Buy Me a Coffee',
     uploadFile: '上传文件'
   },
