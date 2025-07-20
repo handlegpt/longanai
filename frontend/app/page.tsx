@@ -717,13 +717,13 @@ export default function Home() {
           audioUrl: data.audioUrl,
           title: generatedTitle,
           duration: data.duration || '00:00:00',
-          image: podcastImage || null
+          image: podcastImage || undefined
         });
         savePodcastToHistory({
           audioUrl: data.audioUrl,
           title: generatedTitle,
           duration: data.duration || '00:00:00',
-          image: podcastImage || null
+          image: podcastImage || undefined
         });
         // Reset image after saving
         setPodcastImage(null);
