@@ -21,7 +21,8 @@
     "postcss": "^8.4.0",
     "framer-motion": "^10.16.0",
     "lucide-react": "^0.292.0",
-    "react-hot-toast": "^2.4.0"
+    "react-hot-toast": "^2.4.0",
+    "react-dropzone": "^14.2.3"
   },
   "devDependencies": {
     "eslint": "^8.0.0",
