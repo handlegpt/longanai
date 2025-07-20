@@ -154,7 +154,21 @@ const translations = {
     generateFailed: '生成失败，请重试',
     podcastNetworkError: '网络错误，请重试',
     contentRequired: '请输入播客内容',
-    generatedResult: '生成结果'
+    generatedResult: '生成结果',
+    
+    // Feature highlights
+    feature1Title: '智能语音合成',
+    feature1Desc: '使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感',
+    feature2Title: '多种音色选择',
+    feature2Desc: '靓女、靓仔、阿嫲三种不同风格的播客主持人，满足不同内容需求',
+    feature3Title: '一键生成下载',
+    feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
+    
+    // Buy Me a Coffee section
+    supportTitle: '如果这个项目对你有帮助，请考虑支持我们',
+    supportDesc: '龙眼AI是一个开源项目，如果你觉得这个粤语播客生成器对你有用，欢迎通过Buy Me a Coffee来支持我们的开发工作。',
+    buyMeCoffee: 'Buy Me a Coffee',
+    uploadFile: '上传文件'
   },
   mandarin: {
     // Header
@@ -191,7 +205,7 @@ const translations = {
     
     // FileUpload component translations
     fileUploadTitle: '文件上传生成',
-    dragText: '拖拽文件到呢度，或者点击选择',
+    dragText: '拖拽文件到这里，或者点击选择',
     dragActiveText: '放开文件以上传',
     formatText: '支持 TXT, PDF, DOC, DOCX 格式，最大 10MB',
     uploadedFiles: '已上传文件',
@@ -236,7 +250,7 @@ const translations = {
     nextStepsTitle: '下一步',
     step1: '检查你嘅邮箱收件箱',
     step2: '点击验证链接',
-    step3: '返回呢度继续使用',
+    step3: '返回这里继续使用',
     backToLogin: '返回登录',
     resendButton: '重新发送验证邮件',
     resendLoading: '发送中...',
@@ -299,7 +313,21 @@ const translations = {
     generateFailed: '生成失败，请重试',
     podcastNetworkError: '网络错误，请重试',
     contentRequired: '请输入播客内容',
-    generatedResult: '生成结果'
+    generatedResult: '生成结果',
+    
+    // Feature highlights
+    feature1Title: '智能语音合成',
+    feature1Desc: '使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感',
+    feature2Title: '多种音色选择',
+    feature2Desc: '靓女、靓仔、阿嫲三种不同风格的播客主持人，满足不同内容需求',
+    feature3Title: '一键生成下载',
+    feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
+    
+    // Buy Me a Coffee section
+    supportTitle: '如果这个项目对你有帮助，请考虑支持我们',
+    supportDesc: '龙眼AI是一个开源项目，如果你觉得这个粤语播客生成器对你有用，欢迎通过Buy Me a Coffee来支持我们的开发工作。',
+    buyMeCoffee: 'Buy Me a Coffee',
+    uploadFile: '上传文件'
   },
   english: {
     // Header
@@ -444,7 +472,21 @@ const translations = {
     generateFailed: 'Generation failed, please try again',
     podcastNetworkError: 'Network error, please try again',
     contentRequired: 'Please enter podcast content',
-    generatedResult: 'Generated Result'
+    generatedResult: 'Generated Result',
+    
+    // Feature highlights
+    feature1Title: 'Intelligent Voice Synthesis',
+    feature1Desc: 'Using advanced Edge TTS technology to generate natural and fluent Cantonese speech with emotional depth',
+    feature2Title: 'Multiple Voice Options',
+    feature2Desc: 'Three different podcast hosts - Young Lady, Young Man, and Grandma - to meet various content needs',
+    feature3Title: 'One-Click Generation & Download',
+    feature3Desc: 'Input text, select voice, and generate and download podcast audio with one click - simple and efficient',
+    
+    // Buy Me a Coffee section
+    supportTitle: 'If this project helps you, please consider supporting us',
+    supportDesc: 'Longan AI is an open-source project. If you find this Cantonese podcast generator useful, we welcome your support through Buy Me a Coffee to help with our development work.',
+    buyMeCoffee: 'Buy Me a Coffee',
+    uploadFile: 'Upload File'
   }
 };
 
@@ -781,24 +823,24 @@ export default function Home() {
                   <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                     <Mic className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">智能语音合成</h3>
-                  <p className="text-gray-600 leading-relaxed">使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t.feature1Title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{t.feature1Desc}</p>
                 </div>
                 
                 <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                   <div className="w-16 h-16 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                     <User className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">多种音色选择</h3>
-                  <p className="text-gray-600 leading-relaxed">靓女、靓仔、阿嫲三种不同风格的播客主持人，满足不同内容需求</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t.feature2Title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{t.feature2Desc}</p>
                 </div>
                 
                 <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                   <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                     <Download className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">一键生成下载</h3>
-                  <p className="text-gray-600 leading-relaxed">输入文本，选择音色，一键生成并下载播客音频，简单高效</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t.feature3Title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{t.feature3Desc}</p>
                 </div>
               </motion.div>
             </motion.div>
@@ -846,7 +888,7 @@ export default function Home() {
                         className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 transition-all duration-200 text-sm"
                       >
                         <Upload className="w-4 h-4" />
-                        <span>上传文件</span>
+                        <span>{t.uploadFile}</span>
                       </label>
                     </div>
                     
@@ -961,10 +1003,8 @@ export default function Home() {
       <section className="bg-gradient-to-r from-yellow-50 to-orange-50 border-t border-yellow-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">如果这个项目对你有帮助，请考虑支持我们</h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              龙眼AI是一个开源项目，如果你觉得这个粤语播客生成器对你有用，欢迎通过Buy Me a Coffee来支持我们的开发工作。
-            </p>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">{t.supportTitle}</h3>
+            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">{t.supportDesc}</p>
             <a
               href="https://buymeacoffee.com/wego"
               target="_blank"
@@ -972,7 +1012,7 @@ export default function Home() {
               className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 text-lg"
             >
               <span className="text-2xl">☕</span>
-              <span>Buy Me a Coffee</span>
+              <span>{t.buyMeCoffee}</span>
             </a>
           </div>
         </div>
