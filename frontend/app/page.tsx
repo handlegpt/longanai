@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Download, Share2, History, Upload, User, LogOut } from 'lucide-react';
+import { Mic, Download, Share2, History, Upload, User, LogOut, Globe, Play, Pause } from 'lucide-react';
 import PodcastGenerator from '@/components/PodcastGenerator';
 import VoiceSelector from '@/components/VoiceSelector';
 import FileUpload from '@/components/FileUpload';
@@ -12,15 +12,29 @@ import EmailLogin from '@/components/EmailLogin';
 export default function Home() {
   const [activeTab, setActiveTab] = useState('generate');
   const [selectedVoice, setSelectedVoice] = useState('young-lady');
+  const [selectedLanguage, setSelectedLanguage] = useState('cantonese');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [showLogin, setShowLogin] = useState(false);
+  const [inputText, setInputText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const languages = [
+    { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
+    { id: 'mandarin', name: '普通话', flag: '🇨🇳' },
+    { id: 'english', name: 'English', flag: '🇺🇸' },
+  ];
+
+  const voices = [
+    { id: 'young-lady', name: '靓女', description: '年轻女性声音' },
+    { id: 'young-man', name: '靓仔', description: '年轻男性声音' },
+    { id: 'elderly-woman', name: '阿嫲', description: '年长女性声音' },
+  ];
 
   const handleLogin = (token: string, email: string) => {
     setIsLoggedIn(true);
     setUserEmail(email);
     setShowLogin(false);
-    // Store token in localStorage
     localStorage.setItem('auth_token', token);
     localStorage.setItem('user_email', email);
   };
@@ -33,7 +47,20 @@ export default function Home() {
     localStorage.removeItem('user_email');
   };
 
-  // Check if user is already logged in
+  const handleGenerate = async () => {
+    if (!inputText.trim()) {
+      alert('请输入要转换的文本');
+      return;
+    }
+    
+    setIsGenerating(true);
+    // TODO: 调用API生成播客
+    setTimeout(() => {
+      setIsGenerating(false);
+      alert('播客生成完成！');
+    }, 3000);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     const email = localStorage.getItem('user_email');
@@ -91,7 +118,6 @@ export default function Home() {
                 </button>
               </nav>
 
-              {/* User Section */}
               {isLoggedIn ? (
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
@@ -152,7 +178,7 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
               >
                 {/* Hero Section */}
-                <div className="text-center mb-12">
+                <div className="text-center mb-8">
                   <h2 className="text-4xl font-bold text-gray-900 mb-4">
                     用AI生成地道嘅粤语播客
                   </h2>
@@ -161,15 +187,103 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* Voice Selection */}
-                <VoiceSelector
-                  selectedVoice={selectedVoice}
-                  onVoiceChange={setSelectedVoice}
-                />
+                {/* Language and Voice Selection */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  {/* Language Selection */}
+                  <div className="bg-white rounded-xl shadow-lg p-6">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <Globe className="w-5 h-5 text-primary-500" />
+                      <h3 className="text-lg font-semibold text-gray-900">选择语言</h3>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      {languages.map((language) => (
+                        <button
+                          key={language.id}
+                          onClick={() => setSelectedLanguage(language.id)}
+                          className={`p-3 rounded-lg border-2 transition-all ${
+                            selectedLanguage === language.id
+                              ? 'border-primary-500 bg-primary-50 text-primary-700'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="text-2xl mb-1">{language.flag}</div>
+                          <div className="text-sm font-medium">{language.name}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-                {/* Main Generator */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-                  <PodcastGenerator selectedVoice={selectedVoice} />
+                  {/* Voice Selection */}
+                  <div className="bg-white rounded-xl shadow-lg p-6">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <Mic className="w-5 h-5 text-primary-500" />
+                      <h3 className="text-lg font-semibold text-gray-900">选择声音</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {voices.map((voice) => (
+                        <button
+                          key={voice.id}
+                          onClick={() => setSelectedVoice(voice.id)}
+                          className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                            selectedVoice === voice.id
+                              ? 'border-primary-500 bg-primary-50 text-primary-700'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="font-medium">{voice.name}</div>
+                          <div className="text-sm text-gray-500">{voice.description}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text Input Section */}
+                <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">输入要转换的文本</h3>
+                    <p className="text-sm text-gray-600">支持中文、英文等多种语言</p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <textarea
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      placeholder="请输入要转换为播客的文本内容..."
+                      className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-gray-500">
+                        字符数: {inputText.length}
+                      </div>
+                      <button
+                        onClick={handleGenerate}
+                        disabled={isGenerating || !inputText.trim()}
+                        className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>生成中...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-4 h-4" />
+                            <span>生成播客</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* File Upload Section */}
+                <div className="bg-white rounded-xl shadow-lg p-6">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">或者上传文件</h3>
+                    <p className="text-sm text-gray-600">支持TXT、DOC、PDF等格式</p>
+                  </div>
                   <FileUpload />
                 </div>
               </motion.div>
