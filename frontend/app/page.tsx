@@ -725,44 +725,93 @@ export default function Home() {
           transition={{ duration: 0.5 }}
         >
           {/* Hero section with main title */}
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              {t.heroTitle}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t.heroSubtitle}
-            </p>
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="mb-8"
+            >
+              <h2 className="text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+                {t.heroTitle}
+              </h2>
+              <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                {t.heroSubtitle}
+              </p>
+            </motion.div>
+            
+            {/* Feature highlights */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+            >
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                  <Mic className="w-6 h-6 text-primary-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">智能语音合成</h3>
+                <p className="text-gray-600 text-sm">使用先进的Edge TTS技术，生成自然流畅的粤语语音</p>
+              </div>
+              
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                <div className="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                  <User className="w-6 h-6 text-secondary-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">多种音色选择</h3>
+                <p className="text-gray-600 text-sm">靓女、靓仔、阿嫲三种不同风格的播客主持人</p>
+              </div>
+              
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                  <Download className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">一键生成下载</h3>
+                <p className="text-gray-600 text-sm">输入文本，选择音色，一键生成并下载播客音频</p>
+              </div>
+            </motion.div>
           </div>
 
           {/* Text input section for podcast content */}
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.inputTitle}</h3>
-              <p className="text-sm text-gray-600">{t.inputSubtitle}</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100"
+          >
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t.inputTitle}</h3>
+              <p className="text-gray-600">{t.inputSubtitle}</p>
             </div>
             
-            <div className="space-y-4">
-              <textarea
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder={t.inputPlaceholder}
-                className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
+            <div className="space-y-6">
+              <div className="relative">
+                <textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder={t.inputPlaceholder}
+                  className="w-full h-40 p-6 border-2 border-gray-200 rounded-xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-lg"
+                />
+                <div className="absolute bottom-4 right-4 text-sm text-gray-400">
+                  {inputText.length} / 2000
+                </div>
+              </div>
               
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  {/* Voice selection - compact version */}
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">选择音色:</span>
-                    <div className="flex space-x-2">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {/* Voice selection - improved version */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    <span className="text-sm font-medium text-gray-700">选择音色:</span>
+                    <div className="flex flex-wrap gap-2">
                       {voices.map((voice) => (
                         <button
                           key={voice.id}
                           onClick={() => setSelectedVoice(voice.id)}
-                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                             selectedVoice === voice.id
-                              ? 'bg-primary-500 text-white'
-                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                              ? 'bg-primary-500 text-white shadow-lg scale-105'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
                           }`}
                         >
                           {voice.name}
@@ -770,38 +819,39 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
-                  
-                  <div className="text-sm text-gray-500">
-                    {t.characterCount}: {inputText.length}
-                  </div>
                 </div>
                 
                 <button
                   onClick={handleGenerate}
                   disabled={isGenerating || !inputText.trim()}
-                  className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary flex items-center space-x-3 px-8 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200"
                 >
                   {isGenerating ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       <span>{t.generating}</span>
                     </>
                   ) : (
                     <>
-                      <Play className="w-4 h-4" />
+                      <Play className="w-5 h-5" />
                       <span>{t.generatePodcast}</span>
                     </>
                   )}
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* File upload section as alternative */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.uploadTitle}</h3>
-              <p className="text-sm text-gray-600">{t.uploadSubtitle}</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
+          >
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t.uploadTitle}</h3>
+              <p className="text-gray-600">{t.uploadSubtitle}</p>
             </div>
             <FileUpload 
               translations={{
@@ -819,24 +869,24 @@ export default function Home() {
                 generatingFromFiles: t.generatingFromFiles,
               }}
             />
-          </div>
+          </motion.div>
 
           {/* Generated podcast player */}
           {generatedPodcast && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-xl shadow-lg p-6 mt-8"
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl shadow-xl p-8 mt-8 border border-primary-100"
             >
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.podcastTitle}</h3>
-                <p className="text-sm text-gray-600">{generatedPodcast.title}</p>
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">{t.podcastTitle}</h3>
+                <p className="text-gray-600">{generatedPodcast.title}</p>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {/* Audio player */}
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-white rounded-xl p-6 shadow-lg">
                   <audio
                     controls
                     className="w-full"
@@ -847,19 +897,19 @@ export default function Home() {
                 </div>
                 
                 {/* Action buttons */}
-                <div className="flex items-center space-x-4">
-                  <button className="btn-primary flex items-center space-x-2">
-                    <Play className="w-4 h-4" />
+                <div className="flex flex-wrap items-center gap-4">
+                  <button className="btn-primary flex items-center space-x-3 px-6 py-3">
+                    <Play className="w-5 h-5" />
                     <span>{t.playPodcast}</span>
                   </button>
                   
-                  <button className="btn-secondary flex items-center space-x-2">
-                    <Download className="w-4 h-4" />
+                  <button className="btn-secondary flex items-center space-x-3 px-6 py-3">
+                    <Download className="w-5 h-5" />
                     <span>{t.downloadPodcast}</span>
                   </button>
                   
-                  <button className="btn-secondary flex items-center space-x-2">
-                    <Share2 className="w-4 h-4" />
+                  <button className="btn-secondary flex items-center space-x-3 px-6 py-3">
+                    <Share2 className="w-5 h-5" />
                     <span>{t.sharePodcast}</span>
                   </button>
                 </div>
