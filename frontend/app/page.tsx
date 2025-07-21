@@ -1014,6 +1014,81 @@ export default function Home() {
               </motion.div>
             </motion.div>
             
+            {/* Usage Statistics */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="mb-8 sm:mb-12"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
+                <div className="bg-white rounded-xl p-6 text-center shadow-lg border border-gray-100">
+                  <div className="text-3xl font-bold text-primary-600 mb-2">
+                    {podcastHistory.length}
+                  </div>
+                  <div className="text-sm text-gray-600">已生成播客</div>
+                </div>
+                <div className="bg-white rounded-xl p-6 text-center shadow-lg border border-gray-100">
+                  <div className="text-3xl font-bold text-secondary-600 mb-2">
+                    {isLoggedIn ? '1' : '0'}
+                  </div>
+                  <div className="text-sm text-gray-600">活跃用户</div>
+                </div>
+                <div className="bg-white rounded-xl p-6 text-center shadow-lg border border-gray-100">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">
+                    2
+                  </div>
+                  <div className="text-sm text-gray-600">可用音色</div>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Quick Start Guide */}
+            {!isLoggedIn && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="mb-8 sm:mb-12"
+              >
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 sm:p-8 border border-blue-200">
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">快速开始</h3>
+                    <p className="text-gray-600">只需3步，即可生成你的第一个粤语播客</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        1
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">登录账号</div>
+                        <div className="text-sm text-gray-600">使用邮箱快速登录</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        2
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">输入内容</div>
+                        <div className="text-sm text-gray-600">输入要转换的文本</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        3
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">生成播客</div>
+                        <div className="text-sm text-gray-600">一键生成粤语播客</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            
             {/* Text input section for podcast content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1368,6 +1443,99 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      {/* Example Podcasts Section */}
+      <section className="bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">示例播客</h2>
+            <p className="text-gray-600">看看其他用户生成的精彩播客</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="p-6">
+                <div className="flex items-start space-x-4 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Play className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">香港美食文化分享</h3>
+                    <p className="text-xs text-gray-500 mb-2">2024-01-15</p>
+                    <div className="text-xs text-gray-500">时长: 02:30</div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                  <audio
+                    controls
+                    className="w-full h-10 rounded-md"
+                    src="#"
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                <div className="text-xs text-gray-500 text-center">
+                  使用靓女音色生成
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="p-6">
+                <div className="flex items-start space-x-4 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Play className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">粤语学习小贴士</h3>
+                    <p className="text-xs text-gray-500 mb-2">2024-01-14</p>
+                    <div className="text-xs text-gray-500">时长: 01:45</div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                  <audio
+                    controls
+                    className="w-full h-10 rounded-md"
+                    src="#"
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                <div className="text-xs text-gray-500 text-center">
+                  使用靓仔音色生成
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="p-6">
+                <div className="flex items-start space-x-4 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Play className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">香港旅游指南</h3>
+                    <p className="text-xs text-gray-500 mb-2">2024-01-13</p>
+                    <div className="text-xs text-gray-500">时长: 03:15</div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                  <audio
+                    controls
+                    className="w-full h-10 rounded-md"
+                    src="#"
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                <div className="text-xs text-gray-500 text-center">
+                  使用靓女音色生成
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Buy Me a Coffee section */}
       <section className="bg-gradient-to-r from-yellow-50 to-orange-50 border-t border-yellow-200">
