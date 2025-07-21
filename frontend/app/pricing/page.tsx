@@ -11,6 +11,7 @@ const translations = {
     monthly: '月付',
     yearly: '年付',
     save: '节省',
+    period: '/月',
     free: {
       name: '免费版',
       price: '0',
@@ -62,6 +63,7 @@ const translations = {
     monthly: '月付',
     yearly: '年付',
     save: '节省',
+    period: '/月',
     free: {
       name: '免费版',
       price: '0',
@@ -113,6 +115,7 @@ const translations = {
     monthly: 'Monthly',
     yearly: 'Yearly',
     save: 'Save',
+    period: '/month',
     comingSoon: 'Coming Soon',
     stayTuned: 'Stay Tuned',
     free: {
