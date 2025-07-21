@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     FROM_EMAIL: str = "noreply@longan.ai"
     FROM_NAME: str = "龙眼AI"
     
+    # OpenAI Settings (for GPT translation)
+    OPENAI_API_KEY: Optional[str] = None
+    
     # TTS Settings
     EDGE_TTS_VOICES: ClassVar[Dict[str, str]] = {
         "young-lady": "zh-HK-HiuGaaiNeural",  # Young lady voice
