@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import Optional, Dict, ClassVar
+import os
 
 class Settings(BaseSettings):
     # Database
@@ -40,6 +41,9 @@ class Settings(BaseSettings):
     # API Settings
     API_V1_STR: str = "/api"
     PROJECT_NAME: str = "Longan AI"
+    
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+    RESEND_FROM: str = os.getenv("RESEND_FROM", "noreply@yourdomain.com")
     
     class Config:
         env_file = ".env"

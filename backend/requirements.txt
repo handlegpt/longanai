@@ -20,3 +20,4 @@ psycopg2-binary==2.9.9
 PyJWT==2.8.0
 pydub==0.25.1
 openai==0.28.1 
+resend==0.4.4 
