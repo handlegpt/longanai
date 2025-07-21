@@ -70,7 +70,6 @@ docker system prune
 - **后端API**: http://localhost:8005
 - **数据库**: localhost:5432
 - **Redis**: localhost:6380
-- **Nginx**: http://localhost:80
 
 ## 注意事项
 
