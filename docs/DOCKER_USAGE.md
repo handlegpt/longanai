@@ -74,9 +74,31 @@ docker system prune
 ## 注意事项
 
 1. **数据持久化**: 数据库数据存储在 `postgres_data` 卷中
-2. **环境变量**: 可以通过 `.env` 文件或环境变量配置
+2. **环境变量**: 在项目根目录创建 `.env` 文件，参考 `.env.example` 模板
 3. **网络**: 所有服务都在 `longanai-network` 网络中
 4. **容器名称**: 每个服务都有固定的容器名称，便于管理
+
+## 环境变量配置
+
+1. **复制环境变量模板**：
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **编辑.env文件**，设置必要的配置：
+   ```bash
+   # 生成安全密钥
+   python3 scripts/generate_secret.py
+   
+   # 编辑.env文件
+   nano .env
+   ```
+
+3. **重要配置项**：
+   - `SECRET_KEY`: 安全密钥（用于JWT）
+   - `OPENAI_API_KEY`: OpenAI API密钥（用于GPT翻译）
+   - `DATABASE_URL`: 数据库连接
+   - `REDIS_URL`: Redis连接
 
 ## 故障排除
 
