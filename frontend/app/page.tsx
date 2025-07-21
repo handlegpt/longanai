@@ -1014,31 +1014,46 @@ export default function Home() {
               </motion.div>
             </motion.div>
             
-            {/* Usage Statistics */}
+            {/* Platform Highlights */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
               className="mb-8 sm:mb-12"
             >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
-                <div className="bg-white rounded-xl p-6 text-center shadow-lg border border-gray-100">
-                  <div className="text-3xl font-bold text-primary-600 mb-2">
-                    {podcastHistory.length}
-                  </div>
-                  <div className="text-sm text-gray-600">已生成播客</div>
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 sm:p-8 border border-green-200">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">为什么选择龙眼AI？</h3>
+                  <p className="text-gray-600">专业的粤语播客生成平台</p>
                 </div>
-                <div className="bg-white rounded-xl p-6 text-center shadow-lg border border-gray-100">
-                  <div className="text-3xl font-bold text-secondary-600 mb-2">
-                    {isLoggedIn ? '1' : '0'}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
+                      <span className="text-lg">🎯</span>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">精准粤语</div>
+                      <div className="text-sm text-gray-600">地道粤语发音</div>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600">活跃用户</div>
-                </div>
-                <div className="bg-white rounded-xl p-6 text-center shadow-lg border border-gray-100">
-                  <div className="text-3xl font-bold text-purple-600 mb-2">
-                    2
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
+                      <span className="text-lg">⚡</span>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">快速生成</div>
+                      <div className="text-sm text-gray-600">一键生成播客</div>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600">可用音色</div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
+                      <span className="text-lg">🎨</span>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">多种音色</div>
+                      <div className="text-sm text-gray-600">靓女靓仔任选</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
