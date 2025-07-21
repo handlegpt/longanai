@@ -692,6 +692,13 @@ export default function Home() {
 
   // Handle podcast generation
   const handleGenerate = async () => {
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      alert('请先登录后再生成播客');
+      setShowLogin(true);
+      return;
+    }
+    
     if (!inputText.trim()) {
       alert('请输入要转换的文本');
       return;
@@ -1104,13 +1111,18 @@ export default function Home() {
                   
                   <button
                     onClick={handleGenerate}
-                    disabled={isGenerating || !inputText.trim()}
+                    disabled={isGenerating || !inputText.trim() || !isLoggedIn}
                     className="btn-primary flex items-center space-x-3 sm:space-x-4 px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl w-full sm:w-auto"
                   >
                     {isGenerating ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-b-2 border-white"></div>
                         <span>{t.generating}</span>
+                      </>
+                    ) : !isLoggedIn ? (
+                      <>
+                        <User className="w-5 h-5 sm:w-6 sm:h-6" />
+                        <span>请先登录</span>
                       </>
                     ) : (
                       <>
