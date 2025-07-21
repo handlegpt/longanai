@@ -17,7 +17,7 @@ const translations = {
       period: '/月',
       description: '适合个人用户试用',
       features: [
-        '每月生成5个播客',
+        '每月生成10个播客',
         '基础音色选择',
         '标准音质',
         '基础客服支持'
@@ -68,7 +68,7 @@ const translations = {
       period: '/月',
       description: '适合个人用户试用',
       features: [
-        '每月生成5个播客',
+        '每月生成10个播客',
         '基础音色选择',
         '标准音质',
         '基础客服支持'
@@ -113,13 +113,15 @@ const translations = {
     monthly: 'Monthly',
     yearly: 'Yearly',
     save: 'Save',
+    comingSoon: 'Coming Soon',
+    stayTuned: 'Stay Tuned',
     free: {
       name: 'Free',
       price: '0',
       period: '/month',
       description: 'Perfect for individual users to try',
       features: [
-        '5 podcasts per month',
+        '10 podcasts per month',
         'Basic voice options',
         'Standard quality',
         'Basic support'
@@ -317,8 +319,18 @@ export default function PricingPage() {
 
                 <div className="mb-8">
                   <div className="flex items-baseline">
-                    <span className="text-4xl font-bold text-gray-900">¥{getPrice(plan.price)}</span>
-                    <span className="text-gray-500 ml-2">{t.period}</span>
+                    {plan.price === '0' ? (
+                      <>
+                        <span className="text-4xl font-bold text-gray-900">¥{getPrice(plan.price)}</span>
+                        <span className="text-gray-500 ml-2">{t.period}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold text-gray-900">
+                          {selectedLanguage === 'english' ? 'Coming Soon' : '即将推出'}
+                        </span>
+                      </>
+                    )}
                   </div>
                   {billingCycle === 'yearly' && plan.price !== '0' && (
                     <p className="text-sm text-gray-500 mt-1">
@@ -343,7 +355,7 @@ export default function PricingPage() {
                       : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                   }`}
                 >
-                  {t.cta}
+                  {plan.price === '0' ? t.cta : (selectedLanguage === 'english' ? 'Stay Tuned' : '敬请期待')}
                 </button>
               </div>
             </motion.div>

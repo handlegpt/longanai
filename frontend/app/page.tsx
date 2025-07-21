@@ -519,6 +519,13 @@ export default function Home() {
   const [podcastHistory, setPodcastHistory] = useState<Array<{ id: string; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string }>>([]);
   const [showAllPodcasts, setShowAllPodcasts] = useState(false);
   const [podcastImage, setPodcastImage] = useState<string | null>(null);
+  const [userStats, setUserStats] = useState<{
+    subscription_plan: string;
+    monthly_generation_count: number;
+    monthly_generation_limit: number;
+    remaining_generations: number;
+    is_unlimited: boolean;
+  } | null>(null);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -742,6 +749,7 @@ export default function Home() {
           voice: selectedVoice,
           emotion: 'normal',
           speed: 1.0,
+          user_email: userEmail,  // 添加用户邮箱
         }),
       });
 
@@ -762,9 +770,28 @@ export default function Home() {
         });
         // Reset image after saving
         setPodcastImage(null);
+        
+        // Show remaining generations if available
+        if (data.remainingGenerations !== undefined) {
+          if (data.remainingGenerations === -1) {
+            console.log('企业版用户，无生成限制');
+          } else {
+            console.log(`剩余生成次数: ${data.remainingGenerations}`);
+          }
+        }
+        
+        // Refresh user stats after successful generation
+        if (userEmail) {
+          fetchUserStats(userEmail);
+        }
       } else {
         const errorData = await response.json();
-        alert(`生成失败: ${errorData.detail || '未知错误'}`);
+        if (response.status === 429) {
+          // 达到生成限制
+          alert(`生成失败: ${errorData.detail}\n\n请考虑升级到专业版获得更多生成次数。`);
+        } else {
+          alert(`生成失败: ${errorData.detail || '未知错误'}`);
+        }
       }
     } catch (error) {
       console.error('生成播客时出错:', error);
@@ -781,8 +808,23 @@ export default function Home() {
     if (token && email) {
       setIsLoggedIn(true);
       setUserEmail(email);
+      // Fetch user stats
+      fetchUserStats(email);
     }
   }, []);
+
+  // Fetch user statistics
+  const fetchUserStats = async (email: string) => {
+    try {
+      const response = await fetch(`/api/podcast/user/stats?user_email=${encodeURIComponent(email)}`);
+      if (response.ok) {
+        const stats = await response.json();
+        setUserStats(stats);
+      }
+    } catch (error) {
+      console.error('获取用户统计失败:', error);
+    }
+  };
 
   // Close language dropdown when clicking outside
   useEffect(() => {
@@ -1113,6 +1155,20 @@ export default function Home() {
                         ))}
                       </div>
                     </div>
+                    
+                    {/* User stats display */}
+                    {isLoggedIn && userStats && (
+                      <div className="flex items-center space-x-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
+                        <span>📊</span>
+                        <span>
+                          {userStats.is_unlimited ? (
+                            '无限制生成'
+                          ) : (
+                            `剩余 ${userStats.remaining_generations} 次生成`
+                          )}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   
                   <button

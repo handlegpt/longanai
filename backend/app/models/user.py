@@ -10,5 +10,12 @@ class User(Base):
     is_verified = Column(Boolean, default=False)  # Email verification status
     verification_token = Column(String(255), nullable=True)  # Verification token
     verification_expires = Column(DateTime(timezone=True), nullable=True)  # Token expiration time
+    
+    # Subscription and usage tracking
+    subscription_plan = Column(String(50), default="free")  # free, pro, enterprise
+    monthly_generation_count = Column(Integer, default=0)  # Current month's generation count
+    monthly_generation_limit = Column(Integer, default=10)  # Monthly generation limit
+    last_generation_reset = Column(DateTime(timezone=True), nullable=True)  # Last time monthly count was reset
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
