@@ -3,6 +3,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: longanai-frontend:latest
+    container_name: longanai-frontend
     ports:
       - "3008:3008"
     environment:
@@ -16,6 +18,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: longanai-backend:latest
+    container_name: longanai-backend
     ports:
       - "8005:8000"
     environment:
@@ -29,7 +33,8 @@ services:
       - longanai-network
 
   db:
-    image: postgres:15
+    image: postgres:15-alpine
+    container_name: longanai-db
     environment:
       - POSTGRES_DB=longanai
       - POSTGRES_USER=user
@@ -41,13 +46,15 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: longanai-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks:
       - longanai-network
 
   nginx:
     image: nginx:alpine
+    container_name: longanai-nginx
     ports:
       - "80:80"
       - "443:443"
