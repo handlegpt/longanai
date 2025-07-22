@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Send, LogIn, ArrowRight } from 'lucide-react';
+import { Mail, Send, LogIn, ArrowRight, User, Loader, Google } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface EmailLoginProps {
@@ -119,20 +119,27 @@ export default function EmailLogin({ onLogin, translations }: EmailLoginProps) {
   };
 
   return (
-    <div className="card max-w-md mx-auto">
-      <div className="text-center mb-6">
-        <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Mail className="w-8 h-8 text-white" />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          {step === 'login' ? translations.loginTitle : translations.verificationTitle}
-        </h2>
-        <p className="text-gray-600">
-          {step === 'login' 
-            ? translations.loginSubtitle
-            : translations.verificationSubtitle
-          }
-        </p>
+    <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
+        <Mail className="w-6 h-6 mr-2 text-primary-500" />
+        {translations.loginTitle}
+      </h2>
+      {/* Google 登录按钮 */}
+      <button
+        type="button"
+        className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-medium shadow-sm transition-all duration-150"
+        onClick={() => {
+          window.location.href = '/api/auth/google/login';
+        }}
+      >
+        <Google className="w-5 h-5 text-red-500" />
+        <span>使用 Google 登录</span>
+      </button>
+      {/* 分割线 */}
+      <div className="flex items-center my-4">
+        <div className="flex-grow h-px bg-gray-200" />
+        <span className="mx-2 text-gray-400 text-xs">或邮箱登录</span>
+        <div className="flex-grow h-px bg-gray-200" />
       </div>
 
       {step === 'login' && (
