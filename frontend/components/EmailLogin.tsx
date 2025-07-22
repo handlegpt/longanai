@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Send, LogIn, ArrowRight, User, Loader, Google } from 'lucide-react';
+import { Mail, Send, LogIn, ArrowRight, User, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface EmailLoginProps {
@@ -132,7 +132,16 @@ export default function EmailLogin({ onLogin, translations }: EmailLoginProps) {
           window.location.href = '/api/auth/google/login';
         }}
       >
-        <Google className="w-5 h-5 text-red-500" />
+        <span className="w-5 h-5 mr-1">
+          <svg width="20" height="20" viewBox="0 0 48 48">
+            <g>
+              <path fill="#4285F4" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.3-5.7 7-11.3 7-6.6 0-12-5.4-12-12s5.4-12 12-12c2.7 0 5.2.9 7.2 2.4l6-6C36.1 5.1 30.4 3 24 3 12.9 3 4 11.9 4 23s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.2-.3-3.5z"/>
+              <path fill="#34A853" d="M6.3 14.7l6.6 4.8C14.5 16.1 18.8 13 24 13c2.7 0 5.2.9 7.2 2.4l6-6C36.1 5.1 30.4 3 24 3 15.3 3 7.9 8.7 6.3 14.7z"/>
+              <path fill="#FBBC05" d="M24 43c5.4 0 10-1.8 13.3-4.9l-6.2-5.1c-2 1.4-4.5 2.2-7.1 2.2-5.6 0-10.3-3.8-12-9l-6.5 5c3.2 6.3 10.1 11.8 18.5 11.8z"/>
+              <path fill="#EA4335" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.1 3-4.1 7-11.3 7-6.6 0-12-5.4-12-12s5.4-12 12-12c2.7 0 5.2.9 7.2 2.4l6-6C36.1 5.1 30.4 3 24 3 12.9 3 4 11.9 4 23s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.2-.3-3.5z"/>
+            </g>
+          </svg>
+        </span>
         <span>使用 Google 登录</span>
       </button>
       {/* 分割线 */}
