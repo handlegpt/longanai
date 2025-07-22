@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Download, Share2, History, Upload, User, LogOut, Globe, Play, Pause, Trash2 } from 'lucide-react';
+import { Mic, Download, Share2, History, Upload, User, LogOut, Globe, Play, Pause, Trash2, Lock } from 'lucide-react';
 import PodcastGenerator from '@/components/PodcastGenerator';
 import VoiceSelector from '@/components/VoiceSelector';
 import FileUpload from '@/components/FileUpload';
@@ -1177,7 +1177,7 @@ export default function Home() {
                   
                   <button
                     onClick={handleGenerate}
-                    disabled={isGenerating || !inputText.trim() || !isLoggedIn}
+                    disabled={isGenerating || !inputText.trim()}
                     className="btn-primary flex items-center space-x-3 sm:space-x-4 px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl w-full sm:w-auto"
                   >
                     {isGenerating ? (
@@ -1187,7 +1187,7 @@ export default function Home() {
                       </>
                     ) : !isLoggedIn ? (
                       <>
-                        <User className="w-5 h-5 sm:w-6 sm:h-6" />
+                        <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-gray-300" />
                         <span>请先登录</span>
                       </>
                     ) : (
