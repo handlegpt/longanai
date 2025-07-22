@@ -11,6 +11,8 @@ class User(Base):
     verification_token = Column(String(255), nullable=True)  # Verification token
     verification_expires = Column(DateTime(timezone=True), nullable=True)  # Token expiration time
     
+    google_id = Column(String(128), unique=True, nullable=True)  # Google OAuth 用户唯一ID
+    
     # Subscription and usage tracking
     subscription_plan = Column(String(50), default="free")  # free, pro, enterprise
     monthly_generation_count = Column(Integer, default=0)  # Current month's generation count

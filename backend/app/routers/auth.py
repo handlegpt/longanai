@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi.responses import RedirectResponse, JSONResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from typing import Optional
 from pydantic import BaseModel
+from authlib.integrations.starlette_client import OAuth
+import os
 
 from app.core.database import get_db
 from app.core.config import settings
@@ -21,6 +24,21 @@ class TokenRequest(BaseModel):
 
 # Email service
 email_service = EmailService()
+
+# Google OAuth 配置
+oauth = OAuth()
+oauth.register(
+    name='google',
+    client_id=settings.GOOGLE_CLIENT_ID,
+    client_secret=settings.GOOGLE_CLIENT_SECRET,
+    access_token_url='https://oauth2.googleapis.com/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v2/',
+    userinfo_endpoint='https://www.googleapis.com/oauth2/v2/userinfo',
+    client_kwargs={'scope': 'openid email profile'},
+)
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -203,6 +221,47 @@ def resend_verification(request: EmailRequest, db: Session = Depends(get_db)):
         }
     else:
         raise HTTPException(status_code=500, detail="Failed to send email, please try again later")
+
+@router.get("/google/login")
+def google_login(request: Request):
+    redirect_uri = settings.GOOGLE_REDIRECT_URI
+    return oauth.google.authorize_redirect(request, redirect_uri)
+
+@router.get("/google/callback")
+async def google_callback(request: Request, db: Session = Depends(get_db)):
+    token = await oauth.google.authorize_access_token(request)
+    userinfo = await oauth.google.parse_id_token(request, token)
+    if not userinfo:
+        return JSONResponse(status_code=400, content={"success": False, "message": "Google 登录失败"})
+    email = userinfo.get("email")
+    google_id = userinfo.get("sub")
+    if not email or not google_id:
+        return JSONResponse(status_code=400, content={"success": False, "message": "Google 用户信息获取失败"})
+    # 查找或创建用户
+    user = db.query(User).filter((User.email == email) | (User.google_id == google_id)).first()
+    if not user:
+        user = User(email=email, is_verified=True, google_id=google_id)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        # 如果已有用户但没绑定 google_id，则补充
+        if not user.google_id:
+            user.google_id = google_id
+            db.commit()
+    # 生成 JWT
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return JSONResponse({
+        "success": True,
+        "message": "Google 登录成功",
+        "access_token": access_token,
+        "token_type": "bearer",
+        "email": user.email,
+        "is_verified": user.is_verified
+    })
 
 @router.get("/me")
 def get_current_user_info(current_user: User = Depends(get_current_user)):
