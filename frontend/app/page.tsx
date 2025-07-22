@@ -8,6 +8,7 @@ import VoiceSelector from '@/components/VoiceSelector';
 import FileUpload from '@/components/FileUpload';
 import HistoryPanel from '@/components/HistoryPanel';
 import EmailLogin from '@/components/EmailLogin';
+import Link from 'next/link';
 
 // Interface language translations
 const translations = {
@@ -894,15 +895,18 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center py-4 space-y-4 sm:space-y-0">
             {/* Logo and brand */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs">longan</span>
+            <Link href="/" className="flex items-center space-x-3 group" style={{ textDecoration: 'none' }}>
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow group-hover:scale-105 transition-transform">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="16" cy="16" r="16" fill="#f97316" />
+                  <text x="16" y="22" textAnchor="middle" fontSize="14" fill="#fff" fontWeight="bold" fontFamily="sans-serif">龙眼</text>
+                </svg>
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t.title}</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">{t.title}</h1>
                 <p className="text-xs sm:text-sm text-gray-600">{t.subtitle}</p>
               </div>
-            </div>
+            </Link>
             
             {/* Navigation and user section */}
             <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
