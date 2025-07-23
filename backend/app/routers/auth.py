@@ -227,7 +227,7 @@ async def google_login(request: Request):
     redirect_uri = settings.GOOGLE_REDIRECT_URI
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
-@router.get("/google/callback")
+@router.get("/callback/google")
 async def google_callback(request: Request, db: Session = Depends(get_db)):
     token = await oauth.google.authorize_access_token(request)
     userinfo = await oauth.google.parse_id_token(request, token)
