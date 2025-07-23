@@ -18,6 +18,35 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
+      <head>
+        {/* 全局 polyfill for crypto.randomUUID */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if (typeof window !== "undefined") {
+              if (window.crypto && typeof window.crypto.randomUUID !== "function") {
+                window.crypto.randomUUID = function() {
+                  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === "x" ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                  });
+                };
+              }
+              if (!window.crypto) {
+                window.crypto = {
+                  randomUUID: function() {
+                    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+                      const r = Math.random() * 16 | 0;
+                      const v = c === "x" ? r : (r & 0x3 | 0x8);
+                      return v.toString(16);
+                    });
+                  }
+                };
+              }
+            }
+          `
+        }} />
+      </head>
       <body className={inter.className}>
         {children}
         <Toaster position="top-right" />
