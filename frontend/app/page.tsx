@@ -1,18 +1,27 @@
 'use client';
 
 // Polyfill for crypto.randomUUID
-if (
-  typeof window !== "undefined" &&
-  window.crypto &&
-  typeof window.crypto.randomUUID !== "function"
-) {
-  window.crypto.randomUUID = function() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === "x" ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    }) as `${string}-${string}-${string}-${string}-${string}`;
-  };
+if (typeof window !== "undefined") {
+  if (window.crypto && typeof window.crypto.randomUUID !== "function") {
+    window.crypto.randomUUID = function() {
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === "x" ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      }) as `${string}-${string}-${string}-${string}-${string}`;
+    };
+  }
+  if (!window.crypto) {
+    (window as any).crypto = {
+      randomUUID: function() {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+          const r = Math.random() * 16 | 0;
+          const v = c === "x" ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        }) as `${string}-${string}-${string}-${string}-${string}`;
+      }
+    };
+  }
 }
 
 import { useState, useEffect } from 'react';
@@ -699,9 +708,10 @@ export default function Home() {
   const handleLogin = (token: string, email: string) => {
     setIsLoggedIn(true);
     setUserEmail(email);
-    setShowLogin(false);
     localStorage.setItem('auth_token', token);
     localStorage.setItem('user_email', email);
+    setShowLogin(false);
+    window.location.reload(); // 登录成功后自动刷新页面
   };
 
   // Handle user logout
