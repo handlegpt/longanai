@@ -1181,9 +1181,13 @@ export default function Home() {
                         setShowLogin(true);
                         return;
                       }
+                      if (!inputText.trim()) {
+                        alert('请输入要转换的文本');
+                        return;
+                      }
                       handleGenerate();
                     }}
-                    disabled={isGenerating || !inputText.trim()}
+                    disabled={isGenerating}
                     className="btn-primary flex items-center space-x-3 sm:space-x-4 px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl w-full sm:w-auto"
                   >
                     {isGenerating ? (
