@@ -1,3 +1,5 @@
+'use client';
+
 // Polyfill for crypto.randomUUID
 if (typeof window !== "undefined" && !window.crypto?.randomUUID) {
   window.crypto = window.crypto || {};
@@ -9,7 +11,6 @@ if (typeof window !== "undefined" && !window.crypto?.randomUUID) {
     });
   };
 }
-'use client';
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
