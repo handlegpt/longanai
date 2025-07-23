@@ -1191,11 +1191,6 @@ export default function Home() {
                         <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-b-2 border-white"></div>
                         <span>{t.generating}</span>
                       </>
-                    ) : !isLoggedIn ? (
-                      <>
-                        <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-gray-300" />
-                        <span>请先登录</span>
-                      </>
                     ) : (
                       <>
                         <Play className="w-5 h-5 sm:w-6 sm:h-6" />
