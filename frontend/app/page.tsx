@@ -1,8 +1,11 @@
 'use client';
 
 // Polyfill for crypto.randomUUID
-if (typeof window !== "undefined" && !window.crypto?.randomUUID) {
-  window.crypto = window.crypto || {};
+if (
+  typeof window !== "undefined" &&
+  window.crypto &&
+  typeof window.crypto.randomUUID !== "function"
+) {
   window.crypto.randomUUID = function() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
       const r = Math.random() * 16 | 0;
