@@ -37,7 +37,7 @@ oauth.register(
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v2/',
     userinfo_endpoint='https://www.googleapis.com/oauth2/v2/userinfo',
-    client_kwargs={'scope': 'openid email profile', 'jwks_uri': 'https://www.googleapis.com/oauth2/v3/certs'},
+    client_kwargs={'scope': 'openid email profile'},
 )
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
@@ -230,11 +230,12 @@ async def google_login(request: Request):
 @router.get("/callback/google")
 async def google_callback(request: Request, db: Session = Depends(get_db)):
     token = await oauth.google.authorize_access_token(request)
-    userinfo = await oauth.google.parse_id_token(request, token)
+    resp = await oauth.google.get("userinfo")
+    userinfo = resp.json()
     if not userinfo:
         return JSONResponse(status_code=400, content={"success": False, "message": "Google 登录失败"})
     email = userinfo.get("email")
-    google_id = userinfo.get("sub")
+    google_id = userinfo.get("id")
     if not email or not google_id:
         return JSONResponse(status_code=400, content={"success": False, "message": "Google 用户信息获取失败"})
     # 查找或创建用户
