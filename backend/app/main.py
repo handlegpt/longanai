@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 from app.routers import podcast, auth, files, translate
@@ -27,6 +28,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Session middleware (required for OAuth)
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
 # CORS middleware
 app.add_middleware(
