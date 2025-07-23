@@ -223,9 +223,9 @@ def resend_verification(request: EmailRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Failed to send email, please try again later")
 
 @router.get("/google/login")
-def google_login(request: Request):
+async def google_login(request: Request):
     redirect_uri = settings.GOOGLE_REDIRECT_URI
-    return oauth.google.authorize_redirect(request, redirect_uri)
+    return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/google/callback")
 async def google_callback(request: Request, db: Session = Depends(get_db)):
