@@ -229,72 +229,48 @@ async def google_login(request: Request):
 
 @router.get("/callback/google")
 async def google_callback(request: Request, db: Session = Depends(get_db)):
-    try:
-        # 获取授权码
-        code = request.query_params.get("code")
-        if not code:
-            return JSONResponse(status_code=400, content={"success": False, "message": "缺少授权码"})
-        
-        # 手动交换 access token
-        token_url = "https://oauth2.googleapis.com/token"
-        token_data = {
-            "client_id": settings.GOOGLE_CLIENT_ID,
-            "client_secret": settings.GOOGLE_CLIENT_SECRET,
-            "code": code,
-            "grant_type": "authorization_code",
-            "redirect_uri": settings.GOOGLE_REDIRECT_URI
+    token = await oauth.google.authorize_access_token(request)
+    userinfo = await oauth.google.parse_id_token(request, token)
+    if not userinfo:
+        return JSONResponse(status_code=400, content={"success": False, "message": "Google 登录失败"})
+    email = userinfo.get("email")
+    google_id = userinfo.get("sub")
+    if not email or not google_id:
+        return JSONResponse(status_code=400, content={"success": False, "message": "Google 用户信息获取失败"})
+    # 查找或创建用户
+    user = db.query(User).filter((User.email == email) | (User.google_id == google_id)).first()
+    if not user:
+        user = User(email=email, is_verified=True, google_id=google_id)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        # 如果已有用户但没绑定 google_id，则补充
+        if not user.google_id:
+            user.google_id = google_id
+            db.commit()
+    # 生成 JWT
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return JSONResponse({
+        "success": True,
+        "message": "Google 登录成功",
+        "access_token": access_token,
+        "token_type": "bearer",
+        "email": user.email,
+        "is_verified": user.is_verified
+    })
+
+@router.get("/me")
+def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """Get current user info"""
+    return {
+        "success": True,
+        "user": {
+            "id": current_user.id,
+            "email": current_user.email,
+            "is_verified": current_user.is_verified
         }
-        
-        import httpx
-        async with httpx.AsyncClient() as client:
-            token_response = await client.post(token_url, data=token_data)
-            token_info = token_response.json()
-            
-            if "access_token" not in token_info:
-                return JSONResponse(status_code=400, content={"success": False, "message": "获取 access token 失败"})
-            
-            # 获取用户信息
-            userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-            headers = {"Authorization": f"Bearer {token_info["access_token"]}"}
-            userinfo_response = await client.get(userinfo_url, headers=headers)
-            userinfo = userinfo_response.json()
-            
-            if not userinfo or "email" not in userinfo:
-                return JSONResponse(status_code=400, content={"success": False, "message": "获取用户信息失败"})
-            
-            email = userinfo.get("email")
-            google_id = userinfo.get("id")
-            
-            if not email or not google_id:
-                return JSONResponse(status_code=400, content={"success": False, "message": "Google 用户信息获取失败"})
-            
-            # 查找或创建用户
-            user = db.query(User).filter((User.email == email) | (User.google_id == google_id)).first()
-            if not user:
-                user = User(email=email, is_verified=True, google_id=google_id)
-                db.add(user)
-                db.commit()
-                db.refresh(user)
-            else:
-                # 如果已有用户但没绑定 google_id，则补充
-                if not user.google_id:
-                    user.google_id = google_id
-                    db.commit()
-            
-            # 生成 JWT
-            access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-            access_token = create_access_token(
-                data={"sub": user.email}, expires_delta=access_token_expires
-            )
-            return JSONResponse({
-                "success": True,
-                "message": "Google 登录成功",
-                "access_token": access_token,
-                "token_type": "bearer",
-                "email": user.email,
-                "is_verified": user.is_verified
-            })
-            
-    except Exception as e:
-        print(f"Google OAuth error: {e}")
-        return JSONResponse(status_code=500, content={"success": False, "message": f"Google 登录失败: {str(e)}"})
+    } 
