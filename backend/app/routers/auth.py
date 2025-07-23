@@ -37,7 +37,7 @@ oauth.register(
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v2/',
     userinfo_endpoint='https://www.googleapis.com/oauth2/v2/userinfo',
-    client_kwargs={'scope': 'openid email profile'},
+    client_kwargs={'scope': 'openid email profile', 'jwks_uri': 'https://www.googleapis.com/oauth2/v3/certs'},
 )
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
