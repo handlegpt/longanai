@@ -32,7 +32,7 @@ def init_db():
         from app.models.user import User
         
         # Create all tables
-        Base.metadata.create_all(bind=engine)
+        # Base.metadata.create_all(bind=engine)
         print("✅ Database tables created successfully")
     except Exception as e:
         print(f"❌ Error creating database tables: {e}")
