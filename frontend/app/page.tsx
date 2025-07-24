@@ -551,6 +551,8 @@ export default function Home() {
     remaining_generations: number;
     is_unlimited: boolean;
   } | null>(null);
+  const [publicPodcasts, setPublicPodcasts] = useState<Array<{ id: number; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string; coverImageUrl?: string; description?: string; userEmail?: string; tags?: string }>>([]);
+  const [loadingPublic, setLoadingPublic] = useState(false);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -574,6 +576,18 @@ export default function Home() {
     if (savedHistory) {
       setPodcastHistory(JSON.parse(savedHistory));
     }
+  }, []);
+
+  // 拉取全站公开播客
+  useEffect(() => {
+    setLoadingPublic(true);
+    fetch('/api/podcast/public?page=1&size=6')
+      .then(res => res.json())
+      .then(data => {
+        setPublicPodcasts(data.podcasts || []);
+      })
+      .catch(() => setPublicPodcasts([]))
+      .finally(() => setLoadingPublic(false));
   }, []);
 
   // Generate title from content
@@ -1487,6 +1501,71 @@ export default function Home() {
                   {showAllPodcasts ? '显示最新6个' : `查看全部 ${podcastHistory.length} 个播客`}
                 </button>
               </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* 最新播客（全站公开） */}
+      {publicPodcasts.length > 0 && (
+        <section className="bg-gray-50 py-12">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">最新播客</h2>
+              <p className="text-gray-600">全站用户最近生成的公开播客</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {publicPodcasts.map((podcast) => (
+                <motion.div
+                  key={podcast.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="p-6">
+                    <div className="flex items-start space-x-4 mb-4">
+                      {/* Podcast cover image */}
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        {podcast.coverImageUrl ? (
+                          <img 
+                            src={podcast.coverImageUrl} 
+                            alt="播客封面" 
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <Play className="w-6 h-6 text-white" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">{podcast.title}</h3>
+                        <p className="text-xs text-gray-500 mb-2">{podcast.userEmail || ''}</p>
+                        <div className="text-xs text-gray-500">时长: {podcast.duration || '00:00:00'}</div>
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                      <audio
+                        controls
+                        className="w-full h-10 rounded-md"
+                        src={podcast.audioUrl}
+                      >
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                    <div className="flex gap-2 flex-wrap text-xs text-gray-400 mb-2">
+                      {podcast.tags && podcast.tags.split(',').map(tag => tag && (
+                        <span key={tag} className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded">#{tag}</span>
+                      ))}
+                    </div>
+                    <div className="text-xs text-gray-500 mb-2 line-clamp-2">{podcast.description}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            {loadingPublic && (
+              <div className="text-center py-8 text-gray-400">加载中...</div>
+            )}
+            {!loadingPublic && publicPodcasts.length === 0 && (
+              <div className="text-center py-8 text-gray-400">暂无公开播客</div>
             )}
           </div>
         </section>
