@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'add_user_subscription_fields'
-down_revision = None
+down_revision = 'add_google_id_to_user'
 branch_labels = None
 depends_on = None
 
