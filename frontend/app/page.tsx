@@ -839,6 +839,27 @@ export default function Home() {
     }
   }, []);
 
+  // Handle URL parameters for OAuth callback
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('access_token');
+    const email = urlParams.get('email');
+    
+    if (accessToken && email) {
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // Set login state
+      localStorage.setItem('auth_token', accessToken);
+      localStorage.setItem('user_email', email);
+      setIsLoggedIn(true);
+      setUserEmail(email);
+      
+      // Fetch user stats
+      fetchUserStats(email);
+    }
+  }, []);
+
   // Fetch user statistics
   const fetchUserStats = async (email: string) => {
     try {

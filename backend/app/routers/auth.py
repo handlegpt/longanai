@@ -289,7 +289,7 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
             )
             
             # 重定向到前端页面并传递 token
-            frontend_url = "http://localhost:3000/auth/callback"
+            frontend_url = "https://longan.ai/"
             redirect_url = f"{frontend_url}?access_token={access_token}&email={user.email}"
             return RedirectResponse(url=redirect_url)
             
