@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
@@ -36,6 +36,10 @@ class PodcastGenerateRequest(BaseModel):
     emotion: str = "normal"
     speed: float = 1.0
     user_email: str  # 添加用户邮箱字段
+    description: str = ""
+    cover_image_url: str = ""
+    tags: str = ""
+    is_public: bool = True
 
 def format_duration(seconds):
     """Format duration in seconds to HH:MM:SS"""
@@ -119,13 +123,18 @@ async def generate_podcast(
         # Create podcast record
         podcast = Podcast(
             title=f"播客_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            description=request.description,
             content=request.text,
             voice=request.voice,
             emotion=request.emotion,
             speed=request.speed,
             audio_url=f"/static/{filename}",
+            cover_image_url=request.cover_image_url,
             duration=duration_str,
-            file_size=file_size
+            file_size=file_size,
+            user_email=request.user_email,
+            tags=request.tags,
+            is_public=request.is_public
         )
         
         print("💾 Saving podcast record to database...")
@@ -214,4 +223,80 @@ def get_user_stats(user_email: str, db: Session = Depends(get_db)):
         "monthly_generation_limit": user_limit,
         "remaining_generations": remaining,
         "is_unlimited": user_limit == -1
+    } 
+
+# 新增：公开广场 API
+@router.get("/public")
+def get_public_podcasts(
+    db: Session = Depends(get_db),
+    page: int = Query(1, ge=1),
+    size: int = Query(20, ge=1, le=100),
+    search: str = "",
+    tag: str = ""
+):
+    """分页获取所有公开播客，支持搜索和标签筛选"""
+    query = db.query(Podcast).filter(Podcast.is_public == True)
+    if search:
+        query = query.filter(Podcast.title.ilike(f"%{search}%"))
+    if tag:
+        query = query.filter(Podcast.tags.ilike(f"%{tag}%"))
+    total = query.count()
+    podcasts = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
+    return {
+        "total": total,
+        "page": page,
+        "size": size,
+        "podcasts": [
+            {
+                "id": p.id,
+                "title": p.title,
+                "description": p.description,
+                "audioUrl": p.audio_url,
+                "coverImageUrl": p.cover_image_url,
+                "duration": p.duration,
+                "createdAt": p.created_at.isoformat() if p.created_at else None,
+                "userEmail": p.user_email,
+                "tags": p.tags,
+            } for p in podcasts
+        ]
+    }
+
+# 新增：获取某用户所有播客
+@router.get("/user")
+def get_user_podcasts(user_email: str, db: Session = Depends(get_db)):
+    podcasts = db.query(Podcast).filter(Podcast.user_email == user_email).order_by(Podcast.created_at.desc()).all()
+    return {
+        "podcasts": [
+            {
+                "id": p.id,
+                "title": p.title,
+                "description": p.description,
+                "audioUrl": p.audio_url,
+                "coverImageUrl": p.cover_image_url,
+                "duration": p.duration,
+                "createdAt": p.created_at.isoformat() if p.created_at else None,
+                "tags": p.tags,
+                "isPublic": p.is_public,
+            } for p in podcasts
+        ]
+    }
+
+# 新增：获取单个播客详情
+@router.get("/{podcast_id}")
+def get_podcast_detail(podcast_id: int, db: Session = Depends(get_db)):
+    podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
+    if not podcast:
+        raise HTTPException(status_code=404, detail="播客不存在")
+    return {
+        "id": podcast.id,
+        "title": podcast.title,
+        "description": podcast.description,
+        "content": podcast.content,
+        "audioUrl": podcast.audio_url,
+        "coverImageUrl": podcast.cover_image_url,
+        "duration": podcast.duration,
+        "createdAt": podcast.created_at.isoformat() if podcast.created_at else None,
+        "userEmail": podcast.user_email,
+        "tags": podcast.tags,
+        "isPublic": podcast.is_public,
     } 

@@ -978,6 +978,12 @@ export default function Home() {
                   {t.history}
                 </button>
                 <a
+                  href="/explore"
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-700"
+                >
+                  播客广场
+                </a>
+                <a
                   href="/pricing"
                   className="px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-700"
                 >
