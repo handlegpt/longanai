@@ -18,9 +18,6 @@ class User(Base):
     monthly_generation_count = Column(Integer, default=0)  # Current month's generation count
     monthly_generation_limit = Column(Integer, default=10)  # Monthly generation limit
     last_generation_reset = Column(DateTime(timezone=True), nullable=True)  # Last time monthly count was reset
-    
-    # 新增管理员标记
     is_admin = Column(Boolean, default=False)  # 是否为管理员
-    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
