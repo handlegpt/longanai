@@ -287,16 +287,25 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
             access_token = create_access_token(
                 data={"sub": user.email}, expires_delta=access_token_expires
             )
-            return JSONResponse({
-                "success": True,
-                "message": "Google 登录成功",
-                "access_token": access_token,
-                "token_type": "bearer",
-                "email": user.email,
-                "is_verified": user.is_verified
-            })
+            
+            # 重定向到前端页面并传递 token
+            frontend_url = "http://localhost:3000/auth/callback"
+            redirect_url = f"{frontend_url}?access_token={access_token}&email={user.email}"
+            return RedirectResponse(url=redirect_url)
             
     except Exception as e:
         print(f"Google OAuth error: {e}")
         return JSONResponse(status_code=500, content={"success": False, "message": f"Google 登录失败: {str(e)}"})
 
+
+@router.get("/me")
+def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """Get current user info"""
+    return {
+        "success": True,
+        "user": {
+            "id": current_user.id,
+            "email": current_user.email,
+            "is_verified": current_user.is_verified
+        }
+    }

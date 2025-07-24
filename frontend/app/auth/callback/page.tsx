@@ -10,8 +10,8 @@ export default function AuthCallback() {
     const token = params.get("access_token");
     const email = params.get("email");
     if (token) {
-      localStorage.setItem("access_token", token);
-      if (email) localStorage.setItem("email", email);
+      localStorage.setItem("auth_token", token);
+      if (email) localStorage.setItem("user_email", email);
       router.replace("/"); // 自动跳转主页
     }
   }, [params, router]);
