@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query, status
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
@@ -328,3 +328,79 @@ def get_podcast_detail(podcast_id: int, db: Session = Depends(get_db)):
         "tags": podcast.tags,
         "isPublic": podcast.is_public,
     } 
+
+# 管理员权限依赖
+
+def admin_required():
+    # 这里建议用 JWT 或 session 校验，示例用环境变量模拟
+    # 实际生产应替换为更安全的权限校验
+    from fastapi import Request
+    def _admin_dep(request: Request):
+        # 假设 header 里有 X-Admin: true
+        if request.headers.get("x-admin") != "true":
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无管理员权限")
+    return Depends(_admin_dep)
+
+# 后台分页获取所有播客（支持搜索、用户、审核状态筛选）
+@router.get("/admin/list")
+def admin_list_podcasts(
+    db: Session = Depends(get_db),
+    page: int = Query(1, ge=1),
+    size: int = Query(20, ge=1, le=100),
+    search: str = "",
+    user: str = "",
+    review_status: str = "",
+    admin: None = Depends(admin_required())
+):
+    query = db.query(Podcast)
+    if search:
+        query = query.filter(Podcast.title.ilike(f"%{search}%") | Podcast.description.ilike(f"%{search}%") | Podcast.tags.ilike(f"%{search}%"))
+    if user:
+        query = query.filter(Podcast.user_email == user)
+    if review_status:
+        query = query.filter(Podcast.review_status == review_status)
+    total = query.count()
+    podcasts = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
+    return {
+        "total": total,
+        "page": page,
+        "size": size,
+        "podcasts": [
+            {
+                "id": p.id,
+                "title": p.title,
+                "description": p.description,
+                "audioUrl": p.audio_url,
+                "coverImageUrl": p.cover_image_url,
+                "duration": p.duration,
+                "createdAt": p.created_at.isoformat() if p.created_at else None,
+                "user_email": p.user_email,
+                "tags": p.tags,
+                "is_public": p.is_public,
+                "review_status": getattr(p, "review_status", "pending"),
+            } for p in podcasts
+        ]
+    }
+
+# 后台下架播客
+@router.post("/admin/unpublish/{podcast_id}")
+def admin_unpublish_podcast(podcast_id: int, db: Session = Depends(get_db), admin: None = Depends(admin_required())):
+    podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
+    if not podcast:
+        raise HTTPException(status_code=404, detail="播客不存在")
+    podcast.is_public = False
+    db.commit()
+    return {"message": "下架成功"}
+
+# 后台审核状态切换
+class ReviewStatusRequest(BaseModel):
+    review_status: str
+
+@router.post("/admin/review/{podcast_id}")
+def admin_review_podcast(podcast_id: int, req: ReviewStatusRequest, db: Session = Depends(get_db), admin: None = Depends(admin_required())):
+    podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
+    if not podcast:
+        raise HTTPException(status_code=404, detail="播客不存在")
+    podcast.review_status = req.review_status
+    db.commit()
+    return {"message": "审核状态已更新"} 
