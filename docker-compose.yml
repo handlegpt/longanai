@@ -37,9 +37,9 @@ services:
     image: postgres:15-alpine
     container_name: longanai-db
     environment:
-      - POSTGRES_DB=longanai
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
