@@ -9,6 +9,7 @@ import uuid
 import traceback
 from datetime import datetime, timedelta
 from pydub import AudioSegment
+import openai
 
 from app.core.database import get_db
 from app.core.config import settings
@@ -88,9 +89,36 @@ async def generate_podcast(
         tts_voice = VOICE_MAPPING[request.voice]
         print(f"🎵 Using TTS voice: {tts_voice}")
         
+        # 检查文本是否为简体中文，如果是则自动翻译为粤语
+        def is_chinese(text):
+            # 简单判断是否包含中文字符
+            for ch in text:
+                if '\u4e00' <= ch <= '\u9fff':
+                    return True
+            return False
+        tts_text = request.text
+        if is_chinese(request.text):
+            print("🔄 检测到中文，自动调用 OpenAI 翻译为粤语...")
+            api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
+            if not api_key:
+                raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+            openai.api_key = api_key
+            prompt = f"""请将以下内容翻译成粤语，适合朗读：\n\n原文：{request.text}\n\n请翻译成地道的粤语口语，保持原文的意思和情感，但要符合粤语的表达习惯。"""
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "你是一个专业的粤语翻译专家，擅长将普通话翻译成地道的粤语口语。"},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1000,
+                temperature=0.7
+            )
+            tts_text = response.choices[0].message.content.strip()
+            print(f"✅ 翻译完成，粤语文本：{tts_text}")
+        
         # Generate audio using Edge TTS
         print("🔄 Creating Edge TTS communicate object...")
-        communicate = edge_tts.Communicate(request.text, tts_voice)
+        communicate = edge_tts.Communicate(tts_text, tts_voice)
         
         # Create unique filename
         filename = f"podcast_{uuid.uuid4()}.mp3"
@@ -124,7 +152,7 @@ async def generate_podcast(
         podcast = Podcast(
             title=f"播客_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             description=request.description,
-            content=request.text,
+            content=tts_text,
             voice=request.voice,
             emotion=request.emotion,
             speed=request.speed,
