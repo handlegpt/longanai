@@ -1,11 +1,18 @@
 """
 Add public fields to podcast table
+
 Revision ID: 20240608_add_public_fields_to_podcast
-Revises: 
+Revises: add_user_subscription_fields
 Create Date: 2024-06-08
 """
 from alembic import op
 import sqlalchemy as sa
+
+# revision identifiers, used by Alembic.
+revision = '20240608_add_public_fields_to_podcast'
+down_revision = 'add_user_subscription_fields'
+branch_labels = None
+depends_on = None
 
 def upgrade():
     op.add_column('podcasts', sa.Column('description', sa.Text(), nullable=True))
