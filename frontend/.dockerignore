@@ -1,0 +1,36 @@
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Python相关
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 临时/缓存/日志
+tmp/
+temp/
+*.log
+*.tmp
+*.bak
+
+# 二进制/脚本
+*.sh
+*.bin
+*.exe
+*.out
+*.so
+*.dll
+
+# IDE/编辑器
+.vscode/
+.idea/
+.DS_Store
+
+# 其它
+.env
+.env.*
+*.sqlite3
+*.db 
