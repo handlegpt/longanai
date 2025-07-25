@@ -641,7 +641,26 @@ export default function Home() {
     thread_pool_workers: number;
     system_health: string;
   } | null>(null);
+  const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
   const router = useRouter();
+
+  // 轮播标语数组
+  const slogans = [
+    "揀主持人、輸入內容，一鍵生成粵語播客",
+    "释放你嘅创意，让AI为你讲述精彩嘅粤语故事",
+    "克隆你嘅声音，打造专属嘅个人品牌播客",
+    "用AI技术，让每个字都充满情感同温度",
+    "从文字到声音，让粤语文化传承下去"
+  ];
+
+  // 轮播标语效果
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSloganIndex((prev) => (prev + 1) % slogans.length);
+    }, 3000); // 每3秒切换一次
+
+    return () => clearInterval(interval);
+  }, [slogans.length]);
 
   // Website interface language options
   const interfaceLanguages = [
@@ -665,7 +684,7 @@ export default function Home() {
       case 'english':
         return 'Longan AI';
       default:
-        return '龙眼AI';
+        return '龍眼AI';
     }
   };
 
@@ -1156,12 +1175,35 @@ export default function Home() {
                 <span className="mr-2">🎙️</span>
                 {t.heroTag}
               </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 bg-gradient-to-r from-primary-600 via-secondary-600 to-purple-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 bg-gradient-to-r from-primary-600 via-secondary-600 to-purple-600 bg-clip-text text-transparent">
                 {t.heroTitle}
               </h2>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">
-                {t.heroSubtitle}
+                <motion.span
+                  key={currentSloganIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-block"
+                >
+                  {slogans[currentSloganIndex]}
+                </motion.span>
               </p>
+              
+              {/* 标语指示器 */}
+              <div className="flex justify-center space-x-2 mt-4">
+                {slogans.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentSloganIndex 
+                        ? 'bg-primary-500 scale-125' 
+                        : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
             </motion.div>
             
             {/* Text input section for podcast content */}
