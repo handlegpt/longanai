@@ -1134,19 +1134,7 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="mb-8 sm:mb-12"
             >
-              <div className="mb-6 sm:mb-8">
-                <div className="inline-flex items-center px-3 sm:px-4 py-2 rounded-full bg-primary-100 text-primary-700 text-xs sm:text-sm font-medium mb-4 sm:mb-6">
-                  <span className="mr-2">🎙️</span>
-                  AI驱动的粤语播客生成
-                </div>
-                <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 bg-gradient-to-r from-primary-600 via-secondary-600 to-purple-600 bg-clip-text text-transparent">
-                  {t.heroTitle}
-                </h2>
-                <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">
-                  {t.heroSubtitle}
-                </p>
-              </div>
-              
+              {/* 移除标题和图标区域 */}
             </motion.div>
             
             {/* Text input section for podcast content */}
@@ -1156,17 +1144,6 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-6 sm:p-10 mb-6 sm:mb-10 border border-gray-100"
             >
-              <div className="mb-6 sm:mb-8">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
-                    <span className="text-lg sm:text-2xl">🎙️</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">创作你的粤语播客</h3>
-                  </div>
-                </div>
-              </div>
-              
               <div className="space-y-6 sm:space-y-8">
                 <div className="relative">
                   <textarea
