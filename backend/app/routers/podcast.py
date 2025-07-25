@@ -111,6 +111,13 @@ async def generate_podcast(
             tts_voice = VOICE_MAPPING[request.voice]
             print(f"🎵 Using TTS voice: {tts_voice}")
             
+            # 增加中文检测逻辑
+            def is_chinese(text):
+                # 简单判断是否包含中文字符
+                for ch in text:
+                    if '\u4e00' <= ch <= '\u9fff':
+                        return True
+                return False
             # 增加粤语检测逻辑
             def is_cantonese(text):
                 # 常见粤语字/词，可根据需要扩展
