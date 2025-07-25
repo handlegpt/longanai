@@ -25,7 +25,7 @@ const translations = {
     goHome: '立即前往首页',
     resendEmail: '重新发送验证邮件',
     backHome: '返回首页',
-    slogan: '让AI讲好你嘅粤语故事',
+    slogan: '让AI讲好你嘅粤语故事，让粤语传承下去',
     copyright: '© 2025 龙眼AI. 保留所有权利.',
     contactSupport: '请联系客服重新发送验证邮件'
   },

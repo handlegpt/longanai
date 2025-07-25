@@ -103,7 +103,7 @@ class EmailService:
                         </p>
                     </div>
                     <div class="footer">
-                        <p>让AI讲好你嘅粤语故事</p>
+                        <p>让AI讲好你嘅粤语故事，让粤语传承下去</p>
                         <p>&copy; 2024 龙眼AI. 保留所有权利.</p>
                     </div>
                 </div>
