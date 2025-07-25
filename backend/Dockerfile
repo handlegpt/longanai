@@ -6,6 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     ffmpeg \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # 只复制 requirements.txt，避免 COPY . . 带入垃圾文件
