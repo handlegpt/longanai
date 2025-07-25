@@ -32,6 +32,8 @@ services:
       - redis
     networks:
       - longanai-network
+    volumes:
+      - ./static:/app/static
 
   db:
     image: postgres:15-alpine
