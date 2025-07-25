@@ -596,8 +596,17 @@ export default function Home() {
 
   // Generate title from content
   const generateTitleFromContent = (content: string) => {
-    // Remove special characters and get first 50 characters
+    // Remove special characters and get first meaningful sentence or phrase
     const cleanContent = content.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, '').trim();
+    
+    // Try to find the first sentence (ending with 。！？.!?)
+    const sentenceMatch = cleanContent.match(/^[^。！？.!?]+[。！？.!?]/);
+    if (sentenceMatch) {
+      const sentence = sentenceMatch[0].replace(/[。！？.!?]$/, '');
+      return sentence.length > 50 ? sentence.substring(0, 50) + '...' : sentence;
+    }
+    
+    // If no sentence found, take first 30-50 characters
     const title = cleanContent.length > 50 ? cleanContent.substring(0, 50) + '...' : cleanContent;
     return title || '我的播客';
   };
@@ -794,6 +803,7 @@ export default function Home() {
           emotion: 'normal',
           speed: 1.0,
           user_email: userEmail,  // 添加用户邮箱
+          title: generateTitleFromContent(inputText),  // 传递生成的标题
         }),
       });
 
@@ -1235,9 +1245,20 @@ export default function Home() {
       {publicPodcasts.length > 0 && (
         <section className="bg-gray-50 py-12">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">最新播客</h2>
-              <p className="text-gray-600">全站用户最近生成的公开播客</p>
+            <div className="flex items-center justify-between mb-8">
+              <div className="text-center sm:text-left">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">最新播客</h2>
+                <p className="text-gray-600">全站用户最近生成的公开播客</p>
+              </div>
+              <Link 
+                href="/explore" 
+                className="hidden sm:inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+              >
+                <span>查看更多</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {publicPodcasts.map((podcast) => (
@@ -1264,6 +1285,9 @@ export default function Home() {
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">{podcast.title}</h3>
                         <div className="text-xs text-gray-500">时长: {podcast.duration || '00:00:00'}</div>
+                        {podcast.userEmail && (
+                          <div className="text-xs text-gray-400">by {podcast.userEmail.split('@')[0]}</div>
+                        )}
                       </div>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-3 mb-4">
@@ -1275,12 +1299,16 @@ export default function Home() {
                         Your browser does not support the audio element.
                       </audio>
                     </div>
-                    <div className="flex gap-2 flex-wrap text-xs text-gray-400 mb-2">
-                      {podcast.tags && podcast.tags.split(',').map(tag => tag && (
-                        <span key={tag} className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded">#{tag}</span>
-                      ))}
-                    </div>
-                    <div className="text-xs text-gray-500 mb-2 line-clamp-2">{podcast.description}</div>
+                    {podcast.description && (
+                      <div className="text-xs text-gray-500 mb-2 line-clamp-2">{podcast.description}</div>
+                    )}
+                    {podcast.tags && podcast.tags.split(',').filter(tag => tag.trim()).length > 0 && (
+                      <div className="flex gap-2 flex-wrap text-xs text-gray-400 mb-2">
+                        {podcast.tags.split(',').filter(tag => tag.trim()).map(tag => (
+                          <span key={tag} className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded">#{tag.trim()}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -1291,6 +1319,18 @@ export default function Home() {
             {!loadingPublic && publicPodcasts.length === 0 && (
               <div className="text-center py-8 text-gray-400">暂无公开播客</div>
             )}
+            {/* Mobile "查看更多" button */}
+            <div className="text-center sm:hidden mt-8">
+              <Link 
+                href="/explore" 
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+              >
+                <span>查看更多</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </section>
       )}

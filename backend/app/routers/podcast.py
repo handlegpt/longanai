@@ -41,6 +41,7 @@ class PodcastGenerateRequest(BaseModel):
     cover_image_url: str = ""
     tags: str = ""
     is_public: bool = True
+    title: str = ""  # 添加标题字段
 
 def format_duration(seconds):
     """Format duration in seconds to HH:MM:SS"""
@@ -148,9 +149,28 @@ async def generate_podcast(
         file_size = os.path.getsize(filepath)
         print(f"📊 File size: {file_size} bytes")
         
+        # Generate title from content if not provided
+        def generate_title_from_content(content: str) -> str:
+            # Remove special characters and get first meaningful sentence or phrase
+            import re
+            clean_content = re.sub(r'[^\u4e00-\u9fa5a-zA-Z0-9\s]', '', content).strip()
+            
+            # Try to find the first sentence (ending with 。！？.!?)
+            sentence_match = re.match(r'^[^。！？.!?]+[。！？.!?]', clean_content)
+            if sentence_match:
+                sentence = sentence_match.group(0).rstrip('。！？.!?')
+                return sentence[:50] + '...' if len(sentence) > 50 else sentence
+            
+            # If no sentence found, take first 30-50 characters
+            title = clean_content[:50] + '...' if len(clean_content) > 50 else clean_content
+            return title or '我的播客'
+        
+        # Generate title if not provided
+        podcast_title = request.title if request.title else generate_title_from_content(request.text)
+
         # Create podcast record
         podcast = Podcast(
-            title=f"播客_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            title=podcast_title,  # 使用生成的标题
             description=request.description,
             content=tts_text,
             voice=request.voice,
