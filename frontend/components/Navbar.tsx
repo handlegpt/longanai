@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { User, Globe, LogOut } from 'lucide-react';
+import { User, Globe, LogOut, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
@@ -12,6 +12,7 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const router = useRouter();
 
   const languages = [
@@ -74,90 +75,205 @@ export default function Navbar() {
     setIsLoggedIn(false);
     setUserEmail('');
     setShowUserDropdown(false);
+    setShowMobileMenu(false);
     router.push('/');
   };
 
   return (
-    <nav className="w-full flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm z-20">
-      <div className="flex items-center space-x-4">
-        <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
-          <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
-          <span>龙眼AI</span>
-        </Link>
-      </div>
-      <div className="flex items-center space-x-8 text-base font-medium">
-        <Link href="/" className="hover:text-primary transition">制作播客</Link>
-        <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
-        <Link href="/pricing" className="hover:text-primary transition">定价</Link>
-        <Link href="/privacy" className="hover:text-primary transition">隐私</Link>
-        
-        {/* Language selector */}
-        <div className="relative language-dropdown">
-          <button
-            onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-            className="flex items-center space-x-1 hover:text-primary transition"
-          >
-            <Globe className="w-4 h-4" />
-            <span>{languages.find(lang => lang.id === language)?.flag}</span>
-          </button>
-          {showLanguageDropdown && (
-            <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
-              {languages.map((lang) => (
-                <button
-                  key={lang.id}
-                  onClick={() => {
-                    setLanguage(lang.id as any);
-                    setShowLanguageDropdown(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center space-x-2"
-                >
-                  <span>{lang.flag}</span>
-                  <span>{lang.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        {/* 用户登录状态 */}
-        {isLoggedIn ? (
-          <div className="relative user-dropdown">
-            <button
-              onClick={() => setShowUserDropdown(!showUserDropdown)}
-              className="flex items-center space-x-2 hover:text-primary transition"
-            >
-              <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-sm">{userEmail.split('@')[0]}</span>
-            </button>
-            {showUserDropdown && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
-                <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-100">
-                  {userEmail}
+    <nav className="w-full bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm z-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
+              <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
+              <span className="hidden sm:block">龙眼AI</span>
+            </Link>
+          </div>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8 text-base font-medium">
+            <Link href="/" className="hover:text-primary transition">首页</Link>
+            <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
+            <Link href="/pricing" className="hover:text-primary transition">定价</Link>
+            <Link href="/privacy" className="hover:text-primary transition">隐私</Link>
+            
+            {/* Language selector */}
+            <div className="relative language-dropdown">
+              <button
+                onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                className="flex items-center space-x-1 hover:text-primary transition"
+              >
+                <Globe className="w-4 h-4" />
+                <span>{languages.find(lang => lang.id === language)?.flag}</span>
+              </button>
+              {showLanguageDropdown && (
+                <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.id}
+                      onClick={() => {
+                        setLanguage(lang.id as any);
+                        setShowLanguageDropdown(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center space-x-2"
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
                 </div>
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => setShowUserDropdown(false)}
-                >
-                  个人中心
-                </Link>
+              )}
+            </div>
+            
+            {/* 用户登录状态 */}
+            {isLoggedIn ? (
+              <div className="relative user-dropdown">
                 <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                  onClick={() => setShowUserDropdown(!showUserDropdown)}
+                  className="flex items-center space-x-2 hover:text-primary transition"
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span>退出登录</span>
+                  <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-sm">{userEmail.split('@')[0]}</span>
                 </button>
+                {showUserDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                    <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-100">
+                      {userEmail}
+                    </div>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setShowUserDropdown(false)}
+                    >
+                      个人中心
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>退出登录</span>
+                    </button>
+                  </div>
+                )}
               </div>
+            ) : (
+              <Link href="/login" className="flex items-center space-x-1 hover:text-primary transition">
+                <User className="w-4 h-4" />
+                <span>登录</span>
+              </Link>
             )}
           </div>
-        ) : (
-          <Link href="/login" className="flex items-center space-x-1 hover:text-primary transition">
-            <User className="w-4 h-4" />
-            <span>登录</span>
-          </Link>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
+            >
+              {showMobileMenu ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+              <Link
+                href="/"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                首页
+              </Link>
+              <Link
+                href="/explore"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                播客广场
+              </Link>
+              <Link
+                href="/pricing"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                定价
+              </Link>
+              <Link
+                href="/privacy"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                隐私
+              </Link>
+              
+              {/* Mobile Language selector */}
+              <div className="px-3 py-2">
+                <div className="text-sm font-medium text-gray-500 mb-2">语言选择</div>
+                <div className="space-y-1">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.id}
+                      onClick={() => {
+                        setLanguage(lang.id as any);
+                        setShowMobileMenu(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-md flex items-center space-x-2 ${
+                        language === lang.id 
+                          ? 'bg-primary-100 text-primary-700' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile User section */}
+              {isLoggedIn ? (
+                <div className="px-3 py-2 border-t border-gray-200">
+                  <div className="text-sm font-medium text-gray-500 mb-2">用户</div>
+                  <div className="text-sm text-gray-700 mb-2">{userEmail}</div>
+                  <Link
+                    href="/profile"
+                    className="block px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    个人中心
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md flex items-center space-x-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>退出登录</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="px-3 py-2 border-t border-gray-200">
+                  <Link
+                    href="/login"
+                    className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <User className="w-4 h-4" />
+                    <span>登录</span>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </nav>
