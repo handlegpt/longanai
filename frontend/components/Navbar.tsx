@@ -21,6 +21,16 @@ export default function Navbar() {
     { id: 'english', name: 'English', flag: '🇺🇸' },
   ];
 
+  // 根据语言获取网站名称
+  const getWebsiteName = () => {
+    switch (language) {
+      case 'english':
+        return 'Longan AI';
+      default:
+        return '龙眼AI';
+    }
+  };
+
   // 检查登录状态
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
@@ -87,8 +97,8 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
               <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
-              <span className="hidden sm:block">龙眼AI</span>
-              <span className="sm:hidden">龙眼AI</span>
+              <span className="hidden sm:block">{getWebsiteName()}</span>
+              <span className="sm:hidden">{getWebsiteName()}</span>
             </Link>
           </div>
 
