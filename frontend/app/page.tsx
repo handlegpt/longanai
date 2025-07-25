@@ -1186,8 +1186,12 @@ export default function Home() {
                     </div>
                     
                     {/* Character count */}
-                    <div className="text-xs sm:text-sm text-gray-400 bg-white px-2 sm:px-3 py-1 rounded-full">
-                      {inputText.length} / 2000
+                    <div className={`text-xs sm:text-sm bg-white px-2 sm:px-3 py-1 rounded-full ${
+                      inputText.length > 9000 ? 'text-red-500' : 
+                      inputText.length > 8000 ? 'text-orange-500' : 
+                      'text-gray-400'
+                    }`}>
+                      {inputText.length} / 10000
                     </div>
                   </div>
                 </div>
