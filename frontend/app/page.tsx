@@ -1147,37 +1147,6 @@ export default function Home() {
                 </p>
               </div>
               
-              {/* Feature highlights with improved design */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-12"
-              >
-                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                    <Mic className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">{t.feature1Title}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{t.feature1Desc}</p>
-                </div>
-                
-                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">{t.feature2Title}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{t.feature2Desc}</p>
-                </div>
-                
-                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                    <Download className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">{t.feature3Title}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{t.feature3Desc}</p>
-                </div>
-              </motion.div>
             </motion.div>
             
             {/* Text input section for podcast content */}
