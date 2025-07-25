@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
-import Link from 'next/link';
-import { User } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -13,28 +13,6 @@ export const metadata: Metadata = {
   keywords: '粤语,播客,AI,语音生成,龙眼AI',
 };
 
-function Navbar() {
-  return (
-    <nav className="w-full flex items-center justify-between px-6 py-3 bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm z-20">
-      <div className="flex items-center space-x-4">
-        <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
-          <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
-          <span>龙眼AI</span>
-        </Link>
-      </div>
-      <div className="flex items-center space-x-6 text-base font-medium">
-        <Link href="/" className="hover:text-primary transition">制作播客</Link>
-        <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
-        <Link href="/history" className="hover:text-primary transition">历史</Link>
-        <Link href="/pricing" className="hover:text-primary transition">定价</Link>
-        <Link href="/login" className="flex items-center space-x-1 hover:text-primary transition">
-          <User className="w-4 h-4" />
-          <span>登录</span>
-        </Link>
-      </div>
-    </nav>
-  );
-}
 
 export default function RootLayout({
   children,
