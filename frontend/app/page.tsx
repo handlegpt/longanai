@@ -199,7 +199,15 @@ const translations = {
     selectVoiceLabel: '选择音色:',
     generatedPodcastLabel: '生成嘅播客',
     clickToPlayText: '点击播放按钮开始收听',
-    durationLabel: '时长'
+    durationLabel: '时长',
+    
+    // Latest podcasts section
+    latestPodcastsTitle: '最新播客',
+    latestPodcastsSubtitle: '全站用户最近生成嘅公开播客',
+    viewMore: '查看更多',
+    noPublicPodcasts: '暂无公开播客',
+    loadingPodcasts: '加载中...',
+    byUser: 'by'
   },
   mandarin: {
     // Header
@@ -362,7 +370,15 @@ const translations = {
     selectVoiceLabel: '选择音色:',
     generatedPodcastLabel: '生成的播客',
     clickToPlayText: '点击播放按钮开始收听',
-    durationLabel: '时长'
+    durationLabel: '时长',
+    
+    // Latest podcasts section
+    latestPodcastsTitle: '最新播客',
+    latestPodcastsSubtitle: '全站用户最近生成的公开播客',
+    viewMore: '查看更多',
+    noPublicPodcasts: '暂无公开播客',
+    loadingPodcasts: '加载中...',
+    byUser: 'by'
   },
   english: {
     // Header
@@ -525,7 +541,15 @@ const translations = {
     selectVoiceLabel: 'Choose Voice',
     generatedPodcastLabel: 'Generated Podcast',
     clickToPlayText: 'Click the play button to start listening',
-    durationLabel: 'Duration'
+    durationLabel: 'Duration',
+    
+    // Latest podcasts section
+    latestPodcastsTitle: 'Latest Podcasts',
+    latestPodcastsSubtitle: 'Recently generated public podcasts from all users',
+    viewMore: 'View More',
+    noPublicPodcasts: 'No public podcasts yet',
+    loadingPodcasts: 'Loading...',
+    byUser: 'by'
   }
 };
 
@@ -1276,14 +1300,14 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <div className="text-center sm:text-left">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">最新播客</h2>
-                <p className="text-gray-600">全站用户最近生成的公开播客</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.latestPodcastsTitle}</h2>
+                <p className="text-gray-600">{t.latestPodcastsSubtitle}</p>
               </div>
               <Link 
                 href="/explore" 
                 className="hidden sm:inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
               >
-                <span>查看更多</span>
+                <span>{t.viewMore}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -1315,7 +1339,7 @@ export default function Home() {
                         <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">{podcast.title}</h3>
                         <div className="text-xs text-gray-500">时长: {podcast.duration || '00:00:00'}</div>
                         {podcast.userEmail && (
-                          <div className="text-xs text-gray-400">by {podcast.userEmail.split('@')[0]}</div>
+                          <div className="text-xs text-gray-400">{t.byUser} {podcast.userEmail.split('@')[0]}</div>
                         )}
                       </div>
                     </div>
@@ -1343,10 +1367,10 @@ export default function Home() {
               ))}
             </div>
             {loadingPublic && (
-              <div className="text-center py-8 text-gray-400">加载中...</div>
+              <div className="text-center py-8 text-gray-400">{t.loadingPodcasts}</div>
             )}
             {!loadingPublic && publicPodcasts.length === 0 && (
-              <div className="text-center py-8 text-gray-400">暂无公开播客</div>
+              <div className="text-center py-8 text-gray-400">{t.noPublicPodcasts}</div>
             )}
             {/* Mobile "查看更多" button */}
             <div className="text-center sm:hidden mt-8">
@@ -1354,7 +1378,7 @@ export default function Home() {
                 href="/explore" 
                 className="inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
               >
-                <span>查看更多</span>
+                <span>{t.viewMore}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
