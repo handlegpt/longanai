@@ -87,14 +87,10 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
             access_token = create_access_token(
                 data={"sub": user.email}, expires_delta=access_token_expires
             )
-            return JSONResponse({
-                "success": True,
-                "message": "Google 登录成功",
-                "access_token": access_token,
-                "token_type": "bearer",
-                "email": user.email,
-                "is_verified": user.is_verified
-            })
+            # 重定向到前端页面，携带token和email参数
+            frontend_url = "https://longan.ai/auth/callback"
+            redirect_url = f"{frontend_url}?access_token={access_token}&email={email}"
+            return RedirectResponse(url=redirect_url)
     except Exception as e:
         print(f"Google OAuth error: {e}")
         return JSONResponse(status_code=500, content={"success": False, "message": f"Google 登录失败: {str(e)}"})
@@ -193,4 +189,4 @@ def resend_verification(request: EmailRequest, db: Session = Depends(get_db)):
     if email_sent:
         return {"success": True, "message": "Verification email resent successfully"}
     else:
-        raise HTTPException(status_code=500, detail="Failed to send email, please try again later") 
+        raise HTTPException(status_code=500, detail="Failed to send email, please try again later")
