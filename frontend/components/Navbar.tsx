@@ -88,7 +88,6 @@ export default function Navbar() {
       <div className="flex items-center space-x-6 text-base font-medium">
         <Link href="/" className="hover:text-primary transition">制作播客</Link>
         <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
-        <Link href="/history" className="hover:text-primary transition">历史</Link>
         <Link href="/pricing" className="hover:text-primary transition">定价</Link>
         <Link href="/privacy" className="hover:text-primary transition">隐私</Link>
         
