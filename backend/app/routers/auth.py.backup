@@ -18,6 +18,7 @@ router = APIRouter()
 # Request models
 class EmailRequest(BaseModel):
     email: str
+    lang: str = None
 
 class TokenRequest(BaseModel):
     token: str
@@ -69,7 +70,7 @@ async def get_current_user(token: str, db: Session = Depends(get_db)):
     return user
 
 @router.post("/send-verification")
-def send_verification_email(request: EmailRequest, db: Session = Depends(get_db)):
+def send_verification_email(request: EmailRequest, db: Session = Depends(get_db), fastapi_request: Request = None):
     """Send verification email to user"""
     # Validate email format
     if not request.email or '@' not in request.email:
@@ -100,8 +101,14 @@ def send_verification_email(request: EmailRequest, db: Session = Depends(get_db)
     
     db.commit()
     
+    # 多语言处理
+    lang = request.lang
+    if not lang and fastapi_request is not None:
+        lang = fastapi_request.headers.get('accept-language', 'yue').split(',')[0][:2]
+    if lang not in ['zh', 'yue', 'en']:
+        lang = 'yue'
     # Send verification email
-    email_sent = email_service.send_verification_email(request.email, request.email.split('@')[0], verification_token)
+    email_sent = email_service.send_verification_email(request.email, request.email.split('@')[0], verification_token, lang=lang)
     
     if email_sent:
         return {

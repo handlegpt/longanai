@@ -5,6 +5,21 @@ from typing import Optional
 from app.core.config import settings
 from app.utils.email import send_verification_email as resend_send_verification_email
 
+EMAIL_TEMPLATES = {
+    "zh": {
+        "subject": "龙眼AI - 邮箱验证",
+        "body": """<p>你好，{username}！</p>\n<p>请点击以下链接完成邮箱验证：</p>\n<p><a href=\"{url}\">{url}</a></p>\n<p>如果不是你本人操作，请忽略此邮件。</p>"""
+    },
+    "yue": {
+        "subject": "龍眼AI - 郵箱驗證",
+        "body": """<p>你好，{username}！</p>\n<p>請撳以下連結完成郵箱驗證：</p>\n<p><a href=\"{url}\">{url}</a></p>\n<p>如果唔係你本人操作，請忽略此郵件。</p>"""
+    },
+    "en": {
+        "subject": "Longan AI - Email Verification",
+        "body": """<p>Hello, {username}!</p>\n<p>Please click the link below to verify your email address:</p>\n<p><a href=\"{url}\">{url}</a></p>\n<p>If this wasn't you, please ignore this email.</p>"""
+    }
+}
+
 class EmailService:
     def __init__(self):
         self.smtp_config = {
@@ -37,17 +52,13 @@ class EmailService:
             return None
         return None
     
-    def send_verification_email(self, email: str, username: str, token: str) -> bool:
-        """Send verification email (via Resend)"""
+    def send_verification_email(self, email: str, username: str, token: str, lang: str = "zh") -> bool:
+        """Send verification email (via Resend) with multilingual support"""
         try:
             verification_url = f"https://longan.ai/verify-email?token={token}"
-            subject = "龙眼AI - 邮箱验证"
-            html_content = f"""
-            <p>你好，{username}！</p>
-            <p>请点击以下链接完成邮箱验证：</p>
-            <p><a href=\"{verification_url}\">{verification_url}</a></p>
-            <p>如果不是你本人操作，请忽略此邮件。</p>
-            """
+            template = EMAIL_TEMPLATES.get(lang, EMAIL_TEMPLATES["zh"])
+            subject = template["subject"]
+            html_content = template["body"].format(username=username, url=verification_url)
             result = resend_send_verification_email(email, subject, html_content)
             return bool(result and result.get('id'))
         except Exception as e:
