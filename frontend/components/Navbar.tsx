@@ -11,6 +11,7 @@ export default function Navbar() {
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [userDisplayName, setUserDisplayName] = useState('');
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const router = useRouter();
@@ -38,8 +39,23 @@ export default function Navbar() {
     if (token && email) {
       setIsLoggedIn(true);
       setUserEmail(email);
+      fetchUserProfile(email);
     }
   }, []);
+
+  // 获取用户资料
+  const fetchUserProfile = async (email: string) => {
+    try {
+      const response = await fetch(`/api/podcast/user/stats?user_email=${encodeURIComponent(email)}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUserDisplayName(data.display_name || email.split('@')[0]);
+      }
+    } catch (error) {
+      console.error('获取用户资料失败:', error);
+      setUserDisplayName(email.split('@')[0]);
+    }
+  };
 
   // 监听 localStorage 变化
   useEffect(() => {
@@ -49,9 +65,11 @@ export default function Navbar() {
       if (token && email) {
         setIsLoggedIn(true);
         setUserEmail(email);
+        fetchUserProfile(email);
       } else {
         setIsLoggedIn(false);
         setUserEmail('');
+        setUserDisplayName('');
       }
     };
 
@@ -84,17 +102,18 @@ export default function Navbar() {
     localStorage.removeItem('user_email');
     setIsLoggedIn(false);
     setUserEmail('');
+    setUserDisplayName('');
     setShowUserDropdown(false);
     setShowMobileMenu(false);
     router.push('/');
   };
 
   return (
-    <nav className="w-full bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm z-20">
+    <nav className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
+        <div className="flex justify-between items-center py-4">
+          {/* Logo and Brand */}
+          <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
               <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
               <span className="hidden sm:block">{getWebsiteName()}</span>
@@ -103,19 +122,21 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8 text-base font-medium">
+          <div className="hidden md:flex items-center space-x-8">
             <Link href="/" className="hover:text-primary transition">首页</Link>
             <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
             <Link href="/pricing" className="hover:text-primary transition">定价</Link>
             
-            {/* Language selector */}
+            {/* Language Selector */}
             <div className="relative language-dropdown">
               <button
                 onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                className="flex items-center space-x-1 hover:text-primary transition"
+                className="flex items-center space-x-2 hover:text-primary transition"
               >
                 <Globe className="w-4 h-4" />
-                <span>{languages.find(lang => lang.id === language)?.flag}</span>
+                <span className="text-sm">
+                  {languages.find(lang => lang.id === language)?.flag} {languages.find(lang => lang.id === language)?.name}
+                </span>
               </button>
               {showLanguageDropdown && (
                 <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
@@ -126,7 +147,7 @@ export default function Navbar() {
                         setLanguage(lang.id as any);
                         setShowLanguageDropdown(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center space-x-2"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                     >
                       <span>{lang.flag}</span>
                       <span>{lang.name}</span>
@@ -135,8 +156,8 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-            
-            {/* 用户登录状态 */}
+
+            {/* User Menu */}
             {isLoggedIn ? (
               <div className="relative user-dropdown">
                 <button
@@ -146,7 +167,7 @@ export default function Navbar() {
                   <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-sm">{userEmail.split('@')[0]}</span>
+                  <span className="text-sm">{userDisplayName}</span>
                 </button>
                 {showUserDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
@@ -242,7 +263,7 @@ export default function Navbar() {
                   ))}
                 </div>
               </div>
-
+              
               {/* Mobile User section */}
               {isLoggedIn ? (
                 <div className="px-3 py-2 border-t border-gray-200">

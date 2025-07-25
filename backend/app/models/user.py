@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text
 from sqlalchemy.sql import func
 from app.core.database import Base
 
@@ -12,6 +12,13 @@ class User(Base):
     verification_expires = Column(DateTime(timezone=True), nullable=True)  # Token expiration time
     
     google_id = Column(String(128), unique=True, nullable=True)  # Google OAuth 用户唯一ID
+    
+    # User profile fields
+    display_name = Column(String(100), nullable=True)  # 显示名称
+    avatar_url = Column(String(500), nullable=True)  # 头像URL
+    bio = Column(Text, nullable=True)  # 个人简介
+    preferred_voice = Column(String(50), default="young-lady")  # 默认声音
+    preferred_language = Column(String(20), default="cantonese")  # 默认语言
     
     # Subscription and usage tracking
     subscription_plan = Column(String(50), default="free")  # free, pro, enterprise

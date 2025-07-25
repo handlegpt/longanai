@@ -45,12 +45,17 @@ class PodcastGenerateRequest(BaseModel):
     is_public: bool = True
     title: str = ""  # 添加标题字段
 
-def format_duration(seconds):
-    """Format duration in seconds to HH:MM:SS"""
-    hours = int(seconds // 3600)
-    minutes = int((seconds % 3600) // 60)
-    seconds = int(seconds % 60)
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+class UserProfileUpdateRequest(BaseModel):
+    display_name: str = None
+    bio: str = None
+    preferred_voice: str = None
+    preferred_language: str = None
+
+class PodcastUpdateRequest(BaseModel):
+    title: str = None
+    description: str = None
+    tags: str = None
+    is_public: bool = None
 
 # 添加并发控制
 MAX_CONCURRENT_GENERATIONS = settings.MAX_CONCURRENT_GENERATIONS  # 最大并发生成数
@@ -288,8 +293,171 @@ def get_user_stats(user_email: str, db: Session = Depends(get_db)):
         "monthly_generation_count": user.monthly_generation_count,
         "monthly_generation_limit": user_limit,
         "remaining_generations": remaining,
-        "is_unlimited": user_limit == -1
-    } 
+        "is_unlimited": user_limit == -1,
+        "display_name": user.display_name,
+        "bio": user.bio,
+        "preferred_voice": user.preferred_voice,
+        "preferred_language": user.preferred_language,
+        "avatar_url": user.avatar_url
+    }
+
+@router.put("/user/profile")
+def update_user_profile(
+    request: UserProfileUpdateRequest,
+    user_email: str,
+    db: Session = Depends(get_db)
+):
+    """Update user profile information"""
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    
+    if request.display_name is not None:
+        user.display_name = request.display_name
+    if request.bio is not None:
+        user.bio = request.bio
+    if request.preferred_voice is not None:
+        user.preferred_voice = request.preferred_voice
+    if request.preferred_language is not None:
+        user.preferred_language = request.preferred_language
+    
+    db.commit()
+    db.refresh(user)
+    
+    return {"message": "用户资料更新成功"}
+
+@router.get("/user/podcasts")
+def get_user_podcasts(
+    user_email: str,
+    page: int = Query(1, ge=1),
+    size: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    """Get user's podcasts with pagination"""
+    query = db.query(Podcast).filter(Podcast.user_email == user_email)
+    total = query.count()
+    podcasts = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
+    
+    return {
+        "total": total,
+        "page": page,
+        "size": size,
+        "podcasts": [
+            {
+                "id": podcast.id,
+                "title": podcast.title,
+                "description": podcast.description,
+                "audio_url": podcast.audio_url,
+                "cover_image_url": podcast.cover_image_url,
+                "duration": podcast.duration,
+                "voice": podcast.voice,
+                "emotion": podcast.emotion,
+                "speed": podcast.speed,
+                "tags": podcast.tags,
+                "is_public": podcast.is_public,
+                "created_at": podcast.created_at.isoformat() if podcast.created_at else None
+            } for podcast in podcasts
+        ]
+    }
+
+@router.put("/podcast/{podcast_id}")
+def update_podcast(
+    podcast_id: int,
+    request: PodcastUpdateRequest,
+    user_email: str,
+    db: Session = Depends(get_db)
+):
+    """Update podcast information"""
+    podcast = db.query(Podcast).filter(Podcast.id == podcast_id, Podcast.user_email == user_email).first()
+    if not podcast:
+        raise HTTPException(status_code=404, detail="播客不存在或无权限")
+    
+    if request.title is not None:
+        podcast.title = request.title
+    if request.description is not None:
+        podcast.description = request.description
+    if request.tags is not None:
+        podcast.tags = request.tags
+    if request.is_public is not None:
+        podcast.is_public = request.is_public
+    
+    db.commit()
+    db.refresh(podcast)
+    
+    return {"message": "播客更新成功"}
+
+@router.delete("/podcast/{podcast_id}")
+def delete_podcast(
+    podcast_id: int,
+    user_email: str,
+    db: Session = Depends(get_db)
+):
+    """Delete a podcast"""
+    podcast = db.query(Podcast).filter(Podcast.id == podcast_id, Podcast.user_email == user_email).first()
+    if not podcast:
+        raise HTTPException(status_code=404, detail="播客不存在或无权限")
+    
+    # Delete audio file if exists
+    if podcast.audio_url and os.path.exists(podcast.audio_url):
+        try:
+            os.remove(podcast.audio_url)
+        except Exception as e:
+            print(f"Error deleting audio file: {e}")
+    
+    db.delete(podcast)
+    db.commit()
+    
+    return {"message": "播客删除成功"}
+
+@router.get("/user/analytics")
+def get_user_analytics(user_email: str, db: Session = Depends(get_db)):
+    """Get user's podcast generation analytics"""
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    
+    # Get user's podcasts
+    podcasts = db.query(Podcast).filter(Podcast.user_email == user_email).all()
+    
+    # Calculate analytics
+    total_podcasts = len(podcasts)
+    public_podcasts = len([p for p in podcasts if p.is_public])
+    private_podcasts = total_podcasts - public_podcasts
+    
+    # Voice usage statistics
+    voice_stats = {}
+    for podcast in podcasts:
+        voice = podcast.voice
+        voice_stats[voice] = voice_stats.get(voice, 0) + 1
+    
+    # Duration statistics
+    total_duration = 0
+    for podcast in podcasts:
+        if podcast.duration:
+            try:
+                # Parse duration (format: HH:MM:SS)
+                time_parts = podcast.duration.split(':')
+                if len(time_parts) == 3:
+                    hours = int(time_parts[0])
+                    minutes = int(time_parts[1])
+                    seconds = int(time_parts[2])
+                    total_duration += hours * 3600 + minutes * 60 + seconds
+            except:
+                pass
+    
+    # Recent activity (last 30 days)
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    recent_podcasts = len([p for p in podcasts if p.created_at and p.created_at >= thirty_days_ago])
+    
+    return {
+        "total_podcasts": total_podcasts,
+        "public_podcasts": public_podcasts,
+        "private_podcasts": private_podcasts,
+        "voice_statistics": voice_stats,
+        "total_duration_seconds": total_duration,
+        "recent_podcasts_30_days": recent_podcasts,
+        "average_duration": total_duration / total_podcasts if total_podcasts > 0 else 0
+    }
 
 # 新增：公开广场 API
 @router.get("/public")
