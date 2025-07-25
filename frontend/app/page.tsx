@@ -34,6 +34,7 @@ import HistoryPanel from '@/components/HistoryPanel';
 import EmailLogin from '@/components/EmailLogin';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
 
 // Interface language translations
 const translations = {
@@ -529,6 +530,7 @@ const translations = {
 };
 
 export default function Home() {
+  const { language } = useLanguage();
   // State management for UI components
   const [activeTab, setActiveTab] = useState('generate');
   const [selectedVoice, setSelectedVoice] = useState('young-lady');
@@ -570,7 +572,7 @@ export default function Home() {
   ];
 
   // Get current translation based on selected interface language
-  const t = translations[selectedLanguage as keyof typeof translations] || translations.cantonese;
+  const t = translations[language as keyof typeof translations] || translations.cantonese;
 
   // Load podcast history from localStorage on component mount
   useEffect(() => {

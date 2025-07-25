@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { User, Globe, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function Navbar() {
-  const [selectedLanguage, setSelectedLanguage] = useState('cantonese');
+  const { language, setLanguage } = useLanguage();
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
@@ -98,7 +99,7 @@ export default function Navbar() {
             className="flex items-center space-x-1 hover:text-primary transition"
           >
             <Globe className="w-4 h-4" />
-            <span>{languages.find(lang => lang.id === selectedLanguage)?.flag}</span>
+            <span>{languages.find(lang => lang.id === language)?.flag}</span>
           </button>
           {showLanguageDropdown && (
             <div className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
@@ -106,7 +107,7 @@ export default function Navbar() {
                 <button
                   key={lang.id}
                   onClick={() => {
-                    setSelectedLanguage(lang.id);
+                    setLanguage(lang.id as any);
                     setShowLanguageDropdown(false);
                   }}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center space-x-2"
