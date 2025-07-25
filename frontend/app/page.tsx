@@ -48,6 +48,7 @@ const translations = {
     logout: '登出',
     
     // Hero section
+    heroTag: 'AI驱动的粤语播客生成',
     heroTitle: '用AI生成地道嘅粤语播客',
     heroSubtitle: '选择你嘅播客主持人，输入内容，一键生成专业级嘅粤语播客',
     
@@ -236,6 +237,7 @@ const translations = {
     logout: '退出',
     
     // Hero section
+    heroTag: 'AI驱动的粤语播客生成',
     heroTitle: '用AI生成地道的粤语播客',
     heroSubtitle: '选择你的播客主持人，输入内容，一键生成专业级的粤语播客',
     
@@ -424,6 +426,7 @@ const translations = {
     logout: 'Logout',
     
     // Hero section
+    heroTag: 'AI-powered Cantonese Podcast Generation',
     heroTitle: 'Generate Authentic Cantonese Podcasts with AI',
     heroSubtitle: 'Choose your podcast host, input content, and generate professional Cantonese podcasts with one click',
     
@@ -1137,7 +1140,16 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="mb-8 sm:mb-12"
             >
-              {/* 移除标题和图标区域 */}
+              <div className="inline-flex items-center px-3 sm:px-4 py-2 rounded-full bg-primary-100 text-primary-700 text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+                <span className="mr-2">🎙️</span>
+                {t.heroTag}
+              </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 bg-gradient-to-r from-primary-600 via-secondary-600 to-purple-600 bg-clip-text text-transparent">
+                {t.heroTitle}
+              </h2>
+              <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">
+                {t.heroSubtitle}
+              </p>
             </motion.div>
             
             {/* Text input section for podcast content */}
