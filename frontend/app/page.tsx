@@ -1163,25 +1163,16 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">创作你的粤语播客</h3>
-                    <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">输入任何内容，AI将为你生成专业级的粤语播客</p>
                   </div>
                 </div>
               </div>
               
               <div className="space-y-6 sm:space-y-8">
                 <div className="relative">
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      播客内容
-                    </label>
-                    <p className="text-xs text-gray-500 mb-3">
-                      支持新闻、故事、教程、访谈等各种内容类型。AI会自动优化语言表达，让播客更加生动有趣。
-                    </p>
-                  </div>
                   <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="例如：今天我想和大家分享一个关于粤语文化传承的故事。在广东，粤语不仅仅是一种语言，更承载着深厚的历史文化底蕴..."
+                    placeholder="输入你的播客内容..."
                     className="w-full h-32 sm:h-48 p-4 sm:p-8 border-2 border-gray-200 rounded-xl sm:rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-base sm:text-lg leading-relaxed"
                   />
                   <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 flex items-center space-x-2 sm:space-x-4">
