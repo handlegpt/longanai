@@ -1,14 +1,16 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from fastapi.responses import FileResponse
 import os
 import uuid
 import magic
 import hashlib
 import re
-from typing import List
+from typing import List, Optional
+import io
 from app.core.config import settings
 from app.core.security import get_current_user
 from app.models.user import User
+from app.utils.file_processor import extract_text_from_file, validate_extracted_text, clean_extracted_text
 
 router = APIRouter()
 
@@ -119,32 +121,49 @@ async def upload_file(
             detail="文件内容类型不匹配，可能包含恶意内容"
         )
     
-    # 6. 计算文件哈希（用于去重和审计）
+    # 6. 提取文件文本内容
+    extracted_text = extract_text_from_file(content, file.filename)
+    if extracted_text is None:
+        raise HTTPException(
+            status_code=400, 
+            detail="无法从文件中提取文本内容，请检查文件格式"
+        )
+    
+    # 7. 清理和验证提取的文本内容
+    cleaned_text = clean_extracted_text(extracted_text)
+    if not validate_extracted_text(cleaned_text):
+        raise HTTPException(
+            status_code=400, 
+            detail="文件中没有可用的文本内容"
+        )
+    
+    # 8. 计算文件哈希（用于去重和审计）
     file_hash = calculate_file_hash(content)
     
-    # 7. 生成安全的文件名
+    # 9. 生成安全的文件名
     original_name = sanitize_filename(file.filename)
     file_extension = os.path.splitext(original_name)[1]
     unique_filename = f"{uuid.uuid4()}{file_extension}"
     
-    # 8. 确保上传目录存在且安全
+    # 10. 确保上传目录存在且安全
     upload_dir = os.path.abspath(settings.UPLOAD_DIR)
     os.makedirs(upload_dir, exist_ok=True)
     
-    # 9. 验证最终路径安全性
+    # 11. 验证最终路径安全性
     filepath = os.path.join(upload_dir, unique_filename)
     if not filepath.startswith(upload_dir):
         raise HTTPException(status_code=400, detail="文件路径不安全")
     
-    # 10. 保存文件
+    # 12. 保存文件
     try:
         with open(filepath, "wb") as buffer:
             buffer.write(content)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"文件保存失败: {str(e)}")
     
-    # 11. 记录上传日志（可选）
+    # 13. 记录上传日志（可选）
     print(f"📁 File uploaded: {original_name} -> {unique_filename} (User: {current_user.email})")
+    print(f"📝 Extracted text length: {len(cleaned_text)} characters")
     
     return {
         "filename": unique_filename,
@@ -152,68 +171,56 @@ async def upload_file(
         "size": len(content),
         "hash": file_hash,
         "url": f"/static/{unique_filename}",
-        "message": "文件上传成功"
+        "extracted_text": cleaned_text,  # 返回清理后的文本内容
+        "text_length": len(cleaned_text),
+        "message": "文件上传成功，文本内容已提取"
     }
 
-@router.get("/download/{filename}")
-async def download_file(
-    filename: str,
+@router.post("/upload-and-generate")
+async def upload_and_generate_podcast(
+    file: UploadFile = File(...),
+    voice: str = Form("young-lady"),
+    emotion: str = Form("normal"),
+    speed: float = Form(1.0),
     current_user: User = Depends(get_current_user)
 ):
-    """安全下载上传的文件"""
+    """上传文件并直接生成播客"""
     
-    # 1. 验证文件名安全性
-    if not filename or '..' in filename or '/' in filename:
-        raise HTTPException(status_code=400, detail="无效的文件名")
+    # 1. 上传文件并提取内容
+    upload_result = await upload_file(file, current_user)
+    extracted_text = upload_result["extracted_text"]
     
-    # 2. 构建安全路径
-    upload_dir = os.path.abspath(settings.UPLOAD_DIR)
-    filepath = os.path.join(upload_dir, filename)
+    # 2. 调用播客生成API
+    from app.routers.podcast import generate_podcast
+    from app.routers.podcast import PodcastGenerateRequest
     
-    # 3. 验证路径安全性
-    if not filepath.startswith(upload_dir):
-        raise HTTPException(status_code=400, detail="文件路径不安全")
+    # 创建播客生成请求
+    podcast_request = PodcastGenerateRequest(
+        text=extracted_text,
+        voice=voice,
+        emotion=emotion,
+        speed=speed,
+        user_email=current_user.email,
+        title=f"来自文件: {upload_result['original_name']}",
+        description=f"从文件 {upload_result['original_name']} 生成的播客",
+        tags="文件生成",
+        is_public=True
+    )
     
-    # 4. 检查文件是否存在
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="文件不存在")
+    # 3. 生成播客
+    from app.core.database import get_db
+    from sqlalchemy.orm import Session
     
-    # 5. 记录下载日志
-    print(f"📥 File downloaded: {filename} (User: {current_user.email})")
-    
-    return FileResponse(filepath, filename=filename)
-
-@router.delete("/files/{filename}")
-async def delete_file(
-    filename: str,
-    current_user: User = Depends(get_current_user)
-):
-    """删除上传的文件"""
-    
-    # 1. 验证文件名安全性
-    if not filename or '..' in filename or '/' in filename:
-        raise HTTPException(status_code=400, detail="无效的文件名")
-    
-    # 2. 构建安全路径
-    upload_dir = os.path.abspath(settings.UPLOAD_DIR)
-    filepath = os.path.join(upload_dir, filename)
-    
-    # 3. 验证路径安全性
-    if not filepath.startswith(upload_dir):
-        raise HTTPException(status_code=400, detail="文件路径不安全")
-    
-    # 4. 检查文件是否存在
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="文件不存在")
-    
-    # 5. 删除文件
+    db = next(get_db())
     try:
-        os.remove(filepath)
-        print(f"🗑️ File deleted: {filename} (User: {current_user.email})")
+        podcast_result = await generate_podcast(podcast_request, db)
+        return {
+            "upload_info": upload_result,
+            "podcast_info": podcast_result,
+            "message": "文件上传并生成播客成功"
+        }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"文件删除失败: {str(e)}")
-    
-    return {"message": "文件删除成功"}
+        raise HTTPException(status_code=500, detail=f"播客生成失败: {str(e)}")
 
 @router.get("/files/info")
 async def get_upload_info():
@@ -227,5 +234,10 @@ async def get_upload_info():
             "DOC": "Word 97-2003文档",
             "DOCX": "Word 2007+文档",
             "MD": "Markdown文档"
+        },
+        "features": {
+            "text_extraction": "支持从PDF、DOCX等文件中提取文本",
+            "content_validation": "验证文件内容安全性",
+            "direct_generation": "上传文件后可直接生成播客"
         }
     } 
