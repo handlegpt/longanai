@@ -33,6 +33,7 @@ import FileUpload from '@/components/FileUpload';
 import HistoryPanel from '@/components/HistoryPanel';
 import EmailLogin from '@/components/EmailLogin';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // Interface language translations
 const translations = {
@@ -188,8 +189,8 @@ const translations = {
     feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
     
     // Buy Me a Coffee section
-    supportTitle: '如果你觉得呢个项目有帮到你，唔该支持吓我哋啦！',
-    supportDesc: '如果你觉得呢个龙眼AI 粤语播客生成器对你有帮助，欢迎经 Buy Me a Coffee 支持我哋继续搞落去！',
+    supportTitle: '如果你觉得呢个龙眼AI 粤语播客生成器对你有帮助，欢迎经 Buy Me a Coffee 支持我哋继续搞落去！',
+    supportDesc: '',
     buyMeCoffee: 'Buy Me a Coffee',
     uploadFile: '上传文件',
     
@@ -351,8 +352,8 @@ const translations = {
     feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
     
     // Buy Me a Coffee section
-    supportTitle: '如果这个项目对你有帮助，请考虑支持我们',
-    supportDesc: '龙眼AI是一个开源项目，如果你觉得这个粤语播客生成器对你有用，欢迎通过Buy Me a Coffee来支持我们的开发工作。',
+    supportTitle: '如果你觉得龙眼AI 粤语播客生成器对你有帮助，欢迎通过 Buy Me a Coffee 支持我们继续开发！',
+    supportDesc: '',
     buyMeCoffee: 'Buy Me a Coffee',
     uploadFile: '上传文件',
     
@@ -514,8 +515,8 @@ const translations = {
     feature3Desc: 'Input text, select voice, and generate and download podcast audio with one click - simple and efficient',
     
     // Buy Me a Coffee section
-    supportTitle: 'If this project helps you, please consider supporting us',
-    supportDesc: 'Longan AI is an open-source project. If you find this Cantonese podcast generator useful, we welcome your support through Buy Me a Coffee to help with our development work.',
+    supportTitle: 'If you find Longan AI Cantonese Podcast Generator helpful, please support us via Buy Me a Coffee!',
+    supportDesc: '',
     buyMeCoffee: 'Buy Me a Coffee',
     uploadFile: 'Upload File',
     
@@ -553,6 +554,7 @@ export default function Home() {
   } | null>(null);
   const [publicPodcasts, setPublicPodcasts] = useState<Array<{ id: number; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string; coverImageUrl?: string; description?: string; userEmail?: string; tags?: string }>>([]);
   const [loadingPublic, setLoadingPublic] = useState(false);
+  const router = useRouter();
 
   // Website interface language options
   const interfaceLanguages = [
@@ -1058,7 +1060,7 @@ export default function Home() {
                 </div>
               ) : (
                 <button
-                  onClick={() => setShowLogin(true)}
+                  onClick={() => router.push('/login')}
                   className="btn-primary flex items-center space-x-2 text-sm"
                 >
                   <User className="w-4 h-4" />
