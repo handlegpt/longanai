@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Star, Zap, Crown } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
 
 const translations = {
   cantonese: {
@@ -13,6 +14,8 @@ const translations = {
     yearly: '年費',
     save: '慳',
     period: '/月',
+    comingSoon: '即將推出',
+    stayTuned: '敬請期待',
     free: {
       name: '免費版',
       price: '0',
@@ -39,8 +42,8 @@ const translations = {
         '自訂播客封面'
       ]
     },
-    enterprise: {
-      name: '企業版',
+    advanced: {
+      name: '高級版',
       price: '99',
       period: '/月',
       description: '啱晒公司團隊一齊用',
@@ -69,13 +72,16 @@ const translations = {
       },
       {
         q: '生產嘅播客可唔可以商用？',
-        a: '專業版同企業版用戶可以商用播客內容。'
+        a: '專業版同高級版用戶可以商用播客內容。'
       },
       {
         q: '有冇免費試用？',
         a: '所有收費計劃都有7日免費試用期。'
       }
-    ]
+    ],
+    faqTitle: '常見問題',
+    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    slogan: '让AI讲好你嘅粤语故事，让粤语传承下去'
   },
   mandarin: {
     title: '定价方案',
@@ -84,6 +90,8 @@ const translations = {
     yearly: '年付',
     save: '节省',
     period: '/月',
+    comingSoon: '即将推出',
+    stayTuned: '敬请期待',
     free: {
       name: '免费版',
       price: '0',
@@ -110,8 +118,8 @@ const translations = {
         '自定义播客封面'
       ]
     },
-    enterprise: {
-      name: '企业版',
+    advanced: {
+      name: '高级版',
       price: '99',
       period: '/月',
       description: '适合企业团队使用',
@@ -127,7 +135,28 @@ const translations = {
       ]
     },
     cta: '立即开始',
-    popular: '最受欢迎'
+    popular: '最受欢迎',
+    faq: [
+      {
+        q: '可以随时取消订阅吗？',
+        a: '是的，你可以随时取消订阅，不会收取额外费用。'
+      },
+      {
+        q: '支持哪些支付方式？',
+        a: '支持支付宝、微信支付、银行卡等多种支付方式。'
+      },
+      {
+        q: '生成的播客可以商用吗？',
+        a: '专业版和高级版用户拥有播客的商用权利。'
+      },
+      {
+        q: '有免费试用吗？',
+        a: '所有付费方案都提供7天免费试用期。'
+      }
+    ],
+    faqTitle: '常见问题',
+    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    slogan: '让AI讲好你的粤语故事'
   },
   english: {
     title: 'Pricing Plans',
@@ -164,8 +193,8 @@ const translations = {
         'Custom podcast covers'
       ]
     },
-    enterprise: {
-      name: 'Enterprise',
+    advanced: {
+      name: 'Advanced',
       price: '99',
       period: '/month',
       description: 'Perfect for business teams',
@@ -181,15 +210,36 @@ const translations = {
       ]
     },
     cta: 'Get Started',
-    popular: 'Most Popular'
+    popular: 'Most Popular',
+    faq: [
+      {
+        q: 'Can I cancel my subscription anytime?',
+        a: 'Yes, you can cancel your subscription at any time without additional charges.'
+      },
+      {
+        q: 'What payment methods do you support?',
+        a: 'We support Alipay, WeChat Pay, bank cards and other payment methods.'
+      },
+      {
+        q: 'Can I use the generated podcasts commercially?',
+        a: 'Pro and Advanced users have commercial rights to podcast content.'
+      },
+      {
+        q: 'Is there a free trial?',
+        a: 'All paid plans offer a 7-day free trial period.'
+      }
+    ],
+    faqTitle: 'Frequently Asked Questions',
+    copyright: '© 2025 Longan AI. All rights reserved.',
+    slogan: 'Let AI tell your Cantonese stories well'
   }
 };
 
 export default function PricingPage() {
+  const { language } = useLanguage();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [selectedLanguage, setSelectedLanguage] = useState('cantonese');
   
-  const t = translations[selectedLanguage as keyof typeof translations] || translations.cantonese;
+  const t = translations[language as keyof typeof translations] || translations.cantonese;
   
   const plans = [
     {
@@ -205,7 +255,7 @@ export default function PricingPage() {
       color: 'from-primary-500 to-primary-600'
     },
     {
-      ...t.enterprise,
+      ...t.advanced,
       icon: Crown,
       popular: false,
       color: 'from-purple-500 to-purple-600'
@@ -316,7 +366,7 @@ export default function PricingPage() {
                     ) : (
                       <>
                         <span className="text-4xl font-bold text-gray-900">
-                          {selectedLanguage === 'english' ? 'Coming Soon' : '即将推出'}
+                          {t.comingSoon}
                         </span>
                       </>
                     )}
@@ -344,7 +394,7 @@ export default function PricingPage() {
                       : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                   }`}
                 >
-                  {plan.price === '0' ? t.cta : (selectedLanguage === 'english' ? 'Stay Tuned' : '敬请期待')}
+                  {plan.price === '0' ? t.cta : t.stayTuned}
                 </button>
               </div>
             </motion.div>
@@ -358,24 +408,14 @@ export default function PricingPage() {
           transition={{ delay: 0.6 }}
           className="mt-16 text-center"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">常见问题</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-8">{t.faqTitle}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="text-left">
-              <h3 className="font-semibold text-gray-900 mb-2">可以随时取消订阅吗？</h3>
-              <p className="text-gray-600">是的，你可以随时取消订阅，不会收取额外费用。</p>
-            </div>
-            <div className="text-left">
-              <h3 className="font-semibold text-gray-900 mb-2">支持哪些支付方式？</h3>
-              <p className="text-gray-600">支持支付宝、微信支付、银行卡等多种支付方式。</p>
-            </div>
-            <div className="text-left">
-              <h3 className="font-semibold text-gray-900 mb-2">生成的播客可以商用吗？</h3>
-              <p className="text-gray-600">专业版和企业版用户拥有播客的商用权利。</p>
-            </div>
-            <div className="text-left">
-              <h3 className="font-semibold text-gray-900 mb-2">有免费试用吗？</h3>
-              <p className="text-gray-600">所有付费方案都提供7天免费试用期。</p>
-            </div>
+            {t.faq.map((item, index) => (
+              <div key={index} className="text-left">
+                <h3 className="font-semibold text-gray-900 mb-2">{item.q}</h3>
+                <p className="text-gray-600">{item.a}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
       </main>
@@ -384,8 +424,8 @@ export default function PricingPage() {
       <footer className="bg-white border-t mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-600">
-            <p>© 2025 龙眼AI. 保留所有权利.</p>
-            <p className="mt-2">让AI讲好你的粤语故事</p>
+            <p>{t.copyright}</p>
+            <p className="mt-2">{t.slogan}</p>
           </div>
         </div>
       </footer>
