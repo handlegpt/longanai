@@ -330,16 +330,14 @@ def get_podcast_detail(podcast_id: int, db: Session = Depends(get_db)):
     } 
 
 # 管理员权限依赖
+from fastapi import Request
 
-def admin_required():
+def admin_required(request: Request):
     # 这里建议用 JWT 或 session 校验，示例用环境变量模拟
     # 实际生产应替换为更安全的权限校验
-    from fastapi import Request
-    def _admin_dep(request: Request):
-        # 假设 header 里有 X-Admin: true
-        if request.headers.get("x-admin") != "true":
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无管理员权限")
-    return Depends(_admin_dep)
+    if request.headers.get("x-admin") != "true":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="无管理员权限")
+    return True
 
 # 后台分页获取所有播客（支持搜索、用户、审核状态筛选）
 @router.get("/admin/list")
@@ -350,7 +348,7 @@ def admin_list_podcasts(
     search: str = "",
     user: str = "",
     review_status: str = "",
-    admin: None = Depends(admin_required())
+    admin: None = Depends(admin_required)
 ):
     query = db.query(Podcast)
     if search:
@@ -384,7 +382,7 @@ def admin_list_podcasts(
 
 # 后台下架播客
 @router.post("/admin/unpublish/{podcast_id}")
-def admin_unpublish_podcast(podcast_id: int, db: Session = Depends(get_db), admin: None = Depends(admin_required())):
+def admin_unpublish_podcast(podcast_id: int, db: Session = Depends(get_db), admin: None = Depends(admin_required)):
     podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
     if not podcast:
         raise HTTPException(status_code=404, detail="播客不存在")
@@ -397,7 +395,7 @@ class ReviewStatusRequest(BaseModel):
     review_status: str
 
 @router.post("/admin/review/{podcast_id}")
-def admin_review_podcast(podcast_id: int, req: ReviewStatusRequest, db: Session = Depends(get_db), admin: None = Depends(admin_required())):
+def admin_review_podcast(podcast_id: int, req: ReviewStatusRequest, db: Session = Depends(get_db), admin: None = Depends(admin_required)):
     podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
     if not podcast:
         raise HTTPException(status_code=404, detail="播客不存在")
