@@ -207,7 +207,21 @@ const translations = {
     viewMore: '查看更多',
     noPublicPodcasts: '暂无公开播客',
     loadingPodcasts: '加载中...',
-    byUser: 'by'
+    byUser: 'by',
+    
+    // User stats and system status
+    remainingGenerations: '剩余 {count} 次生成',
+    unlimitedGenerations: '无限制生成',
+    systemLoad: '系统负载',
+    
+    // UI elements
+    addCover: '添加封面',
+    home: '首页',
+    explore: '播客广场',
+    pricing: '定价',
+    quickLinks: '快速链接',
+    legalInfo: '法律信息',
+    contactUs: '联系我们'
   },
   mandarin: {
     // Header
@@ -378,7 +392,21 @@ const translations = {
     viewMore: '查看更多',
     noPublicPodcasts: '暂无公开播客',
     loadingPodcasts: '加载中...',
-    byUser: 'by'
+    byUser: 'by',
+    
+    // User stats and system status
+    remainingGenerations: '剩余 {count} 次生成',
+    unlimitedGenerations: '无限制生成',
+    systemLoad: '系统负载',
+    
+    // UI elements
+    addCover: '添加封面',
+    home: '首页',
+    explore: '播客广场',
+    pricing: '定价',
+    quickLinks: '快速链接',
+    legalInfo: '法律信息',
+    contactUs: '联系我们'
   },
   english: {
     // Header
@@ -549,7 +577,21 @@ const translations = {
     viewMore: 'View More',
     noPublicPodcasts: 'No public podcasts yet',
     loadingPodcasts: 'Loading...',
-    byUser: 'by'
+    byUser: 'by',
+    
+    // User stats and system status
+    remainingGenerations: 'Remaining {count} generations',
+    unlimitedGenerations: 'Unlimited generations',
+    systemLoad: 'System Load',
+    
+    // UI elements
+    addCover: 'Add Cover',
+    home: 'Home',
+    explore: 'Explore',
+    pricing: 'Pricing',
+    quickLinks: 'Quick Links',
+    legalInfo: 'Legal Info',
+    contactUs: 'Contact Us'
   }
 };
 
@@ -1162,7 +1204,7 @@ export default function Home() {
                         className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-100 text-blue-700 rounded-lg cursor-pointer hover:bg-blue-200 transition-all duration-200 text-xs sm:text-sm"
                       >
                         <span className="text-lg">🖼️</span>
-                        <span>添加封面</span>
+                        <span>{t.addCover}</span>
                       </label>
                     </div>
                     
@@ -1224,9 +1266,9 @@ export default function Home() {
                         <span>📊</span>
                         <span>
                           {userStats.is_unlimited ? (
-                            '无限制生成'
+                            t.unlimitedGenerations
                           ) : (
-                            `剩余 ${userStats.remaining_generations} 次生成`
+                            t.remainingGenerations.replace('{count}', userStats.remaining_generations.toString())
                           )}
                         </span>
                       </div>
@@ -1237,7 +1279,7 @@ export default function Home() {
                       <div className="flex items-center space-x-2 text-xs text-gray-500 bg-blue-50 px-3 py-2 rounded-lg">
                         <span>⚡</span>
                         <span>
-                          系统负载: {systemStatus.current_active_generations}/{systemStatus.max_concurrent_generations}
+                          {t.systemLoad}: {systemStatus.current_active_generations}/{systemStatus.max_concurrent_generations}
                         </span>
                       </div>
                     )}
@@ -1477,23 +1519,23 @@ export default function Home() {
             
             {/* 快速链接 */}
             <div className="text-center md:text-left">
-              <h3 className="font-semibold text-gray-900 mb-4">快速链接</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">{t.quickLinks}</h3>
               <div className="space-y-2">
                 <Link href="/" className="block text-sm text-gray-600 hover:text-primary transition">
-                  首页
+                  {t.home}
                 </Link>
                 <Link href="/explore" className="block text-sm text-gray-600 hover:text-primary transition">
-                  播客广场
+                  {t.explore}
                 </Link>
                 <Link href="/pricing" className="block text-sm text-gray-600 hover:text-primary transition">
-                  定价
+                  {t.pricing}
                 </Link>
               </div>
             </div>
             
             {/* 法律信息 */}
             <div className="text-center md:text-left">
-              <h3 className="font-semibold text-gray-900 mb-4">法律信息</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">{t.legalInfo}</h3>
               <div className="space-y-2">
                 <Link href="/privacy" className="block text-sm text-gray-600 hover:text-primary transition">
                   隐私政策
@@ -1502,7 +1544,7 @@ export default function Home() {
                   服务条款
                 </Link>
                 <a href="mailto:support@longan.ai" className="block text-sm text-gray-600 hover:text-primary transition">
-                  联系我们
+                  {t.contactUs}
                 </a>
               </div>
             </div>
