@@ -1032,6 +1032,11 @@ export default function Home() {
       setIsLoggedIn(true);
       setUserEmail(email);
       
+      // 触发自定义事件通知导航栏更新
+      window.dispatchEvent(new CustomEvent('userLogin', { 
+        detail: { token: accessToken, email } 
+      }));
+      
       // Fetch user stats
       fetchUserStats(email);
     }
