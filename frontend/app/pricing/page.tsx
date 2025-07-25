@@ -39,7 +39,8 @@ const translations = {
         '高清音質',
         '優先客服支援',
         '批量生成功能',
-        '自訂播客封面'
+        '自訂播客封面',
+        '播客下載功能'
       ]
     },
     advanced: {
@@ -55,7 +56,8 @@ const translations = {
         'API介面接入',
         '團隊協作功能',
         '數據分析報告',
-        '度身訂造服務'
+        '度身訂造服務',
+        '播客下載功能'
       ]
     },
     cta: '即刻開始',
@@ -115,7 +117,8 @@ const translations = {
         '高清音质',
         '优先客服支持',
         '批量生成功能',
-        '自定义播客封面'
+        '自定义播客封面',
+        '播客下载功能'
       ]
     },
     advanced: {
@@ -131,7 +134,8 @@ const translations = {
         'API接口访问',
         '团队协作功能',
         '数据分析报告',
-        '定制化服务'
+        '定制化服务',
+        '播客下载功能'
       ]
     },
     cta: '立即开始',
@@ -190,7 +194,8 @@ const translations = {
         'HD quality',
         'Priority support',
         'Batch generation',
-        'Custom podcast covers'
+        'Custom podcast covers',
+        'Podcast download feature'
       ]
     },
     advanced: {
@@ -206,7 +211,8 @@ const translations = {
         'API access',
         'Team collaboration',
         'Analytics reports',
-        'Custom solutions'
+        'Custom solutions',
+        'Podcast download feature'
       ]
     },
     cta: 'Get Started',
@@ -360,7 +366,7 @@ export default function PricingPage() {
                   <div className="flex items-baseline">
                     {plan.price === '0' ? (
                       <>
-                        <span className="text-4xl font-bold text-gray-900">¥{getPrice(plan.price)}</span>
+                        <span className="text-4xl font-bold text-gray-900">${getPrice(plan.price)}</span>
                         <span className="text-gray-500 ml-2">{t.period}</span>
                       </>
                     ) : (
@@ -373,7 +379,7 @@ export default function PricingPage() {
                   </div>
                   {billingCycle === 'yearly' && plan.price !== '0' && (
                     <p className="text-sm text-gray-500 mt-1">
-                      原价 ¥{parseInt(plan.price) * 12}/年
+                      原价 ${parseInt(plan.price) * 12}/年
                     </p>
                   )}
                 </div>
