@@ -223,7 +223,8 @@ const translations = {
     legalInfo: '法律信息',
     privacyPolicy: '隐私政策',
     termsOfService: '服务条款',
-    contactUs: '联系我们'
+    contactUs: '联系我们',
+    createButton: '創作',
   },
   mandarin: {
     // Header
@@ -410,7 +411,8 @@ const translations = {
     legalInfo: '法律信息',
     privacyPolicy: '隐私政策',
     termsOfService: '服务条款',
-    contactUs: '联系我们'
+    contactUs: '联系我们',
+    createButton: '创作',
   },
   english: {
     // Header
@@ -597,7 +599,8 @@ const translations = {
     legalInfo: 'Legal Info',
     privacyPolicy: 'Privacy Policy',
     termsOfService: 'Terms of Service',
-    contactUs: 'Contact Us'
+    contactUs: 'Contact Us',
+    createButton: 'Create',
   }
 };
 
@@ -1274,7 +1277,7 @@ export default function Home() {
                     ) : (
                       <>
                         <Play className="w-5 h-5 sm:w-6 sm:h-6" />
-                        <span>开始生成播客</span>
+                        <span>{t.createButton}</span>
                       </>
                     )}
                   </button>
