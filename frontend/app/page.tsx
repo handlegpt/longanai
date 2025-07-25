@@ -189,7 +189,7 @@ const translations = {
     feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
     
     // Buy Me a Coffee section
-    supportTitle: '如果你觉得呢个龙眼AI 粤语播客生成器对你有帮助，欢迎经 Buy Me a Coffee 支持我哋继续搞落去！',
+    supportTitle: '请我饮一杯咖啡，支持我哋继续搞落去！',
     supportDesc: '',
     buyMeCoffee: 'Buy Me a Coffee',
     uploadFile: '上传文件',
@@ -352,7 +352,7 @@ const translations = {
     feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
     
     // Buy Me a Coffee section
-    supportTitle: '如果你觉得龙眼AI 粤语播客生成器对你有帮助，欢迎通过 Buy Me a Coffee 支持我们继续开发！',
+    supportTitle: '请我喝一杯咖啡，支持我们继续开发！',
     supportDesc: '',
     buyMeCoffee: 'Buy Me a Coffee',
     uploadFile: '上传文件',
@@ -515,7 +515,7 @@ const translations = {
     feature3Desc: 'Input text, select voice, and generate and download podcast audio with one click - simple and efficient',
     
     // Buy Me a Coffee section
-    supportTitle: 'If you find Longan AI Cantonese Podcast Generator helpful, please support us via Buy Me a Coffee!',
+    supportTitle: 'Buy me a coffee to support our development!',
     supportDesc: '',
     buyMeCoffee: 'Buy Me a Coffee',
     uploadFile: 'Upload File',
