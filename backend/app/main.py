@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
-from app.routers import podcast, auth, files, translate
+from app.routers import podcast, auth, files, translate, admin
 from app.core.config import settings
 from app.core.database import init_db
 
@@ -46,6 +46,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["认证"])
 app.include_router(podcast.router, prefix="/api/podcast", tags=["播客"])
 app.include_router(files.router, prefix="/api/files", tags=["文件"])
 app.include_router(translate.router, prefix="/api/translate", tags=["翻译"])
+app.include_router(admin.router, prefix="/api/admin", tags=["管理员"])
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
