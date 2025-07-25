@@ -88,6 +88,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
               <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
               <span className="hidden sm:block">龙眼AI</span>
+              <span className="sm:hidden">龙眼AI</span>
             </Link>
           </div>
 
