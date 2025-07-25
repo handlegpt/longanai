@@ -379,7 +379,7 @@ export default function PricingPage() {
                   </div>
                   {billingCycle === 'yearly' && plan.price !== '0' && (
                     <p className="text-sm text-gray-500 mt-1">
-                      原价 ${parseInt(plan.price) * 12}/年
+                      原价 ${plan.price === '29' ? '216' : '456'}/年
                     </p>
                   )}
                 </div>
