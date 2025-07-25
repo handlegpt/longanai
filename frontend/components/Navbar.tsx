@@ -6,6 +6,46 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 
+// 翻译对象
+const translations = {
+  cantonese: {
+    home: '首页',
+    explore: '播客广场',
+    pricing: '定价',
+    languageSelection: '语言选择',
+    user: '用户',
+    profile: '个人中心',
+    logout: '退出登录',
+    login: '登录',
+    other: '其他',
+    privacyPolicy: '隐私政策'
+  },
+  mandarin: {
+    home: '首页',
+    explore: '播客广场',
+    pricing: '定价',
+    languageSelection: '语言选择',
+    user: '用户',
+    profile: '个人中心',
+    logout: '退出登录',
+    login: '登录',
+    other: '其他',
+    privacyPolicy: '隐私政策'
+  },
+  english: {
+    home: 'Home',
+    explore: 'Explore',
+    pricing: 'Pricing',
+    languageSelection: 'Language',
+    user: 'User',
+    profile: 'Profile',
+    logout: 'Logout',
+    login: 'Login',
+    other: 'Other',
+    privacyPolicy: 'Privacy Policy'
+  }
+};
+
 export default function Navbar() {
   const { language, setLanguage } = useLanguage();
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
@@ -15,6 +55,9 @@ export default function Navbar() {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const router = useRouter();
+
+  // 获取当前翻译
+  const t = translations[language as keyof typeof translations] || translations.cantonese;
 
   const languages = [
     { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
@@ -123,9 +166,9 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="hover:text-primary transition">首页</Link>
-            <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
-            <Link href="/pricing" className="hover:text-primary transition">定价</Link>
+            <Link href="/" className="hover:text-primary transition">{t.home}</Link>
+            <Link href="/explore" className="hover:text-primary transition">{t.explore}</Link>
+            <Link href="/pricing" className="hover:text-primary transition">{t.pricing}</Link>
             
             {/* Language Selector */}
             <div className="relative language-dropdown">
@@ -179,14 +222,14 @@ export default function Navbar() {
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setShowUserDropdown(false)}
                     >
-                      个人中心
+                      {t.profile}
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>退出登录</span>
+                      <span>{t.logout}</span>
                     </button>
                   </div>
                 )}
@@ -194,7 +237,7 @@ export default function Navbar() {
             ) : (
               <Link href="/login" className="flex items-center space-x-1 hover:text-primary transition">
                 <User className="w-4 h-4" />
-                <span>登录</span>
+                <span>{t.login}</span>
               </Link>
             )}
           </div>
@@ -223,26 +266,26 @@ export default function Navbar() {
                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
                 onClick={() => setShowMobileMenu(false)}
               >
-                首页
+                {t.home}
               </Link>
               <Link
                 href="/explore"
                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
                 onClick={() => setShowMobileMenu(false)}
               >
-                播客广场
+                {t.explore}
               </Link>
               <Link
                 href="/pricing"
                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
                 onClick={() => setShowMobileMenu(false)}
               >
-                定价
+                {t.pricing}
               </Link>
               
               {/* Mobile Language selector */}
               <div className="px-3 py-2">
-                <div className="text-sm font-medium text-gray-500 mb-2">语言选择</div>
+                <div className="text-sm font-medium text-gray-500 mb-2">{t.languageSelection}</div>
                 <div className="space-y-1">
                   {languages.map((lang) => (
                     <button
@@ -267,21 +310,21 @@ export default function Navbar() {
               {/* Mobile User section */}
               {isLoggedIn ? (
                 <div className="px-3 py-2 border-t border-gray-200">
-                  <div className="text-sm font-medium text-gray-500 mb-2">用户</div>
+                  <div className="text-sm font-medium text-gray-500 mb-2">{t.user}</div>
                   <div className="text-sm text-gray-700 mb-2">{userEmail}</div>
                   <Link
                     href="/profile"
                     className="block px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
                     onClick={() => setShowMobileMenu(false)}
                   >
-                    个人中心
+                    {t.profile}
                   </Link>
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md flex items-center space-x-2"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>退出登录</span>
+                    <span>{t.logout}</span>
                   </button>
                 </div>
               ) : (
@@ -292,20 +335,20 @@ export default function Navbar() {
                     onClick={() => setShowMobileMenu(false)}
                   >
                     <User className="w-4 h-4" />
-                    <span>登录</span>
+                    <span>{t.login}</span>
                   </Link>
                 </div>
               )}
               
               {/* Mobile Privacy section - moved to bottom */}
               <div className="px-3 py-2 border-t border-gray-200">
-                <div className="text-sm font-medium text-gray-500 mb-2">其他</div>
+                <div className="text-sm font-medium text-gray-500 mb-2">{t.other}</div>
                 <Link
                   href="/privacy"
                   className="block px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
                   onClick={() => setShowMobileMenu(false)}
                 >
-                  隐私政策
+                  {t.privacyPolicy}
                 </Link>
               </div>
             </div>
