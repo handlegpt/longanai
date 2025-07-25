@@ -26,6 +26,7 @@ if (typeof window !== "undefined") {
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Mic, Download, Share2, History, Upload, User, LogOut, Globe, Play, Pause, Trash2, Lock } from 'lucide-react';
 import PodcastGenerator from '@/components/PodcastGenerator';
 import VoiceSelector from '@/components/VoiceSelector';
@@ -226,6 +227,13 @@ const translations = {
     termsOfService: '服务条款',
     contactUs: '联系我们',
     createButton: '創作',
+    slogans: [
+      "揀主持人、輸入內容，一鍵生成粵語播客",
+      "释放你嘅创意，让AI为你讲述精彩嘅粤语故事",
+      "克隆你嘅声音，打造专属嘅个人品牌播客",
+      "用AI技术，让每个字都充满情感同温度",
+      "从文字到声音，让粤语文化传承下去"
+    ],
   },
   mandarin: {
     // Header
@@ -415,6 +423,13 @@ const translations = {
     termsOfService: '服务条款',
     contactUs: '联系我们',
     createButton: '创作',
+    slogans: [
+      "选择主持人，输入内容，一键生成粤语播客",
+      "释放你的创意，让AI为你讲述精彩的粤语故事",
+      "克隆你的声音，打造专属的个人品牌播客",
+      "用AI技术，让每个字都充满情感和温度",
+      "从文字到声音，让粤语文化传承下去"
+    ],
   },
   english: {
     // Header
@@ -604,6 +619,13 @@ const translations = {
     termsOfService: 'Terms of Service',
     contactUs: 'Contact Us',
     createButton: 'Create',
+    slogans: [
+      "Choose a host, input content, generate a Cantonese podcast with one click",
+      "Unleash your creativity, let AI tell wonderful Cantonese stories",
+      "Clone your voice, build your personal brand podcast",
+      "With AI, every word is full of emotion and warmth",
+      "From text to sound, let Cantonese culture live on"
+    ],
   }
 };
 
@@ -641,17 +663,11 @@ export default function Home() {
     thread_pool_workers: number;
     system_health: string;
   } | null>(null);
-  const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
-  const router = useRouter();
+  const t = translations[language as keyof typeof translations] || translations.cantonese;
 
-  // 轮播标语数组
-  const slogans = [
-    "揀主持人、輸入內容，一鍵生成粵語播客",
-    "释放你嘅创意，让AI为你讲述精彩嘅粤语故事",
-    "克隆你嘅声音，打造专属嘅个人品牌播客",
-    "用AI技术，让每个字都充满情感同温度",
-    "从文字到声音，让粤语文化传承下去"
-  ];
+  // slogans 多语言化
+  const slogans = t.slogans;
+  const [currentSloganIndex, setCurrentSloganIndex] = useState(0);
 
   // 轮播标语效果
   useEffect(() => {
@@ -676,7 +692,7 @@ export default function Home() {
   ];
 
   // Get current translation based on selected interface language
-  const t = translations[language as keyof typeof translations] || translations.cantonese;
+  // const t = translations[language as keyof typeof translations] || translations.cantonese;
 
   // 根据语言获取网站名称
   const getWebsiteName = () => {
@@ -1179,31 +1195,21 @@ export default function Home() {
                 {t.heroTitle}
               </h2>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">
-                <motion.span
-                  key={currentSloganIndex}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="inline-block"
-                >
-                  {slogans[currentSloganIndex]}
-                </motion.span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={currentSloganIndex}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.8 }}
+                    className="inline-block"
+                  >
+                    {slogans[currentSloganIndex]}
+                  </motion.span>
+                </AnimatePresence>
               </p>
               
-              {/* 标语指示器 */}
-              <div className="flex justify-center space-x-2 mt-4">
-                {slogans.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === currentSloganIndex 
-                        ? 'bg-primary-500 scale-125' 
-                        : 'bg-gray-300'
-                    }`}
-                  />
-                ))}
-              </div>
+              {/* 移除标语指示器点点 */}
             </motion.div>
             
             {/* Text input section for podcast content */}
