@@ -168,10 +168,10 @@ async def generate_podcast(
             print("🎵 Generating audio file...")
             try:
                 loop = asyncio.get_event_loop()
-                # 设置60秒超时
+                # 设置180秒超时
                 await asyncio.wait_for(
                     loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(filepath))),
-                    timeout=60.0
+                    timeout=180.0
                 )
                 print("✅ Audio file generated successfully")
             except asyncio.TimeoutError:
