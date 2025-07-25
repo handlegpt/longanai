@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Podcast, Shield, LogOut, Search, Settings } from 'lucide-react';
+import { Users, Podcast, Shield, LogOut, Search, Settings, Edit, Trash2, Eye, Plus, Filter } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -20,7 +20,16 @@ interface User {
   is_admin: boolean;
   subscription_plan: string;
   monthly_generation_count: number;
+  monthly_generation_limit: number;
   created_at: string;
+  display_name?: string;
+  avatar_url?: string;
+  bio?: string;
+}
+
+interface EditUserModal {
+  user: User | null;
+  isOpen: boolean;
 }
 
 export default function AdminDashboard() {
@@ -28,6 +37,9 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const [editModal, setEditModal] = useState<EditUserModal>({ user: null, isOpen: false });
+  const [filterStatus, setFilterStatus] = useState('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -96,7 +108,7 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         toast.success('用户权限更新成功');
-        fetchUsers(); // 刷新用户列表
+        fetchUsers();
       } else {
         toast.error('更新失败');
       }
@@ -105,9 +117,104 @@ export default function AdminDashboard() {
     }
   };
 
-  const filteredUsers = users.filter(user => 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const updateUserSubscription = async (userId: number, plan: string, limit: number) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
+        body: JSON.stringify({ 
+          subscription_plan: plan,
+          monthly_generation_limit: limit
+        })
+      });
+
+      if (response.ok) {
+        toast.success('用户订阅计划更新成功');
+        fetchUsers();
+        setEditModal({ user: null, isOpen: false });
+      } else {
+        toast.error('更新失败');
+      }
+    } catch (error) {
+      toast.error('网络错误');
+    }
+  };
+
+  const deleteUser = async (userId: number) => {
+    if (!confirm('确定要删除这个用户吗？此操作不可撤销。')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        }
+      });
+
+      if (response.ok) {
+        toast.success('用户删除成功');
+        fetchUsers();
+      } else {
+        toast.error('删除失败');
+      }
+    } catch (error) {
+      toast.error('网络错误');
+    }
+  };
+
+  const bulkDeleteUsers = async () => {
+    if (!confirm(`确定要删除选中的 ${selectedUsers.length} 个用户吗？`)) {
+      return;
+    }
+
+    try {
+      const promises = selectedUsers.map(userId =>
+        fetch(`/api/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+          }
+        })
+      );
+
+      await Promise.all(promises);
+      toast.success(`成功删除 ${selectedUsers.length} 个用户`);
+      setSelectedUsers([]);
+      fetchUsers();
+    } catch (error) {
+      toast.error('批量删除失败');
+    }
+  };
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === 'all' || 
+      (filterStatus === 'admin' && user.is_admin) ||
+      (filterStatus === 'verified' && user.is_verified) ||
+      (filterStatus === 'unverified' && !user.is_verified);
+    return matchesSearch && matchesFilter;
+  });
+
+  const handleSelectAll = () => {
+    if (selectedUsers.length === filteredUsers.length) {
+      setSelectedUsers([]);
+    } else {
+      setSelectedUsers(filteredUsers.map(user => user.id));
+    }
+  };
+
+  const handleSelectUser = (userId: number) => {
+    setSelectedUsers(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  };
 
   if (loading) {
     return (
@@ -127,13 +234,29 @@ export default function AdminDashboard() {
               <Shield className="w-8 h-8 text-red-600" />
               <h1 className="text-2xl font-bold text-gray-900">管理员面板</h1>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>退出登录</span>
-            </button>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => router.push('/admin/podcasts')}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Podcast className="w-4 h-4" />
+                <span>播客管理</span>
+              </button>
+              <button
+                onClick={() => router.push('/admin/settings')}
+                className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <Settings className="w-4 h-4" />
+                <span>设置</span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>退出登录</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -208,15 +331,39 @@ export default function AdminDashboard() {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">用户管理</h2>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="搜索用户..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                />
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Filter className="w-4 h-4 text-gray-400" />
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  >
+                    <option value="all">全部用户</option>
+                    <option value="admin">管理员</option>
+                    <option value="verified">已验证</option>
+                    <option value="unverified">未验证</option>
+                  </select>
+                </div>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="搜索用户..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                </div>
+                {selectedUsers.length > 0 && (
+                  <button
+                    onClick={bulkDeleteUsers}
+                    className="flex items-center space-x-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>删除选中 ({selectedUsers.length})</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -225,6 +372,14 @@ export default function AdminDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                      onChange={handleSelectAll}
+                      className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    />
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     用户
                   </th>
@@ -235,7 +390,7 @@ export default function AdminDashboard() {
                     订阅计划
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    生成次数
+                    使用情况
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     操作
@@ -244,7 +399,15 @@ export default function AdminDashboard() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredUsers.map((user) => (
-                  <tr key={user.id}>
+                  <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.includes(user.id)}
+                        onChange={() => handleSelectUser(user.id)}
+                        className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">{user.email}</div>
@@ -270,22 +433,54 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.subscription_plan}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        user.subscription_plan === 'pro' 
+                          ? 'bg-blue-100 text-blue-800'
+                          : user.subscription_plan === 'enterprise'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {user.subscription_plan}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.monthly_generation_count}
+                      <div>
+                        <div className="text-sm">{user.monthly_generation_count} / {user.monthly_generation_limit}</div>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                          <div 
+                            className="bg-red-600 h-2 rounded-full" 
+                            style={{ width: `${Math.min((user.monthly_generation_count / user.monthly_generation_limit) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => updateUserAdmin(user.id, !user.is_admin)}
-                        className={`px-3 py-1 rounded-md text-xs font-medium ${
-                          user.is_admin
-                            ? 'bg-red-100 text-red-800 hover:bg-red-200'
-                            : 'bg-green-100 text-green-800 hover:bg-green-200'
-                        }`}
-                      >
-                        {user.is_admin ? '取消管理员' : '设为管理员'}
-                      </button>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setEditModal({ user, isOpen: true })}
+                          className="flex items-center space-x-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
+                        >
+                          <Edit className="w-3 h-3" />
+                          <span>编辑</span>
+                        </button>
+                        <button
+                          onClick={() => updateUserAdmin(user.id, !user.is_admin)}
+                          className={`px-2 py-1 text-xs rounded ${
+                            user.is_admin
+                              ? 'bg-red-100 text-red-800 hover:bg-red-200'
+                              : 'bg-green-100 text-green-800 hover:bg-green-200'
+                          }`}
+                        >
+                          {user.is_admin ? '取消管理员' : '设为管理员'}
+                        </button>
+                        <button
+                          onClick={() => deleteUser(user.id)}
+                          className="flex items-center space-x-1 px-2 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>删除</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -294,6 +489,71 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Edit User Modal */}
+      {editModal.isOpen && editModal.user && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">编辑用户信息</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+                <input
+                  type="email"
+                  value={editModal.user.email}
+                  disabled
+                  className="w-full p-2 border border-gray-300 rounded-lg bg-gray-100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">订阅计划</label>
+                <select
+                  value={editModal.user.subscription_plan}
+                  onChange={(e) => setEditModal(prev => ({ 
+                    ...prev, 
+                    user: prev.user ? { ...prev.user, subscription_plan: e.target.value } : null 
+                  }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                >
+                  <option value="free">免费版</option>
+                  <option value="pro">专业版</option>
+                  <option value="enterprise">企业版</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">月度生成限制</label>
+                <input
+                  type="number"
+                  value={editModal.user.monthly_generation_limit}
+                  onChange={(e) => setEditModal(prev => ({ 
+                    ...prev, 
+                    user: prev.user ? { ...prev.user, monthly_generation_limit: parseInt(e.target.value) } : null 
+                  }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                />
+              </div>
+              <div className="flex space-x-3 pt-4">
+                <button
+                  onClick={() => updateUserSubscription(
+                    editModal.user!.id,
+                    editModal.user!.subscription_plan,
+                    editModal.user!.monthly_generation_limit
+                  )}
+                  className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+                >
+                  保存
+                </button>
+                <button
+                  onClick={() => setEditModal({ user: null, isOpen: false })}
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
+                >
+                  取消
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

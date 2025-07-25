@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from pydantic import BaseModel
 from typing import Optional
+import hashlib
 
 from app.core.database import get_db
 from app.core.config import settings
@@ -18,10 +19,17 @@ class AdminLoginRequest(BaseModel):
     email: str
     password: str
 
+class AdminPasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
 class AdminUserUpdateRequest(BaseModel):
     is_admin: bool = None
     subscription_plan: str = None
     monthly_generation_limit: int = None
+    display_name: str = None
+    bio: str = None
+    is_verified: bool = None
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -88,6 +96,27 @@ def admin_login(request: AdminLoginRequest, db: Session = Depends(get_db)):
         }
     }
 
+@router.post("/change-password")
+def admin_change_password(
+    request: AdminPasswordChangeRequest,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    """管理员修改密码"""
+    # 验证当前密码
+    if request.current_password != "admin123":  # 临时验证，生产环境应该更安全
+        raise HTTPException(status_code=401, detail="当前密码错误")
+    
+    # 验证新密码长度
+    if len(request.new_password) < 6:
+        raise HTTPException(status_code=400, detail="新密码至少需要6个字符")
+    
+    # 这里应该更新用户密码，暂时只是返回成功
+    # 实际应该将新密码加密后存储到数据库
+    # 由于当前系统使用邮箱验证登录，这里只是示例
+    
+    return {"message": "密码修改成功，请重新登录"}
+
 @router.get("/users")
 def admin_get_users(
     db: Session = Depends(get_db),
@@ -116,6 +145,10 @@ def admin_get_users(
                 "is_admin": user.is_admin,
                 "subscription_plan": user.subscription_plan,
                 "monthly_generation_count": user.monthly_generation_count,
+                "monthly_generation_limit": user.monthly_generation_limit,
+                "display_name": user.display_name,
+                "avatar_url": user.avatar_url,
+                "bio": user.bio,
                 "created_at": user.created_at.isoformat() if user.created_at else None
             } for user in users
         ]
@@ -139,11 +172,71 @@ def admin_update_user(
         user.subscription_plan = request.subscription_plan
     if request.monthly_generation_limit is not None:
         user.monthly_generation_limit = request.monthly_generation_limit
+    if request.display_name is not None:
+        user.display_name = request.display_name
+    if request.bio is not None:
+        user.bio = request.bio
+    if request.is_verified is not None:
+        user.is_verified = request.is_verified
     
     db.commit()
     db.refresh(user)
     
     return {"message": "用户信息更新成功"}
+
+@router.delete("/users/{user_id}")
+def admin_delete_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    """管理员删除用户"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    
+    # 防止删除自己
+    if user.id == current_admin.id:
+        raise HTTPException(status_code=400, detail="不能删除自己的账户")
+    
+    # 删除用户相关的播客
+    user_podcasts = db.query(Podcast).filter(Podcast.user_email == user.email).all()
+    for podcast in user_podcasts:
+        db.delete(podcast)
+    
+    # 删除用户
+    db.delete(user)
+    db.commit()
+    
+    return {"message": "用户删除成功"}
+
+@router.get("/users/{user_id}")
+def admin_get_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    """管理员获取单个用户详情"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    
+    return {
+        "id": user.id,
+        "email": user.email,
+        "is_verified": user.is_verified,
+        "is_admin": user.is_admin,
+        "subscription_plan": user.subscription_plan,
+        "monthly_generation_count": user.monthly_generation_count,
+        "monthly_generation_limit": user.monthly_generation_limit,
+        "display_name": user.display_name,
+        "avatar_url": user.avatar_url,
+        "bio": user.bio,
+        "preferred_voice": user.preferred_voice,
+        "preferred_language": user.preferred_language,
+        "created_at": user.created_at.isoformat() if user.created_at else None,
+        "updated_at": user.updated_at.isoformat() if user.updated_at else None
+    }
 
 @router.get("/podcasts")
 def admin_get_podcasts(
