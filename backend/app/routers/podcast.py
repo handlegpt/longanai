@@ -651,3 +651,28 @@ async def get_system_status():
         "thread_pool_workers": executor._max_workers,
         "system_health": "healthy"
     } 
+
+# 工具函数：格式化秒为HH:MM:SS
+
+def format_duration(seconds: float) -> str:
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = int(seconds % 60)
+    return f"{hours:02d}:{minutes:02d}:{secs:02d}"
+
+# 新增：自动清理无效音频记录的API（可定时调用）
+@router.delete("/admin/cleanup-invalid-podcasts")
+def cleanup_invalid_podcasts(db: Session = Depends(get_db)):
+    """自动清理数据库中指向不存在音频文件的播客记录"""
+    podcasts = db.query(Podcast).all()
+    removed = 0
+    for podcast in podcasts:
+        if podcast.audio_url:
+            # 兼容/static/前缀和绝对路径
+            filename = os.path.basename(podcast.audio_url)
+            filepath = os.path.join("static", filename)
+            if not os.path.exists(filepath):
+                db.delete(podcast)
+                removed += 1
+    db.commit()
+    return {"message": f"已清理无效音频记录 {removed} 条"} 
