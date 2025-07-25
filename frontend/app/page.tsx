@@ -605,6 +605,16 @@ export default function Home() {
   // Get current translation based on selected interface language
   const t = translations[language as keyof typeof translations] || translations.cantonese;
 
+  // 根据语言获取网站名称
+  const getWebsiteName = () => {
+    switch (language) {
+      case 'english':
+        return 'Longan AI';
+      default:
+        return '龙眼AI';
+    }
+  };
+
   // Load podcast history from localStorage on component mount
   useEffect(() => {
     const savedHistory = localStorage.getItem('podcast_history');
@@ -1410,9 +1420,52 @@ export default function Home() {
       {/* Footer with copyright information */}
       <footer className="bg-white border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center text-gray-600">
-            <p>{t.copyright}</p>
-            <p className="mt-2">{t.slogan}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* 品牌信息 */}
+            <div className="text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start space-x-2 mb-4">
+                <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
+                <span className="font-bold text-xl text-primary">{getWebsiteName()}</span>
+              </div>
+              <p className="text-gray-600 text-sm">{t.slogan}</p>
+            </div>
+            
+            {/* 快速链接 */}
+            <div className="text-center md:text-left">
+              <h3 className="font-semibold text-gray-900 mb-4">快速链接</h3>
+              <div className="space-y-2">
+                <Link href="/" className="block text-sm text-gray-600 hover:text-primary transition">
+                  首页
+                </Link>
+                <Link href="/explore" className="block text-sm text-gray-600 hover:text-primary transition">
+                  播客广场
+                </Link>
+                <Link href="/pricing" className="block text-sm text-gray-600 hover:text-primary transition">
+                  定价
+                </Link>
+              </div>
+            </div>
+            
+            {/* 法律信息 */}
+            <div className="text-center md:text-left">
+              <h3 className="font-semibold text-gray-900 mb-4">法律信息</h3>
+              <div className="space-y-2">
+                <Link href="/privacy" className="block text-sm text-gray-600 hover:text-primary transition">
+                  隐私政策
+                </Link>
+                <Link href="/terms" className="block text-sm text-gray-600 hover:text-primary transition">
+                  服务条款
+                </Link>
+                <a href="mailto:support@longan.ai" className="block text-sm text-gray-600 hover:text-primary transition">
+                  联系我们
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          {/* 版权信息 */}
+          <div className="border-t border-gray-200 mt-8 pt-8 text-center">
+            <p className="text-gray-600 text-sm">{t.copyright}</p>
           </div>
         </div>
       </footer>
