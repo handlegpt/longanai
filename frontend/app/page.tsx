@@ -1158,22 +1158,30 @@ export default function Home() {
             >
               <div className="mb-6 sm:mb-8">
                 <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4">
-                    <span className="text-lg sm:text-2xl">✍️</span>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
+                    <span className="text-lg sm:text-2xl">🎙️</span>
                   </div>
                   <div>
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{t.inputTitle}</h3>
-                    <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">{t.inputSubtitle}</p>
+                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">创作你的粤语播客</h3>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">输入任何内容，AI将为你生成专业级的粤语播客</p>
                   </div>
                 </div>
               </div>
               
               <div className="space-y-6 sm:space-y-8">
                 <div className="relative">
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      播客内容
+                    </label>
+                    <p className="text-xs text-gray-500 mb-3">
+                      支持新闻、故事、教程、访谈等各种内容类型。AI会自动优化语言表达，让播客更加生动有趣。
+                    </p>
+                  </div>
                   <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder={t.inputPlaceholder}
+                    placeholder="例如：今天我想和大家分享一个关于粤语文化传承的故事。在广东，粤语不仅仅是一种语言，更承载着深厚的历史文化底蕴..."
                     className="w-full h-32 sm:h-48 p-4 sm:p-8 border-2 border-gray-200 rounded-xl sm:rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-base sm:text-lg leading-relaxed"
                   />
                   <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 flex items-center space-x-2 sm:space-x-4">
@@ -1188,7 +1196,7 @@ export default function Home() {
                       />
                       <label
                         htmlFor="image-upload"
-                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-100 text-blue-700 rounded-lg cursor-pointer hover:bg-blue-200 transition-all duration-200 text-xs sm:text-sm"
+                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg cursor-pointer hover:from-blue-600 hover:to-purple-700 transition-all duration-200 text-xs sm:text-sm shadow-md"
                       >
                         <span className="text-lg">🖼️</span>
                         <span>{t.addCover}</span>
@@ -1207,7 +1215,7 @@ export default function Home() {
                       />
                       <label
                         htmlFor="file-upload"
-                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 transition-all duration-200 text-xs sm:text-sm"
+                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg cursor-pointer hover:from-gray-600 hover:to-gray-700 transition-all duration-200 text-xs sm:text-sm shadow-md"
                       >
                         <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span>{t.uploadFile}</span>
@@ -1215,10 +1223,10 @@ export default function Home() {
                     </div>
                     
                     {/* Character count */}
-                    <div className={`text-xs sm:text-sm bg-white px-2 sm:px-3 py-1 rounded-full ${
-                      inputText.length > 9000 ? 'text-red-500' : 
-                      inputText.length > 8000 ? 'text-orange-500' : 
-                      'text-gray-400'
+                    <div className={`text-xs sm:text-sm bg-white px-2 sm:px-3 py-1 rounded-full shadow-sm border ${
+                      inputText.length > 9000 ? 'text-red-500 border-red-200' : 
+                      inputText.length > 8000 ? 'text-orange-500 border-orange-200' : 
+                      'text-gray-400 border-gray-200'
                     }`}>
                       {inputText.length} / 10000
                     </div>
@@ -1229,16 +1237,19 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
                     {/* Voice selection - improved version */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                      <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.selectVoiceLabel}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg">🎭</span>
+                        <span className="text-sm sm:text-lg font-semibold text-gray-700">选择播客主持人</span>
+                      </div>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         {voices.map((voice) => (
                           <button
                             key={voice.id}
                             onClick={() => setSelectedVoice(voice.id)}
-                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 ${
+                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
                               selectedVoice === voice.id
                                 ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
                             }`}
                           >
                             {voice.name}
@@ -1249,8 +1260,8 @@ export default function Home() {
                     
                     {/* User stats display */}
                     {isLoggedIn && userStats && (
-                      <div className="flex items-center space-x-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
-                        <span>📊</span>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600 bg-gradient-to-r from-green-50 to-blue-50 px-3 py-2 rounded-lg border border-green-200">
+                        <span className="text-lg">📊</span>
                         <span>
                           {userStats.is_unlimited ? (
                             t.unlimitedGenerations
@@ -1263,8 +1274,8 @@ export default function Home() {
                     
                     {/* System status display */}
                     {systemStatus && (
-                      <div className="flex items-center space-x-2 text-xs text-gray-500 bg-blue-50 px-3 py-2 rounded-lg">
-                        <span>⚡</span>
+                      <div className="flex items-center space-x-2 text-xs text-gray-500 bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 rounded-lg border border-blue-200">
+                        <span className="text-lg">⚡</span>
                         <span>
                           {t.systemLoad}: {systemStatus.current_active_generations}/{systemStatus.max_concurrent_generations}
                         </span>
@@ -1285,7 +1296,7 @@ export default function Home() {
                       handleGenerate();
                     }}
                     disabled={isGenerating}
-                    className="btn-primary flex items-center space-x-3 sm:space-x-4 px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl w-full sm:w-auto"
+                    className="btn-primary flex items-center space-x-3 sm:space-x-4 px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl w-full sm:w-auto bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
                   >
                     {isGenerating ? (
                       <>
@@ -1295,7 +1306,7 @@ export default function Home() {
                     ) : (
                       <>
                         <Play className="w-5 h-5 sm:w-6 sm:h-6" />
-                        <span>{t.generatePodcast}</span>
+                        <span>开始生成播客</span>
                       </>
                     )}
                   </button>
