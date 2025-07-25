@@ -221,6 +221,8 @@ const translations = {
     pricing: '定价',
     quickLinks: '快速链接',
     legalInfo: '法律信息',
+    privacyPolicy: '隐私政策',
+    termsOfService: '服务条款',
     contactUs: '联系我们'
   },
   mandarin: {
@@ -406,6 +408,8 @@ const translations = {
     pricing: '定价',
     quickLinks: '快速链接',
     legalInfo: '法律信息',
+    privacyPolicy: '隐私政策',
+    termsOfService: '服务条款',
     contactUs: '联系我们'
   },
   english: {
@@ -591,6 +595,8 @@ const translations = {
     pricing: 'Pricing',
     quickLinks: 'Quick Links',
     legalInfo: 'Legal Info',
+    privacyPolicy: 'Privacy Policy',
+    termsOfService: 'Terms of Service',
     contactUs: 'Contact Us'
   }
 };
@@ -1538,10 +1544,10 @@ export default function Home() {
               <h3 className="font-semibold text-gray-900 mb-4">{t.legalInfo}</h3>
               <div className="space-y-2">
                 <Link href="/privacy" className="block text-sm text-gray-600 hover:text-primary transition">
-                  隐私政策
+                  {t.privacyPolicy}
                 </Link>
                 <Link href="/terms" className="block text-sm text-gray-600 hover:text-primary transition">
-                  服务条款
+                  {t.termsOfService}
                 </Link>
                 <a href="mailto:support@longan.ai" className="block text-sm text-gray-600 hover:text-primary transition">
                   {t.contactUs}
