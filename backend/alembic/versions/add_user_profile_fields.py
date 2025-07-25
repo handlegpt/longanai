@@ -1,7 +1,7 @@
 """Add user profile fields
 
 Revision ID: add_user_profile_fields
-Revises: 20240610_add_is_admin_to_user
+Revises: 
 Create Date: 2025-01-20 10:00:00.000000
 
 """
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'add_user_profile_fields'
-down_revision = '20240610_add_is_admin_to_user'
+down_revision = None
 branch_labels = None
 depends_on = None
 
