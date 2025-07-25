@@ -265,7 +265,7 @@ const translations = {
     
     // Footer
     copyright: '© 2025 龙眼AI. 保留所有权利.',
-    slogan: '让AI讲好你嘅粤语故事，让粤语传承下去',
+    slogan: '让AI讲好你的粤语故事',
     
     // Welcome message
     welcomeTitle: '欢迎使用龙眼AI',
