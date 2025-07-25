@@ -54,7 +54,30 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = os.getenv("GOOGLE_CLIENT_SECRET", "your-google-client-secret")
     GOOGLE_REDIRECT_URI: str = os.getenv("GOOGLE_REDIRECT_URI", "http://longan.ai/api/auth/callback/google")
     
+    # Storage Settings
+    STORAGE_TYPE: str = os.getenv("STORAGE_TYPE", "local")  # local, s3, aliyun_oss
+    LOCAL_STORAGE_PATH: str = os.getenv("LOCAL_STORAGE_PATH", "static")
+    
+    # AWS S3 Settings
+    S3_BUCKET_NAME: str = os.getenv("S3_BUCKET_NAME", "longanai-audio")
+    AWS_REGION: str = os.getenv("AWS_REGION", "ap-southeast-1")
+    AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
+    AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+    
+    # Aliyun OSS Settings
+    OSS_BUCKET_NAME: str = os.getenv("OSS_BUCKET_NAME", "longanai-audio")
+    OSS_ENDPOINT: str = os.getenv("OSS_ENDPOINT", "oss-cn-hangzhou.aliyuncs.com")
+    OSS_ACCESS_KEY_ID: str = os.getenv("OSS_ACCESS_KEY_ID", "")
+    OSS_ACCESS_KEY_SECRET: str = os.getenv("OSS_ACCESS_KEY_SECRET", "")
+    
+    # CDN Settings
+    CDN_DOMAIN: str = os.getenv("CDN_DOMAIN", "")
+    
+    # File Retention Settings
+    AUDIO_RETENTION_DAYS: int = int(os.getenv("AUDIO_RETENTION_DAYS", "365"))
+    UPLOAD_RETENTION_DAYS: int = int(os.getenv("UPLOAD_RETENTION_DAYS", "30"))
+    
     class Config:
         env_file = ".env"
 
-settings = Settings() 
+settings = Settings()
