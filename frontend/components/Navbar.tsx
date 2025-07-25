@@ -78,14 +78,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full flex items-center justify-between px-6 py-3 bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm z-20">
+    <nav className="w-full flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm z-20">
       <div className="flex items-center space-x-4">
         <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
           <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
           <span>龙眼AI</span>
         </Link>
       </div>
-      <div className="flex items-center space-x-6 text-base font-medium">
+      <div className="flex items-center space-x-8 text-base font-medium">
         <Link href="/" className="hover:text-primary transition">制作播客</Link>
         <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
         <Link href="/pricing" className="hover:text-primary transition">定价</Link>
