@@ -111,16 +111,17 @@ async def generate_podcast(
             tts_voice = VOICE_MAPPING[request.voice]
             print(f"🎵 Using TTS voice: {tts_voice}")
             
-            # 检查文本是否为简体中文，如果是则自动翻译为粤语
-            def is_chinese(text):
-                # 简单判断是否包含中文字符
-                for ch in text:
-                    if '\u4e00' <= ch <= '\u9fff':
-                        return True
-                return False
+            # 增加粤语检测逻辑
+            def is_cantonese(text):
+                # 常见粤语字/词，可根据需要扩展
+                cantonese_keywords = [
+                    '咗', '冇', '啱', '嘅', '咩', '啦', '喺', '嚟', '咁', '佢', '乜', '唔', '嘢', '呢', '噉', '啲', '嗰', '喂', '咩', '哋', '咗', '嚟', '冇', '咩', '啱', '嘅', '啦', '喺', '佢', '乜', '嘢', '噉', '啲', '嗰', '哋', '咗', '嚟', '冇', '咩', '啱', '嘅', '啦', '喺', '佢', '乜', '嘢', '噉', '啲', '嗰', '哋'
+                ]
+                return any(word in text for word in cantonese_keywords)
+
             tts_text = request.text
-            if is_chinese(request.text):
-                print("🔄 检测到中文，自动调用 OpenAI 翻译为粤语...")
+            if is_chinese(request.text) and not is_cantonese(request.text):
+                print("🔄 检测到普通话，自动调用 OpenAI 翻译为粤语...")
                 api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
                 if not api_key:
                     raise HTTPException(status_code=500, detail="翻译服务未配置，请稍后重试")
@@ -142,6 +143,7 @@ async def generate_podcast(
                     print(f"⚠️ 翻译失败，使用原文: {e}")
                     # 翻译失败时使用原文
                     tts_text = request.text
+            # 如果是粤语，直接用原文，不翻译
             
             # Validate text length and duration
             estimated_duration = len(request.text) * 0.1  # 粗略估算：每个字符0.1秒
