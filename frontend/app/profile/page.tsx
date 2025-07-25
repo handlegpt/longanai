@@ -249,13 +249,32 @@ export default function ProfilePage() {
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">个人中心</h1>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>退出登录</span>
-            </button>
+            {!editingProfile ? (
+              <button
+                onClick={() => setEditingProfile(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+              >
+                <Edit className="w-4 h-4" />
+                <span>编辑</span>
+              </button>
+            ) : (
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleUpdateProfile}
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>保存</span>
+                </button>
+                <button
+                  onClick={() => setEditingProfile(false)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                  <span>取消</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -294,32 +313,7 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">个人资料</h2>
-                {!editingProfile ? (
-                  <button
-                    onClick={() => setEditingProfile(true)}
-                    className="flex items-center space-x-2 px-3 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-                  >
-                    <Edit className="w-4 h-4" />
-                    <span>编辑</span>
-                  </button>
-                ) : (
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={handleUpdateProfile}
-                      className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                    >
-                      <Save className="w-4 h-4" />
-                      <span>保存</span>
-                    </button>
-                    <button
-                      onClick={() => setEditingProfile(false)}
-                      className="flex items-center space-x-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                      <span>取消</span>
-                    </button>
-                  </div>
-                )}
+                {/* 这里移除原有的编辑/保存/取消按钮 */}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
