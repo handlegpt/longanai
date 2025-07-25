@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -51,9 +52,11 @@ export default function RootLayout({
         }} />
       </head>
       <body className={inter.className + " bg-gray-50 min-h-screen"}>
-        <Navbar />
-        <main className="pt-4">{children}</main>
-        <Toaster position="top-right" />
+        <LanguageProvider>
+          <Navbar />
+          <main className="pt-4">{children}</main>
+          <Toaster position="top-right" />
+        </LanguageProvider>
       </body>
     </html>
   );
