@@ -252,7 +252,7 @@ export default function ProfilePage() {
             {!editingProfile ? (
               <button
                 onClick={() => setEditingProfile(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition-colors"
               >
                 <Edit className="w-4 h-4" />
                 <span>编辑</span>
@@ -292,8 +292,8 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-primary text-white'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? 'bg-gray-200 text-black' // 浅色底+黑色字
+                    : 'text-gray-600 hover:text-primary hover:bg-gray-100'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
