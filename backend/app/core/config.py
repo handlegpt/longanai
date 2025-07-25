@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api"
     PROJECT_NAME: str = "Longan AI"
     
+    # Concurrency Settings
+    MAX_CONCURRENT_GENERATIONS: int = 20  # 最大并发生成数
+    THREAD_POOL_WORKERS: int = 10  # 线程池工作线程数
+    MAX_AUDIO_DURATION: int = 300  # 最大音频时长（秒）
+    
     RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
     RESEND_FROM: str = os.getenv("RESEND_FROM", "noreply@yourdomain.com")
     

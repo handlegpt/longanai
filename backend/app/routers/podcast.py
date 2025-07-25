@@ -10,6 +10,8 @@ import traceback
 from datetime import datetime, timedelta
 from pydub import AudioSegment
 import openai
+from concurrent.futures import ThreadPoolExecutor
+import threading
 
 from app.core.database import get_db
 from app.core.config import settings
@@ -50,165 +52,181 @@ def format_duration(seconds):
     seconds = int(seconds % 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
+# 添加并发控制
+MAX_CONCURRENT_GENERATIONS = settings.MAX_CONCURRENT_GENERATIONS  # 最大并发生成数
+generation_semaphore = asyncio.Semaphore(MAX_CONCURRENT_GENERATIONS)
+executor = ThreadPoolExecutor(max_workers=settings.THREAD_POOL_WORKERS)  # 线程池
+
 @router.post("/generate")
 async def generate_podcast(
     request: PodcastGenerateRequest,
     db: Session = Depends(get_db)
 ):
     """Generate podcast from text"""
-    try:
-        print(f"🎤 Starting podcast generation with voice: {request.voice}")
-        
-        # Check user and their generation limits
-        user = db.query(User).filter(User.email == request.user_email).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="用户不存在")
-        
-        if not user.is_verified:
-            raise HTTPException(status_code=403, detail="请先验证邮箱")
-        
-        # Check if monthly count needs to be reset
-        now = datetime.utcnow()
-        if user.last_generation_reset is None or user.last_generation_reset.month != now.month or user.last_generation_reset.year != now.year:
-            user.monthly_generation_count = 0
-            user.last_generation_reset = now
-        
-        # Check generation limits
-        user_limit = SUBSCRIPTION_LIMITS.get(user.subscription_plan, 10)
-        if user_limit != -1 and user.monthly_generation_count >= user_limit:
-            raise HTTPException(
-                status_code=429, 
-                detail=f"已达到本月生成限制 ({user_limit} 个)。请升级到专业版获得更多生成次数。"
-            )
-        
-        # Validate voice
-        if request.voice not in VOICE_MAPPING:
-            print(f"❌ Invalid voice: {request.voice}")
-            raise HTTPException(status_code=400, detail="Invalid voice selection")
-        
-        # Get TTS voice
-        tts_voice = VOICE_MAPPING[request.voice]
-        print(f"🎵 Using TTS voice: {tts_voice}")
-        
-        # 检查文本是否为简体中文，如果是则自动翻译为粤语
-        def is_chinese(text):
-            # 简单判断是否包含中文字符
-            for ch in text:
-                if '\u4e00' <= ch <= '\u9fff':
-                    return True
-            return False
-        tts_text = request.text
-        if is_chinese(request.text):
-            print("🔄 检测到中文，自动调用 OpenAI 翻译为粤语...")
-            api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
-            if not api_key:
-                raise HTTPException(status_code=500, detail="OpenAI API key not configured")
-            openai.api_key = api_key
-            prompt = f"""请将以下内容翻译成粤语，适合朗读：\n\n原文：{request.text}\n\n请翻译成地道的粤语口语，保持原文的意思和情感，但要符合粤语的表达习惯。"""
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "你是一个专业的粤语翻译专家，擅长将普通话翻译成地道的粤语口语。"},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=1000,
-                temperature=0.7
-            )
-            tts_text = response.choices[0].message.content.strip()
-            print(f"✅ 翻译完成，粤语文本：{tts_text}")
-        
-        # Generate audio using Edge TTS
-        print("🔄 Creating Edge TTS communicate object...")
-        communicate = edge_tts.Communicate(tts_text, tts_voice)
-        
-        # Create unique filename
-        filename = f"podcast_{uuid.uuid4()}.mp3"
-        filepath = os.path.join("static", filename)
-        print(f"📁 Audio file path: {filepath}")
-        
-        # Ensure static directory exists
-        os.makedirs("static", exist_ok=True)
-        print("✅ Static directory ensured")
-        
-        # Generate audio file
-        print("🎵 Generating audio file...")
-        await communicate.save(filepath)
-        print("✅ Audio file generated successfully")
-        
-        # Calculate audio duration
+    async with generation_semaphore:  # 限制并发数
         try:
-            audio = AudioSegment.from_mp3(filepath)
-            duration_seconds = len(audio) / 1000.0  # Convert milliseconds to seconds
-            duration_str = format_duration(duration_seconds)
-            print(f"⏱️ Audio duration: {duration_str}")
-        except Exception as e:
-            print(f"⚠️ Could not calculate duration: {e}")
-            duration_str = "00:00:00"
-        
-        # Get file size
-        file_size = os.path.getsize(filepath)
-        print(f"📊 File size: {file_size} bytes")
-        
-        # Generate title from content if not provided
-        def generate_title_from_content(content: str) -> str:
-            # Remove special characters and get first meaningful sentence or phrase
-            import re
-            clean_content = re.sub(r'[^\u4e00-\u9fa5a-zA-Z0-9\s]', '', content).strip()
+            print(f"🎤 Starting podcast generation with voice: {request.voice}")
+            print(f"📊 Current active generations: {MAX_CONCURRENT_GENERATIONS - generation_semaphore._value}")
             
-            # Try to find the first sentence (ending with 。！？.!?)
-            sentence_match = re.match(r'^[^。！？.!?]+[。！？.!?]', clean_content)
-            if sentence_match:
-                sentence = sentence_match.group(0).rstrip('。！？.!?')
-                return sentence[:50] + '...' if len(sentence) > 50 else sentence
+            # Check user and their generation limits
+            user = db.query(User).filter(User.email == request.user_email).first()
+            if not user:
+                raise HTTPException(status_code=404, detail="用户不存在")
             
-            # If no sentence found, take first 30-50 characters
-            title = clean_content[:50] + '...' if len(clean_content) > 50 else clean_content
-            return title or '我的播客'
-        
-        # Generate title if not provided
-        podcast_title = request.title if request.title else generate_title_from_content(request.text)
+            if not user.is_verified:
+                raise HTTPException(status_code=403, detail="请先验证邮箱")
+            
+            # Check if monthly count needs to be reset
+            now = datetime.utcnow()
+            if user.last_generation_reset is None or user.last_generation_reset.month != now.month or user.last_generation_reset.year != now.year:
+                user.monthly_generation_count = 0
+                user.last_generation_reset = now
+            
+            # Check generation limits
+            user_limit = SUBSCRIPTION_LIMITS.get(user.subscription_plan, 10)
+            if user_limit != -1 and user.monthly_generation_count >= user_limit:
+                raise HTTPException(
+                    status_code=429, 
+                    detail=f"已达到本月生成限制 ({user_limit} 个)。请升级到专业版获得更多生成次数。"
+                )
+            
+            # Validate voice
+            if request.voice not in VOICE_MAPPING:
+                print(f"❌ Invalid voice: {request.voice}")
+                raise HTTPException(status_code=400, detail="Invalid voice selection")
+            
+            # Get TTS voice
+            tts_voice = VOICE_MAPPING[request.voice]
+            print(f"🎵 Using TTS voice: {tts_voice}")
+            
+            # 检查文本是否为简体中文，如果是则自动翻译为粤语
+            def is_chinese(text):
+                # 简单判断是否包含中文字符
+                for ch in text:
+                    if '\u4e00' <= ch <= '\u9fff':
+                        return True
+                return False
+            tts_text = request.text
+            if is_chinese(request.text):
+                print("🔄 检测到中文，自动调用 OpenAI 翻译为粤语...")
+                api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
+                if not api_key:
+                    raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+                openai.api_key = api_key
+                prompt = f"""请将以下内容翻译成粤语，适合朗读：\n\n原文：{request.text}\n\n请翻译成地道的粤语口语，保持原文的意思和情感，但要符合粤语的表达习惯。"""
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "你是一个专业的粤语翻译专家，擅长将普通话翻译成地道的粤语口语。"},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=1000,
+                    temperature=0.7
+                )
+                tts_text = response.choices[0].message.content.strip()
+                print(f"✅ 翻译完成，粤语文本：{tts_text}")
+            
+            # Validate text length and duration
+            estimated_duration = len(request.text) * 0.1  # 粗略估算：每个字符0.1秒
+            if estimated_duration > settings.MAX_AUDIO_DURATION:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"文本过长，预计音频时长 {estimated_duration:.1f} 秒，超过最大限制 {settings.MAX_AUDIO_DURATION} 秒"
+                )
 
-        # Create podcast record
-        podcast = Podcast(
-            title=podcast_title,  # 使用生成的标题
-            description=request.description,
-            content=tts_text,
-            voice=request.voice,
-            emotion=request.emotion,
-            speed=request.speed,
-            audio_url=f"/static/{filename}",
-            cover_image_url=request.cover_image_url,
-            duration=duration_str,
-            file_size=file_size,
-            user_email=request.user_email,
-            tags=request.tags,
-            is_public=request.is_public
-        )
-        
-        print("💾 Saving podcast record to database...")
-        db.add(podcast)
-        
-        # Update user's generation count
-        user.monthly_generation_count += 1
-        db.commit()
-        db.refresh(podcast)
-        print(f"✅ Podcast saved with ID: {podcast.id}")
-        
-        return {
-            "id": podcast.id,
-            "audioUrl": podcast.audio_url,
-            "title": podcast.title,
-            "duration": duration_str,
-            "message": "播客生成成功",
-            "remainingGenerations": user_limit - user.monthly_generation_count if user_limit != -1 else -1
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"❌ Error during podcast generation: {str(e)}")
-        print(f"🔍 Full traceback: {traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail=f"生成失败: {str(e)}")
+            # Generate audio using Edge TTS in thread pool
+            print("🔄 Creating Edge TTS communicate object...")
+            communicate = edge_tts.Communicate(tts_text, tts_voice)
+            
+            # Create unique filename
+            filename = f"podcast_{uuid.uuid4()}.mp3"
+            filepath = os.path.join("static", filename)
+            print(f"📁 Audio file path: {filepath}")
+            
+            # Ensure static directory exists
+            os.makedirs("static", exist_ok=True)
+            print("✅ Static directory ensured")
+            
+            # Generate audio file in thread pool to avoid blocking
+            print("🎵 Generating audio file...")
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(filepath)))
+            print("✅ Audio file generated successfully")
+            
+            # Calculate audio duration
+            try:
+                audio = AudioSegment.from_mp3(filepath)
+                duration_seconds = len(audio) / 1000.0  # Convert milliseconds to seconds
+                duration_str = format_duration(duration_seconds)
+                print(f"⏱️ Audio duration: {duration_str}")
+            except Exception as e:
+                print(f"⚠️ Could not calculate duration: {e}")
+                duration_str = "00:00:00"
+            
+            # Get file size
+            file_size = os.path.getsize(filepath)
+            print(f"📊 File size: {file_size} bytes")
+            
+            # Generate title from content if not provided
+            def generate_title_from_content(content: str) -> str:
+                # Remove special characters and get first meaningful sentence or phrase
+                import re
+                clean_content = re.sub(r'[^\u4e00-\u9fa5a-zA-Z0-9\s]', '', content).strip()
+                
+                # Try to find the first sentence (ending with 。！？.!?)
+                sentence_match = re.match(r'^[^。！？.!?]+[。！？.!?]', clean_content)
+                if sentence_match:
+                    sentence = sentence_match.group(0).rstrip('。！？.!?')
+                    return sentence[:50] + '...' if len(sentence) > 50 else sentence
+                
+                # If no sentence found, take first 30-50 characters
+                title = clean_content[:50] + '...' if len(clean_content) > 50 else clean_content
+                return title or '我的播客'
+            
+            # Generate title if not provided
+            podcast_title = request.title if request.title else generate_title_from_content(request.text)
+
+            # Create podcast record
+            podcast = Podcast(
+                title=podcast_title,  # 使用生成的标题
+                description=request.description,
+                content=tts_text,
+                voice=request.voice,
+                emotion=request.emotion,
+                speed=request.speed,
+                audio_url=f"/static/{filename}",
+                cover_image_url=request.cover_image_url,
+                duration=duration_str,
+                file_size=file_size,
+                user_email=request.user_email,
+                tags=request.tags,
+                is_public=request.is_public
+            )
+            
+            print("💾 Saving podcast record to database...")
+            db.add(podcast)
+            
+            # Update user's generation count
+            user.monthly_generation_count += 1
+            db.commit()
+            db.refresh(podcast)
+            print(f"✅ Podcast saved with ID: {podcast.id}")
+            
+            return {
+                "id": podcast.id,
+                "audioUrl": podcast.audio_url,
+                "title": podcast.title,
+                "duration": duration_str,
+                "message": "播客生成成功",
+                "remainingGenerations": user_limit - user.monthly_generation_count if user_limit != -1 else -1
+            }
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            print(f"❌ Error during podcast generation: {str(e)}")
+            print(f"🔍 Full traceback: {traceback.format_exc()}")
+            raise HTTPException(status_code=500, detail=f"生成失败: {str(e)}")
 
 @router.get("/history")
 def get_podcast_history(db: Session = Depends(get_db)):
@@ -422,3 +440,15 @@ def admin_review_podcast(podcast_id: int, req: ReviewStatusRequest, db: Session 
     podcast.review_status = req.review_status
     db.commit()
     return {"message": "审核状态已更新"} 
+
+# 添加系统状态API
+@router.get("/system/status")
+async def get_system_status():
+    """获取系统当前状态"""
+    return {
+        "max_concurrent_generations": MAX_CONCURRENT_GENERATIONS,
+        "current_active_generations": MAX_CONCURRENT_GENERATIONS - generation_semaphore._value,
+        "available_slots": generation_semaphore._value,
+        "thread_pool_workers": executor._max_workers,
+        "system_health": "healthy"
+    } 

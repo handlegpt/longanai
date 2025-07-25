@@ -556,6 +556,13 @@ export default function Home() {
   } | null>(null);
   const [publicPodcasts, setPublicPodcasts] = useState<Array<{ id: number; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string; coverImageUrl?: string; description?: string; userEmail?: string; tags?: string }>>([]);
   const [loadingPublic, setLoadingPublic] = useState(false);
+  const [systemStatus, setSystemStatus] = useState<{
+    max_concurrent_generations: number;
+    current_active_generations: number;
+    available_slots: number;
+    thread_pool_workers: number;
+    system_health: string;
+  } | null>(null);
   const router = useRouter();
 
   // Website interface language options
@@ -592,6 +599,18 @@ export default function Home() {
       })
       .catch(() => setPublicPodcasts([]))
       .finally(() => setLoadingPublic(false));
+  }, []);
+
+  // 拉取系统状态
+  useEffect(() => {
+    fetch('/api/podcast/system/status')
+      .then(res => res.json())
+      .then(data => {
+        setSystemStatus(data);
+      })
+      .catch(() => {
+        console.log('无法获取系统状态');
+      });
   }, []);
 
   // Generate title from content
@@ -1130,6 +1149,16 @@ export default function Home() {
                           ) : (
                             `剩余 ${userStats.remaining_generations} 次生成`
                           )}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* System status display */}
+                    {systemStatus && (
+                      <div className="flex items-center space-x-2 text-xs text-gray-500 bg-blue-50 px-3 py-2 rounded-lg">
+                        <span>⚡</span>
+                        <span>
+                          系统负载: {systemStatus.current_active_generations}/{systemStatus.max_concurrent_generations}
                         </span>
                       </div>
                     )}
