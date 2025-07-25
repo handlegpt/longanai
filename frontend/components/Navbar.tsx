@@ -107,7 +107,6 @@ export default function Navbar() {
             <Link href="/" className="hover:text-primary transition">首页</Link>
             <Link href="/explore" className="hover:text-primary transition">播客广场</Link>
             <Link href="/pricing" className="hover:text-primary transition">定价</Link>
-            <Link href="/privacy" className="hover:text-primary transition">隐私</Link>
             
             {/* Language selector */}
             <div className="relative language-dropdown">
@@ -219,13 +218,6 @@ export default function Navbar() {
               >
                 定价
               </Link>
-              <Link
-                href="/privacy"
-                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
-                onClick={() => setShowMobileMenu(false)}
-              >
-                隐私
-              </Link>
               
               {/* Mobile Language selector */}
               <div className="px-3 py-2">
@@ -283,6 +275,18 @@ export default function Navbar() {
                   </Link>
                 </div>
               )}
+              
+              {/* Mobile Privacy section - moved to bottom */}
+              <div className="px-3 py-2 border-t border-gray-200">
+                <div className="text-sm font-medium text-gray-500 mb-2">其他</div>
+                <Link
+                  href="/privacy"
+                  className="block px-3 py-2 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  隐私政策
+                </Link>
+              </div>
             </div>
           </div>
         )}
