@@ -146,15 +146,12 @@ export default function ProfilePage() {
 
   const handleUpdateProfile = async () => {
     try {
-      const response = await fetch('/api/podcast/user/profile', {
+      const response = await fetch(`/api/podcast/user/profile?user_email=${encodeURIComponent(userEmail)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          user_email: userEmail,
-          ...profileForm
-        }),
+        body: JSON.stringify(profileForm),
       });
 
       if (response.ok) {
