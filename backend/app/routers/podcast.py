@@ -445,9 +445,9 @@ def get_user_analytics(user_email: str, db: Session = Depends(get_db)):
             except:
                 pass
     
-    # Recent activity (last 30 days)
-    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-    recent_podcasts = len([p for p in podcasts if p.created_at and p.created_at >= thirty_days_ago])
+    # Recent activity (last 30 days) - Fix timezone comparison
+    thirty_days_ago = datetime.utcnow().replace(tzinfo=None) - timedelta(days=30)
+    recent_podcasts = len([p for p in podcasts if p.created_at and p.created_at.replace(tzinfo=None) >= thirty_days_ago])
     
     return {
         "total_podcasts": total_podcasts,
