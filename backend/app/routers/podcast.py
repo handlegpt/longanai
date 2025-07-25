@@ -76,10 +76,10 @@ async def generate_podcast(
             # Check user and their generation limits
             user = db.query(User).filter(User.email == request.user_email).first()
             if not user:
-                raise HTTPException(status_code=404, detail="用户不存在")
+                raise HTTPException(status_code=404, detail="用户不存在，请重新登录")
             
             if not user.is_verified:
-                raise HTTPException(status_code=403, detail="请先验证邮箱")
+                raise HTTPException(status_code=403, detail="请先验证邮箱后再生成播客")
             
             # Check if monthly count needs to be reset
             now = datetime.utcnow()
@@ -98,7 +98,14 @@ async def generate_podcast(
             # Validate voice
             if request.voice not in VOICE_MAPPING:
                 print(f"❌ Invalid voice: {request.voice}")
-                raise HTTPException(status_code=400, detail="Invalid voice selection")
+                raise HTTPException(status_code=400, detail="无效的声音选择，请选择靓女或靓仔")
+            
+            # Validate text length
+            if not request.text or len(request.text.strip()) == 0:
+                raise HTTPException(status_code=400, detail="请输入要转换的文本内容")
+            
+            if len(request.text) > 10000:  # 限制文本长度
+                raise HTTPException(status_code=400, detail="文本内容过长，请控制在10000字符以内")
             
             # Get TTS voice
             tts_voice = VOICE_MAPPING[request.voice]
@@ -116,20 +123,25 @@ async def generate_podcast(
                 print("🔄 检测到中文，自动调用 OpenAI 翻译为粤语...")
                 api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
                 if not api_key:
-                    raise HTTPException(status_code=500, detail="OpenAI API key not configured")
-                openai.api_key = api_key
-                prompt = f"""请将以下内容翻译成粤语，适合朗读：\n\n原文：{request.text}\n\n请翻译成地道的粤语口语，保持原文的意思和情感，但要符合粤语的表达习惯。"""
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "system", "content": "你是一个专业的粤语翻译专家，擅长将普通话翻译成地道的粤语口语。"},
-                        {"role": "user", "content": prompt}
-                    ],
-                    max_tokens=1000,
-                    temperature=0.7
-                )
-                tts_text = response.choices[0].message.content.strip()
-                print(f"✅ 翻译完成，粤语文本：{tts_text}")
+                    raise HTTPException(status_code=500, detail="翻译服务未配置，请稍后重试")
+                try:
+                    openai.api_key = api_key
+                    prompt = f"""请将以下内容翻译成粤语，适合朗读：\n\n原文：{request.text}\n\n请翻译成地道的粤语口语，保持原文的意思和情感，但要符合粤语的表达习惯。"""
+                    response = openai.ChatCompletion.create(
+                        model="gpt-3.5-turbo",
+                        messages=[
+                            {"role": "system", "content": "你是一个专业的粤语翻译专家，擅长将普通话翻译成地道的粤语口语。"},
+                            {"role": "user", "content": prompt}
+                        ],
+                        max_tokens=1000,
+                        temperature=0.7
+                    )
+                    tts_text = response.choices[0].message.content.strip()
+                    print(f"✅ 翻译完成，粤语文本：{tts_text}")
+                except Exception as e:
+                    print(f"⚠️ 翻译失败，使用原文: {e}")
+                    # 翻译失败时使用原文
+                    tts_text = request.text
             
             # Validate text length and duration
             estimated_duration = len(request.text) * 0.1  # 粗略估算：每个字符0.1秒
@@ -139,7 +151,7 @@ async def generate_podcast(
                     detail=f"文本过长，预计音频时长 {estimated_duration:.1f} 秒，超过最大限制 {settings.MAX_AUDIO_DURATION} 秒"
                 )
 
-            # Generate audio using Edge TTS in thread pool
+            # Generate audio using Edge TTS in thread pool with timeout
             print("🔄 Creating Edge TTS communicate object...")
             communicate = edge_tts.Communicate(tts_text, tts_voice)
             
@@ -152,11 +164,21 @@ async def generate_podcast(
             os.makedirs("static", exist_ok=True)
             print("✅ Static directory ensured")
             
-            # Generate audio file in thread pool to avoid blocking
+            # Generate audio file in thread pool with timeout
             print("🎵 Generating audio file...")
-            loop = asyncio.get_event_loop()
-            await loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(filepath)))
-            print("✅ Audio file generated successfully")
+            try:
+                loop = asyncio.get_event_loop()
+                # 设置60秒超时
+                await asyncio.wait_for(
+                    loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(filepath))),
+                    timeout=60.0
+                )
+                print("✅ Audio file generated successfully")
+            except asyncio.TimeoutError:
+                raise HTTPException(status_code=408, detail="生成超时，请稍后重试或减少文本长度")
+            except Exception as e:
+                print(f"❌ Audio generation failed: {e}")
+                raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
             
             # Calculate audio duration
             try:

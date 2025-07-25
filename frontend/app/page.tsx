@@ -893,16 +893,57 @@ export default function Home() {
         }
       } else {
         const errorData = await response.json();
-        if (response.status === 429) {
-          // 达到生成限制
-          alert(`生成失败: ${errorData.detail}\n\n请考虑升级到专业版获得更多生成次数。`);
-        } else {
-          alert(`生成失败: ${errorData.detail || '未知错误'}`);
+        let errorMessage = '生成失败';
+        
+        // 根据不同的错误状态码提供具体的错误信息
+        switch (response.status) {
+          case 400:
+            errorMessage = `请求参数错误: ${errorData.detail || '请检查输入内容'}`;
+            break;
+          case 401:
+            errorMessage = '登录已过期，请重新登录';
+            setShowLogin(true);
+            break;
+          case 403:
+            errorMessage = '权限不足，请先验证邮箱';
+            break;
+          case 404:
+            errorMessage = '服务不可用，请稍后重试';
+            break;
+          case 429:
+            errorMessage = `已达到本月生成限制 (${errorData.detail || '未知限制'})\n\n请考虑升级到专业版获得更多生成次数。`;
+            break;
+          case 500:
+            errorMessage = '服务器内部错误，请稍后重试';
+            break;
+          case 503:
+            errorMessage = '服务暂时不可用，请稍后重试';
+            break;
+          default:
+            errorMessage = `生成失败: ${errorData.detail || '未知错误'}`;
         }
+        
+        alert(errorMessage);
       }
     } catch (error) {
       console.error('生成播客时出错:', error);
-      alert('网络错误，请重试');
+      
+      // 根据错误类型提供更具体的错误信息
+      let errorMessage = '网络错误，请重试';
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = '网络连接失败，请检查网络连接后重试';
+      } else if (error instanceof Error) {
+        if (error.message.includes('timeout')) {
+          errorMessage = '请求超时，请稍后重试';
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMessage = '无法连接到服务器，请检查网络连接';
+        } else {
+          errorMessage = `生成失败: ${error.message}`;
+        }
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsGenerating(false);
     }
