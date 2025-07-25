@@ -839,7 +839,14 @@ export default function Home() {
     localStorage.setItem('auth_token', token);
     localStorage.setItem('user_email', email);
     setShowLogin(false);
-    window.location.reload(); // 登录成功后自动刷新页面
+    
+    // 触发自定义事件通知导航栏更新
+    window.dispatchEvent(new CustomEvent('userLogin', { 
+      detail: { token, email } 
+    }));
+    
+    // 获取用户统计信息
+    fetchUserStats(email);
   };
 
   // Handle user logout

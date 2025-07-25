@@ -116,8 +116,21 @@ export default function Navbar() {
       }
     };
 
+    // 监听自定义登录事件
+    const handleUserLogin = (event: CustomEvent) => {
+      const { token, email } = event.detail;
+      setIsLoggedIn(true);
+      setUserEmail(email);
+      fetchUserProfile(email);
+    };
+
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('userLogin', handleUserLogin as EventListener);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogin', handleUserLogin as EventListener);
+    };
   }, []);
 
   // 点击外部关闭下拉菜单
