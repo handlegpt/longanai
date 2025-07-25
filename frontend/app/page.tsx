@@ -1012,14 +1012,26 @@ export default function Home() {
 
   // Check if user is already logged in on component mount
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const email = localStorage.getItem('user_email');
-    if (token && email) {
-      setIsLoggedIn(true);
-      setUserEmail(email);
-      // Fetch user stats
-      fetchUserStats(email);
-    }
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem('auth_token');
+      const email = localStorage.getItem('user_email');
+      if (token && email) {
+        setIsLoggedIn(true);
+        setUserEmail(email);
+        // Fetch user stats
+        fetchUserStats(email);
+      }
+    };
+
+    // 初始检查
+    checkLoginStatus();
+
+    // 添加定期检查，确保状态同步
+    const interval = setInterval(checkLoginStatus, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   // Handle URL parameters for OAuth callback

@@ -124,12 +124,19 @@ export default function Navbar() {
       fetchUserProfile(email);
     };
 
+    // 初始检查登录状态
+    handleStorageChange();
+
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('userLogin', handleUserLogin as EventListener);
+    
+    // 添加定期检查，确保状态同步
+    const interval = setInterval(handleStorageChange, 1000);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('userLogin', handleUserLogin as EventListener);
+      clearInterval(interval);
     };
   }, []);
 
