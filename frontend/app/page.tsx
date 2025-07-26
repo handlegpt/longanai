@@ -57,6 +57,7 @@ const translations = {
     selectLanguage: '选择语言',
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
+    mandarinLang: '普通话',
     englishLang: 'English',
     
     // Voice selection
@@ -253,6 +254,7 @@ const translations = {
     selectLanguage: '选择语言',
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
+    mandarinLang: '普通话',
     englishLang: 'English',
     
     // Voice selection
@@ -449,6 +451,7 @@ const translations = {
     selectLanguage: 'Select Language',
     cantoneseLang: 'Cantonese',
     guangdonghuaLang: 'Guangdong Dialect',
+    mandarinLang: 'Mandarin',
     englishLang: 'English',
     
     // Voice selection
@@ -1285,7 +1288,7 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                       <div className="flex items-center space-x-2">
                         <span className="text-lg">🌐</span>
-                        <span className="text-sm sm:text-lg font-semibold text-gray-700">输入语言</span>
+                        <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.selectLanguage}</span>
                       </div>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         <button
@@ -1296,7 +1299,7 @@ export default function Home() {
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
                           }`}
                         >
-                          粤语
+                          {t.cantoneseLang}
                         </button>
                         <button
                           onClick={() => setSelectedLanguage('mandarin')}
@@ -1306,7 +1309,7 @@ export default function Home() {
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
                           }`}
                         >
-                          普通话
+                          {t.mandarinLang}
                         </button>
                       </div>
                     </div>
@@ -1315,7 +1318,7 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                       <div className="flex items-center space-x-2">
                         <span className="text-lg">🎭</span>
-                        <span className="text-sm sm:text-lg font-semibold text-gray-700">选择播客主持人</span>
+                        <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
                       </div>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         {voices.map((voice) => (
