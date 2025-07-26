@@ -54,7 +54,8 @@ const translations = {
     heroSubtitle: '选择你嘅播客主持人，输入内容，一键生成专业级嘅粤语播客',
     
     // Language selection
-    selectLanguage: '选择语言',
+    selectLanguage: '输入语言',
+    selectLanguageHint: '请选择你输入的内容是粤语还是普通话，生成语言会自动匹配',
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
     mandarinLang: '普通话',
@@ -251,7 +252,8 @@ const translations = {
     heroSubtitle: '选择你的播客主持人，输入内容，一键生成专业级的粤语播客',
     
     // Language selection
-    selectLanguage: '选择语言',
+    selectLanguage: '输入語言',
+    selectLanguageHint: '請選擇你輸入的內容是粵語還是普通話，生成語言會自動匹配',
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
     mandarinLang: '普通话',
@@ -448,7 +450,8 @@ const translations = {
     heroSubtitle: 'Choose your podcast host, input content, and generate professional Cantonese podcasts with one click',
     
     // Language selection
-    selectLanguage: 'Select Language',
+    selectLanguage: 'Input Language',
+    selectLanguageHint: 'Please select the language of your input. The output language will be matched automatically.',
     cantoneseLang: 'Cantonese',
     guangdonghuaLang: 'Guangdong Dialect',
     mandarinLang: 'Mandarin',
@@ -1293,6 +1296,7 @@ export default function Home() {
                         <span className="text-lg">🌐</span>
                         <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.selectLanguage}</span>
                       </div>
+                      <div className="text-xs text-gray-400 mb-1 ml-7">{t.selectLanguageHint}</div>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         <button
                           onClick={() => setSelectedLanguage('cantonese')}
