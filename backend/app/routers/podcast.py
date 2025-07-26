@@ -129,30 +129,16 @@ async def generate_podcast(
                 return any(word in text for word in cantonese_keywords)
 
             tts_text = request.text
+            # 只有当文本未翻译过且是中文但不是粤语时，才进行翻译
             if not request.is_translated and is_chinese(request.text) and not is_cantonese(request.text):
-                print("🔄 检测到普通话，自动调用 OpenAI 翻译为粤语...")
-                api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
-                if not api_key:
-                    raise HTTPException(status_code=500, detail="翻译服务未配置，请稍后重试")
-                try:
-                    openai.api_key = api_key
-                    prompt = f"""请将以下内容翻译成粤语，适合朗读：\n\n原文：{request.text}\n\n请翻译成地道的粤语口语，保持原文的意思和情感，但要符合粤语的表达习惯。"""
-                    response = openai.ChatCompletion.create(
-                        model="gpt-3.5-turbo",
-                        messages=[
-                            {"role": "system", "content": "你是一个专业的粤语翻译专家，擅长将普通话翻译成地道的粤语口语。"},
-                            {"role": "user", "content": prompt}
-                        ],
-                        max_tokens=1000,
-                        temperature=0.7
-                    )
-                    tts_text = response.choices[0].message.content.strip()
-                    print(f"✅ 翻译完成，粤语文本：{tts_text}")
-                except Exception as e:
-                    print(f"⚠️ 翻译失败，使用原文: {e}")
-                    # 翻译失败时使用原文
-                    tts_text = request.text
-            # 如果是粤语，直接用原文，不翻译
+                print("🔄 检测到普通话且未翻译，自动调用翻译服务...")
+                # 这里可以调用翻译API，但为了保持一致性，建议前端处理翻译
+                # 暂时跳过后端翻译，让前端负责翻译
+                print("⚠️ 建议在前端进行翻译，后端跳过翻译步骤")
+                tts_text = request.text
+            else:
+                print(f"✅ 使用前端提供的文本（已翻译: {request.is_translated}）")
+                tts_text = request.text
             
             # Validate text length and duration
             estimated_duration = len(request.text) * 0.1  # 粗略估算：每个字符0.1秒

@@ -997,6 +997,39 @@ export default function Home() {
         // English version: user wants English podcast, no translation needed
         // selectedLanguage is 'mandarin' but in English UI it means 'English'
         isTranslated = false;
+      } else if (language === 'english' && selectedLanguage === 'cantonese') {
+        // English version: user wants Cantonese podcast, translate English to Cantonese
+        try {
+          console.log('开始翻译英文到粤语:', inputText);
+          const translationResponse = await fetch('/api/translate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: inputText,
+              targetLanguage: 'cantonese'
+            }),
+          });
+          
+          if (translationResponse.ok) {
+            const translationData = await translationResponse.json();
+            finalText = translationData.translatedText;
+            isTranslated = true;
+            console.log('翻译成功:', finalText);
+          } else {
+            const errorData = await translationResponse.json();
+            console.error('翻译API返回错误:', translationResponse.status, errorData);
+            // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+            finalText = inputText;
+            isTranslated = true;
+          }
+        } catch (error) {
+          console.error('Translation failed, using original text:', error);
+          // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+          finalText = inputText;
+          isTranslated = true;
+        }
       }
       
       // Call real backend API to generate podcast
