@@ -55,7 +55,7 @@ const translations = {
     
     // Language selection
     selectLanguage: '输入语言',
-    selectLanguageHint: '请选择你输入的内容是粤语还是普通话，生成语言会自动匹配',
+    selectLanguageHint: '请选择你输入的内容是粤语还是普通话',
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
     mandarinLang: '普通话',
@@ -253,7 +253,7 @@ const translations = {
     
     // Language selection
     selectLanguage: '输入語言',
-    selectLanguageHint: '請選擇你輸入的內容是粵語還是普通話，生成語言會自動匹配',
+    selectLanguageHint: '請選擇你輸入的內容是粵語還是普通話',
     cantoneseLang: '粤语',
     guangdonghuaLang: '广东话',
     mandarinLang: '普通话',
@@ -451,7 +451,7 @@ const translations = {
     
     // Language selection
     selectLanguage: 'Input Language',
-    selectLanguageHint: 'Please select the language of your input. The output language will be matched automatically.',
+    selectLanguageHint: 'Please select whether your input is Cantonese or Mandarin',
     cantoneseLang: 'Cantonese',
     guangdonghuaLang: 'Guangdong Dialect',
     mandarinLang: 'Mandarin',
@@ -1296,7 +1296,7 @@ export default function Home() {
                         <span className="text-lg">🌐</span>
                         <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.selectLanguage}</span>
                       </div>
-                      <div className="text-xs text-gray-400 mb-1 ml-7">{t.selectLanguageHint}</div>
+                      <div className="text-xs text-gray-400 mb-2">{t.selectLanguageHint}</div>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         <button
                           onClick={() => setSelectedLanguage('cantonese')}
