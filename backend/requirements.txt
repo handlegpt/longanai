@@ -31,4 +31,3 @@ python-docx==0.8.11  # Word文档处理
 # 云存储依赖
 boto3>=1.26.0  # AWS S3
 oss2>=2.18.0   # 阿里云OSS
-google-generativeai
