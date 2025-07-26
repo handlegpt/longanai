@@ -640,7 +640,14 @@ export default function Home() {
   // State management for UI components
   const [activeTab, setActiveTab] = useState('generate');
   const [selectedVoice, setSelectedVoice] = useState('young-lady');
-  const [selectedLanguage, setSelectedLanguage] = useState('cantonese');
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    // 根据界面语言设置默认输入语言
+    if (language === 'english') {
+      return 'cantonese'; // 英文界面默认选择粤语（实际会生成英文播客）
+    } else {
+      return 'mandarin'; // 中文界面默认选择普通话
+    }
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [showLogin, setShowLogin] = useState(false);
@@ -709,6 +716,15 @@ export default function Home() {
         return '龍眼AI';
     }
   };
+
+  // 根据界面语言自动设置默认输入语言
+  useEffect(() => {
+    if (language === 'english') {
+      setSelectedLanguage('cantonese'); // 英文界面默认选择粤语（实际会生成英文播客）
+    } else {
+      setSelectedLanguage('mandarin'); // 中文界面默认选择普通话
+    }
+  }, [language]);
 
   // Load podcast history from localStorage on component mount
   useEffect(() => {
