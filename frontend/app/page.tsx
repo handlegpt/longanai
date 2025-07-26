@@ -41,7 +41,7 @@ import { useLanguage } from '@/context/LanguageContext';
 const translations = {
   cantonese: {
     // Header
-    title: '龙眼AI',
+    title: '龍眼AI',
     subtitle: '智能粤语播客生成平台',
     generatePodcast: '制作播客',
     history: '历史',
@@ -97,11 +97,11 @@ const translations = {
     podcastTitle: '生成嘅播客',
     
     // Footer
-    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龍眼AI. 保留所有权利.',
     slogan: '让AI讲好你嘅粤语故事，让粤语传承下去',
     
     // Welcome message
-    welcomeTitle: '欢迎使用龙眼AI',
+    welcomeTitle: '欢迎使用龍眼AI',
     welcomeSubtitle: '请先登录以开始使用粤语播客生成功能',
     loginNow: '立即登录',
     
@@ -156,8 +156,8 @@ const translations = {
     deleteSuccess: '删除成功',
     deleteFailed: '删除失败',
     historyNetworkError: '网络错误',
-    shareText: '我用龙眼AI生成嘅粤语播客',
-    shareTitle: '龙眼AI播客',
+    shareText: '我用龍眼AI生成嘅粤语播客',
+    shareTitle: '龍眼AI播客',
     linkCopied: '链接已复制到剪贴板',
     
     // VoiceSelector component translations
@@ -354,8 +354,8 @@ const translations = {
     deleteSuccess: '删除成功',
     deleteFailed: '删除失败',
     historyNetworkError: '网络错误',
-    shareText: '我用龙眼AI生成嘅粤语播客',
-    shareTitle: '龙眼AI播客',
+    shareText: '我用龍眼AI生成嘅粤语播客',
+    shareTitle: '龍眼AI播客',
     linkCopied: '链接已复制到剪贴板',
     
     // VoiceSelector component translations
@@ -552,8 +552,8 @@ const translations = {
     deleteSuccess: 'Deleted successfully',
     deleteFailed: 'Delete failed',
     historyNetworkError: 'Network error',
-    shareText: 'I generated a Cantonese podcast with Longan AI',
-    shareTitle: 'Longan AI Podcast',
+    shareText: '我用龍眼AI生成嘅粤语播客',
+    shareTitle: '龍眼AI播客',
     linkCopied: 'Link copied to clipboard',
     
     // VoiceSelector component translations
@@ -813,8 +813,8 @@ export default function Home() {
         // Check if Web Share API is available and supported
         if (navigator.share && navigator.canShare) {
           const shareData = {
-            title: t.shareTitle || '龙眼AI播客',
-            text: t.shareText || '我用龙眼AI生成的粤语播客',
+            title: t.shareTitle || '龍眼AI播客',
+            text: t.shareText || '我用龍眼AI生成的粤语播客',
             url: window.location.href,
           };
           
@@ -1726,7 +1726,7 @@ export default function Home() {
             {/* 品牌信息 */}
             <div className="text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start space-x-2 mb-4">
-                <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
+                <img src="/logo.png" alt="龍眼AI Logo" className="h-8 w-8" />
                 <span className="font-bold text-xl text-primary">{getWebsiteName()}</span>
               </div>
               <p className="text-gray-600 text-sm">{t.slogan}</p>
