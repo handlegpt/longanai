@@ -45,7 +45,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/auth", tags=["认证"])
 app.include_router(podcast.router, prefix="/api/podcast", tags=["播客"])
 app.include_router(files.router, prefix="/api/files", tags=["文件"])
-app.include_router(translate.router, prefix="/api/translate", tags=["翻译"])
+app.include_router(translate.router, prefix="/api", tags=["翻译"])
 app.include_router(admin.router, prefix="/api/admin", tags=["管理员"])
 
 # Mount static files
