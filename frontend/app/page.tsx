@@ -54,11 +54,11 @@ const translations = {
     heroSubtitle: '选择你嘅播客主持人，输入内容，一键生成专业级嘅粤语播客',
     
     // Language selection
-    selectLanguage: '输入语言',
-    selectLanguageHint: '请选择你输入的内容是粤语还是普通话',
-    cantoneseLang: '粤语',
-    guangdonghuaLang: '广东话',
-    mandarinLang: '普通话',
+    selectLanguage: '輸入語言',
+    selectLanguageHint: '請選擇你輸入嘅內容係粵語定普通話',
+    cantoneseLang: '粵語',
+    guangdonghuaLang: '廣東話',
+    mandarinLang: '普通話',
     englishLang: 'English',
     
     // Voice selection
@@ -1402,26 +1402,53 @@ export default function Home() {
                         <div className="text-xs text-gray-400 mt-1 ml-7">{t.selectLanguageHint}</div>
                       </div>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
-                        <button
-                          onClick={() => setSelectedLanguage('cantonese')}
-                          className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
-                            selectedLanguage === 'cantonese'
-                              ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
-                          }`}
-                        >
-                          {t.cantoneseLang}
-                        </button>
-                        <button
-                          onClick={() => setSelectedLanguage('mandarin')}
-                          className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
-                            selectedLanguage === 'mandarin'
-                              ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
-                          }`}
-                        >
-                          {t.mandarinLang}
-                        </button>
+                        {(language === 'mandarin' || language === 'cantonese') ? (
+                          <>
+                            <button
+                              onClick={() => setSelectedLanguage('mandarin')}
+                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                                selectedLanguage === 'mandarin'
+                                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                              }`}
+                            >
+                              {t.mandarinLang}
+                            </button>
+                            <button
+                              onClick={() => setSelectedLanguage('cantonese')}
+                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                                selectedLanguage === 'cantonese'
+                                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                              }`}
+                            >
+                              {t.cantoneseLang}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => setSelectedLanguage('cantonese')}
+                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                                selectedLanguage === 'cantonese'
+                                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                              }`}
+                            >
+                              {t.cantoneseLang}
+                            </button>
+                            <button
+                              onClick={() => setSelectedLanguage('mandarin')}
+                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                                selectedLanguage === 'mandarin'
+                                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                              }`}
+                            >
+                              {t.mandarinLang}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                     
