@@ -959,6 +959,7 @@ export default function Home() {
           user_email: userEmail,  // 添加用户邮箱
           title: generateTitleFromContent(inputText),  // 传递生成的标题
           is_translated: isTranslated,  // 添加翻译状态
+          language: selectedLanguage,  // 添加语言字段
         }),
       });
 

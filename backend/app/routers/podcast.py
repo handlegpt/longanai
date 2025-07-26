@@ -45,6 +45,7 @@ class PodcastGenerateRequest(BaseModel):
     is_public: bool = True
     title: str = ""  # 添加标题字段
     is_translated: bool = False  # 添加字段指示文本是否已经翻译过
+    language: str = "cantonese"  # 播客语言：cantonese, mandarin, english
 
 class UserProfileUpdateRequest(BaseModel):
     display_name: str = None
@@ -237,7 +238,8 @@ async def generate_podcast(
                 file_size=file_size,
                 user_email=request.user_email,
                 tags=request.tags,
-                is_public=request.is_public
+                is_public=request.is_public,
+                language=request.language # 设置播客语言
             )
             
             print("💾 Saving podcast record to database...")
@@ -498,14 +500,17 @@ def get_public_podcasts(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     search: str = "",
-    tag: str = ""
+    tag: str = "",
+    language: str = ""  # 添加语言筛选参数
 ):
-    """分页获取所有公开播客，支持搜索和标签筛选"""
+    """分页获取所有公开播客，支持搜索、标签和语言筛选"""
     query = db.query(Podcast).filter(Podcast.is_public == True)
     if search:
         query = query.filter(Podcast.title.ilike(f"%{search}%"))
     if tag:
         query = query.filter(Podcast.tags.ilike(f"%{tag}%"))
+    if language:  # 添加语言筛选
+        query = query.filter(Podcast.language == language)
     total = query.count()
     podcasts = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
     return {
@@ -523,6 +528,7 @@ def get_public_podcasts(
                 "createdAt": p.created_at.isoformat() if p.created_at else None,
                 "userEmail": p.user_email,
                 "tags": p.tags,
+                "language": p.language,  # 添加语言字段到返回结果
             } for p in podcasts
         ]
     }

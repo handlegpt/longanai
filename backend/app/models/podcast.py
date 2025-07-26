@@ -19,5 +19,6 @@ class Podcast(Base):
     user_email = Column(String(100), nullable=False, index=True)  # 新增作者
     tags = Column(String(200), nullable=True)  # 新增标签
     is_public = Column(Boolean, default=True)  # 是否公开
+    language = Column(String(20), default="cantonese")  # 播客语言：cantonese, mandarin, english
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
