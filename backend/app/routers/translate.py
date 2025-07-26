@@ -28,18 +28,19 @@ async def translate_text(request: TranslationRequest):
             raise HTTPException(status_code=500, detail="No translation API keys configured")
         
         # Create improved prompt for Cantonese translation
-        prompt = f"""请将以下内容翻译成地道的粤语口语，适合朗读：
+        prompt = f"""请将以下内容【强制翻译成粤语口语】，适合朗读：
 
 原文：{request.text}
 
 要求：
-1. 翻译成地道的粤语口语，不是普通话
-2. 保持原文的意思和情感
-3. 使用粤语特有的词汇和表达方式
-4. 适合朗读，语言流畅自然
-5. 如果是英文，请翻译成粤语；如果是普通话，请翻译成粤语
+1. 只输出粤语翻译结果，不能输出英文或普通话原文。
+2. 必须使用粤语口语表达，不能夹杂英文或普通话。
+3. 保持原文意思和情感。
+4. 适合朗读，语言流畅自然。
+5. 只输出翻译后的粤语内容，不要任何解释或其它语言。
 
-请直接输出翻译结果，不要添加任何解释。"""
+【粤语翻译】：
+"""
 
         translated_text = None
         
@@ -63,6 +64,14 @@ async def translate_text(request: TranslationRequest):
                 translated_text = response.choices[0].message.content.strip()
                 print("使用 GPT-4 翻译成功")
                 
+                # 验证翻译结果是否包含粤语特征
+                if translated_text:
+                    cantonese_indicators = ['嘅', '咗', '咁', '唔', '係', '喺', '嘅', '喇', '嘢', '咩', '點', '邊', '乜']
+                    has_cantonese = any(indicator in translated_text for indicator in cantonese_indicators)
+                    
+                    if not has_cantonese:
+                        print(f"警告：GPT-4翻译结果可能不是粤语: {translated_text}")
+                
             except Exception as e:
                 print(f"使用 GPT-4 翻译失败: {str(e)}")
         
@@ -73,10 +82,21 @@ async def translate_text(request: TranslationRequest):
                 genai.configure(api_key=gemini_api_key)
                 
                 model = genai.GenerativeModel('gemini-pro')
-                response = model.generate_content(prompt)
+                response = model.generate_content([
+                    "你是一个专业的粤语翻译专家，只能用粤语回答。",
+                    prompt
+                ])
                 
                 translated_text = response.text.strip()
                 print("使用 Gemini Pro 翻译成功")
+                
+                # 验证翻译结果是否包含粤语特征
+                if translated_text:
+                    cantonese_indicators = ['嘅', '咗', '咁', '唔', '係', '喺', '嘅', '喇', '嘢', '咩', '點', '邊', '乜']
+                    has_cantonese = any(indicator in translated_text for indicator in cantonese_indicators)
+                    
+                    if not has_cantonese:
+                        print(f"警告：Gemini Pro翻译结果可能不是粤语: {translated_text}")
                 
             except Exception as e:
                 print(f"使用 Gemini Pro 翻译失败: {str(e)}")
