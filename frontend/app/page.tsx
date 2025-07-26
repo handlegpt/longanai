@@ -928,7 +928,7 @@ export default function Home() {
       
       // Check if translation is needed
       if (selectedLanguage === 'mandarin') {
-        // Chinese version: translate Mandarin to Cantonese
+        // 选择普通话输入，需要翻译为粤语
         try {
           console.log('开始翻译普通话到粤语:', inputText);
           const translationResponse = await fetch('/api/translate', {
@@ -961,7 +961,7 @@ export default function Home() {
           isTranslated = false;
         }
       } else if (selectedLanguage === 'cantonese' && language === 'english') {
-        // English version: translate English to Cantonese when user wants Cantonese podcast
+        // 英文界面下选择粤语，需要翻译英文为粤语
         try {
           console.log('开始翻译英文到粤语:', inputText);
           const translationResponse = await fetch('/api/translate', {
@@ -994,42 +994,11 @@ export default function Home() {
           isTranslated = false;
         }
       } else if (selectedLanguage === 'mandarin' && language === 'english') {
-        // English version: user wants English podcast, no translation needed
-        // selectedLanguage is 'mandarin' but in English UI it means 'English'
+        // 英文界面下选择英文（mandarin在英文界面表示English），不需要翻译
         isTranslated = false;
-      } else if (language === 'english' && selectedLanguage === 'cantonese') {
-        // English version: user wants Cantonese podcast, translate English to Cantonese
-        try {
-          console.log('开始翻译英文到粤语:', inputText);
-          const translationResponse = await fetch('/api/translate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              text: inputText,
-              targetLanguage: 'cantonese'
-            }),
-          });
-          
-          if (translationResponse.ok) {
-            const translationData = await translationResponse.json();
-            finalText = translationData.translatedText;
-            isTranslated = true;
-            console.log('翻译成功:', finalText);
-          } else {
-            const errorData = await translationResponse.json();
-            console.error('翻译API返回错误:', translationResponse.status, errorData);
-            // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
-            finalText = inputText;
-            isTranslated = false;
-          }
-        } catch (error) {
-          console.error('Translation failed, using original text:', error);
-          // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
-          finalText = inputText;
-          isTranslated = false;
-        }
+      } else {
+        // 其他情况（选择粤语输入或英文界面选择英文），不需要翻译
+        isTranslated = false;
       }
       
       // Call real backend API to generate podcast
