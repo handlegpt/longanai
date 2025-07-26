@@ -637,6 +637,16 @@ const translations = {
 
 export default function Home() {
   const { language } = useLanguage();
+  
+  // 检测当前路径，如果不是语言路径则重定向
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    if (pathname === '/') {
+      // 根路径重定向到默认语言（中文）
+      window.location.href = '/zh';
+    }
+  }, []);
+
   // State management for UI components
   const [activeTab, setActiveTab] = useState('generate');
   const [selectedVoice, setSelectedVoice] = useState('young-lady');

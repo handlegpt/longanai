@@ -47,7 +47,7 @@ const translations = {
 };
 
 export default function Navbar() {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, switchLanguageWithPath } = useLanguage();
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
@@ -207,7 +207,7 @@ export default function Navbar() {
                     <button
                       key={lang.id}
                       onClick={() => {
-                        setLanguage(lang.id as any);
+                        switchLanguageWithPath(lang.id as any);
                         setShowLanguageDropdown(false);
                       }}
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
@@ -311,7 +311,7 @@ export default function Navbar() {
                     <button
                       key={lang.id}
                       onClick={() => {
-                        setLanguage(lang.id as any);
+                        switchLanguageWithPath(lang.id as any);
                         setShowMobileMenu(false);
                       }}
                       className={`w-full text-left px-3 py-2 text-sm rounded-md flex items-center space-x-2 ${
