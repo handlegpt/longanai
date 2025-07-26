@@ -1246,10 +1246,12 @@ export default function Home() {
                       />
                       <label
                         htmlFor="image-upload"
-                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg cursor-pointer hover:from-blue-600 hover:to-purple-700 transition-all duration-200 text-xs sm:text-sm shadow-md"
+                        className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg cursor-pointer hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-md"
+                        title="添加封面"
                       >
-                        <span className="text-lg">🖼️</span>
-                        <span>{t.addCover}</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
                       </label>
                     </div>
                     
@@ -1265,10 +1267,10 @@ export default function Home() {
                       />
                       <label
                         htmlFor="file-upload"
-                        className="inline-flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg cursor-pointer hover:from-gray-600 hover:to-gray-700 transition-all duration-200 text-xs sm:text-sm shadow-md"
+                        className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg cursor-pointer hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-md"
+                        title="上传文件"
                       >
-                        <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span>{t.uploadFile}</span>
+                        <Upload className="w-4 h-4" />
                       </label>
                     </div>
                     

@@ -79,7 +79,7 @@ export default function ExplorePage() {
   useEffect(() => {
     fetchPodcasts();
     // eslint-disable-next-line
-  }, [page, search, tag]);
+  }, [page, search, tag, lang]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -95,6 +95,7 @@ export default function ExplorePage() {
         size: String(size),
         search,
         tag,
+        language: lang === "zh" ? "cantonese" : "english",  // 根据界面语言筛选播客
       });
       const res = await fetch(`/api/podcast/public?${params.toString()}`);
       const data = await res.json();
