@@ -552,8 +552,8 @@ const translations = {
     deleteSuccess: 'Deleted successfully',
     deleteFailed: 'Delete failed',
     historyNetworkError: 'Network error',
-    shareText: '我用龍眼AI生成嘅粤语播客',
-    shareTitle: '龍眼AI播客',
+    shareText: 'I generated a Cantonese podcast with Longan AI',
+    shareTitle: 'Longan AI Podcast',
     linkCopied: 'Link copied to clipboard',
     
     // VoiceSelector component translations
@@ -813,8 +813,8 @@ export default function Home() {
         // Check if Web Share API is available and supported
         if (navigator.share && navigator.canShare) {
           const shareData = {
-            title: t.shareTitle || '龍眼AI播客',
-            text: t.shareText || '我用龍眼AI生成的粤语播客',
+            title: t.shareTitle || (language === 'english' ? 'Longan AI Podcast' : '龍眼AI播客'),
+            text: t.shareText || (language === 'english' ? 'I generated a Cantonese podcast with Longan AI' : '我用龍眼AI生成的粤语播客'),
             url: window.location.href,
           };
           
