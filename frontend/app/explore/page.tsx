@@ -164,7 +164,6 @@ export default function ExplorePage() {
                 <span className="absolute top-2 right-2 bg-white/80 text-xs text-gray-500 px-2 py-0.5 rounded shadow">{podcast.duration}</span>
               </div>
               <h2 className="font-bold text-lg mb-1 truncate group-hover:text-blue-600 transition-colors">{podcast.title}</h2>
-              <div className="text-xs text-gray-500 mb-2 truncate">{t.by} {podcast.userEmail}</div>
               <div className="text-sm text-gray-700 mb-2 line-clamp-2">{podcast.description || (lang==="zh" ? "无简介" : "No description")}</div>
               <audio controls src={podcast.audioUrl} className="w-full mt-auto rounded" />
               <div className="flex flex-wrap gap-2 mt-2">
