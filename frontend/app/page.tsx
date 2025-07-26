@@ -950,15 +950,15 @@ export default function Home() {
           } else {
             const errorData = await translationResponse.json();
             console.error('翻译API返回错误:', translationResponse.status, errorData);
-            // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+            // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
             finalText = inputText;
-            isTranslated = true;
+            isTranslated = false;
           }
         } catch (error) {
           console.error('翻译失败，使用原文:', error);
-          // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+          // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
           finalText = inputText;
-          isTranslated = true;
+          isTranslated = false;
         }
       } else if (selectedLanguage === 'cantonese' && language === 'english') {
         // English version: translate English to Cantonese when user wants Cantonese podcast
@@ -983,15 +983,15 @@ export default function Home() {
           } else {
             const errorData = await translationResponse.json();
             console.error('翻译API返回错误:', translationResponse.status, errorData);
-            // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+            // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
             finalText = inputText;
-            isTranslated = true;
+            isTranslated = false;
           }
         } catch (error) {
           console.error('Translation failed, using original text:', error);
-          // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+          // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
           finalText = inputText;
-          isTranslated = true;
+          isTranslated = false;
         }
       } else if (selectedLanguage === 'mandarin' && language === 'english') {
         // English version: user wants English podcast, no translation needed
@@ -1020,15 +1020,15 @@ export default function Home() {
           } else {
             const errorData = await translationResponse.json();
             console.error('翻译API返回错误:', translationResponse.status, errorData);
-            // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+            // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
             finalText = inputText;
-            isTranslated = true;
+            isTranslated = false;
           }
         } catch (error) {
           console.error('Translation failed, using original text:', error);
-          // 翻译失败时使用原文，但标记为已翻译（避免重复翻译）
+          // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
           finalText = inputText;
-          isTranslated = true;
+          isTranslated = false;
         }
       }
       

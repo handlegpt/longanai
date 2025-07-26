@@ -132,10 +132,28 @@ async def generate_podcast(
             # 只有当文本未翻译过且是中文但不是粤语时，才进行翻译
             if not request.is_translated and is_chinese(request.text) and not is_cantonese(request.text):
                 print("🔄 检测到普通话且未翻译，自动调用翻译服务...")
-                # 这里可以调用翻译API，但为了保持一致性，建议前端处理翻译
-                # 暂时跳过后端翻译，让前端负责翻译
-                print("⚠️ 建议在前端进行翻译，后端跳过翻译步骤")
-                tts_text = request.text
+                try:
+                    # 实际调用翻译API
+                    import httpx
+                    async with httpx.AsyncClient() as client:
+                        translation_response = await client.post(
+                            "http://localhost:8000/api/translate",
+                            json={
+                                "text": request.text,
+                                "targetLanguage": "cantonese"
+                            },
+                            timeout=30.0
+                        )
+                        if translation_response.status_code == 200:
+                            translation_data = translation_response.json()
+                            tts_text = translation_data["translatedText"]
+                            print(f"✅ 后端翻译成功: {tts_text}")
+                        else:
+                            print(f"⚠️ 后端翻译失败，使用原文: {translation_response.status_code}")
+                            tts_text = request.text
+                except Exception as e:
+                    print(f"⚠️ 后端翻译异常，使用原文: {str(e)}")
+                    tts_text = request.text
             else:
                 print(f"✅ 使用前端提供的文本（已翻译: {request.is_translated}）")
                 tts_text = request.text
