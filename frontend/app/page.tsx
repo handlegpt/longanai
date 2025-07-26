@@ -660,7 +660,7 @@ export default function Home() {
     remaining_generations: number;
     is_unlimited: boolean;
   } | null>(null);
-  const [publicPodcasts, setPublicPodcasts] = useState<Array<{ id: number; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string; coverImageUrl?: string; description?: string; userEmail?: string; tags?: string }>>([]);
+  const [publicPodcasts, setPublicPodcasts] = useState<Array<{ id: number; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string; coverImageUrl?: string; description?: string; userEmail?: string; userDisplayName?: string; tags?: string }>>([]);
   const [loadingPublic, setLoadingPublic] = useState(false);
   const [systemStatus, setSystemStatus] = useState<{
     max_concurrent_generations: number;
@@ -1606,7 +1606,7 @@ export default function Home() {
                         <h3 className="font-semibold text-gray-900 text-sm truncate mb-1">{podcast.title}</h3>
                         <div className="text-xs text-gray-500">时长: {podcast.duration || '00:00:00'}</div>
                         {podcast.userEmail && (
-                          <div className="text-xs text-gray-400">{t.byUser} {podcast.userEmail.split('@')[0]}</div>
+                          <div className="text-xs text-gray-400">{t.byUser} {podcast.userDisplayName || podcast.userEmail.split('@')[0]}</div>
                         )}
                       </div>
                     </div>

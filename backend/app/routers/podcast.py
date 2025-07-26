@@ -490,7 +490,8 @@ def get_public_podcasts(
     language: str = ""  # 添加语言筛选参数
 ):
     """分页获取所有公开播客，支持搜索、标签和语言筛选"""
-    query = db.query(Podcast).filter(Podcast.is_public == True)
+    # 使用JOIN查询获取用户昵称
+    query = db.query(Podcast, User.display_name).join(User, Podcast.user_email == User.email).filter(Podcast.is_public == True)
     if search:
         query = query.filter(Podcast.title.ilike(f"%{search}%"))
     if tag:
@@ -498,7 +499,8 @@ def get_public_podcasts(
     if language:  # 添加语言筛选
         query = query.filter(Podcast.language == language)
     total = query.count()
-    podcasts = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
+    results = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
+    
     return {
         "total": total,
         "page": page,
@@ -513,9 +515,10 @@ def get_public_podcasts(
                 "duration": p.duration,
                 "createdAt": p.created_at.isoformat() if p.created_at else None,
                 "userEmail": p.user_email,
+                "userDisplayName": display_name,  # 添加用户昵称
                 "tags": p.tags,
                 "language": p.language,  # 添加语言字段到返回结果
-            } for p in podcasts
+            } for p, display_name in results
         ]
     }
 
