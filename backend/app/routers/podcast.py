@@ -44,6 +44,7 @@ class PodcastGenerateRequest(BaseModel):
     tags: str = ""
     is_public: bool = True
     title: str = ""  # 添加标题字段
+    is_translated: bool = False  # 添加字段指示文本是否已经翻译过
 
 class UserProfileUpdateRequest(BaseModel):
     display_name: str = None
@@ -127,7 +128,7 @@ async def generate_podcast(
                 return any(word in text for word in cantonese_keywords)
 
             tts_text = request.text
-            if is_chinese(request.text) and not is_cantonese(request.text):
+            if not request.is_translated and is_chinese(request.text) and not is_cantonese(request.text):
                 print("🔄 检测到普通话，自动调用 OpenAI 翻译为粤语...")
                 api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
                 if not api_key:

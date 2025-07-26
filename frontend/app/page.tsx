@@ -918,6 +918,7 @@ export default function Home() {
     try {
       // First, translate Mandarin to Cantonese if needed
       let finalText = inputText;
+      let isTranslated = false;
       if (selectedLanguage === 'mandarin') {
         try {
           const translationResponse = await fetch('/api/translate', {
@@ -934,6 +935,7 @@ export default function Home() {
           if (translationResponse.ok) {
             const translationData = await translationResponse.json();
             finalText = translationData.translatedText;
+            isTranslated = true;
           }
         } catch (error) {
           console.error('翻译失败，使用原文:', error);
@@ -953,6 +955,7 @@ export default function Home() {
           speed: 1.0,
           user_email: userEmail,  // 添加用户邮箱
           title: generateTitleFromContent(inputText),  // 传递生成的标题
+          is_translated: isTranslated,  // 添加翻译状态
         }),
       });
 
@@ -1278,6 +1281,36 @@ export default function Home() {
                 
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
+                    {/* Input language selection */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg">🌐</span>
+                        <span className="text-sm sm:text-lg font-semibold text-gray-700">输入语言</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
+                        <button
+                          onClick={() => setSelectedLanguage('cantonese')}
+                          className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                            selectedLanguage === 'cantonese'
+                              ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                          }`}
+                        >
+                          粤语
+                        </button>
+                        <button
+                          onClick={() => setSelectedLanguage('mandarin')}
+                          className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                            selectedLanguage === 'mandarin'
+                              ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                          }`}
+                        >
+                          普通话
+                        </button>
+                      </div>
+                    </div>
+                    
                     {/* Voice selection - improved version */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                       <div className="flex items-center space-x-2">
