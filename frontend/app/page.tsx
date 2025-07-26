@@ -1082,35 +1082,53 @@ export default function Home() {
           fetchUserStats(userEmail);
         }
       } else {
-        const errorData = await response.json();
         let errorMessage = '生成失败';
         
-        // 根据不同的错误状态码提供具体的错误信息
-        switch (response.status) {
-          case 400:
-            errorMessage = `请求参数错误: ${errorData.detail || '请检查输入内容'}`;
-            break;
-          case 401:
-            errorMessage = '登录已过期，请重新登录';
-            setShowLogin(true);
-            break;
-          case 403:
-            errorMessage = '权限不足，请先验证邮箱';
-            break;
-          case 404:
-            errorMessage = '服务不可用，请稍后重试';
-            break;
-          case 429:
-            errorMessage = `已达到本月生成限制 (${errorData.detail || '未知限制'})\n\n请考虑升级到专业版获得更多生成次数。`;
-            break;
-          case 500:
-            errorMessage = '服务器内部错误，请稍后重试';
-            break;
-          case 503:
-            errorMessage = '服务暂时不可用，请稍后重试';
-            break;
-          default:
-            errorMessage = `生成失败: ${errorData.detail || '未知错误'}`;
+        // 检查响应内容类型
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json();
+            // 根据不同的错误状态码提供具体的错误信息
+            switch (response.status) {
+              case 400:
+                errorMessage = `请求参数错误: ${errorData.detail || '请检查输入内容'}`;
+                break;
+              case 401:
+                errorMessage = '登录已过期，请重新登录';
+                setShowLogin(true);
+                break;
+              case 403:
+                errorMessage = '权限不足，请先验证邮箱';
+                break;
+              case 404:
+                errorMessage = '服务不可用，请稍后重试';
+                break;
+              case 429:
+                errorMessage = `已达到本月生成限制 (${errorData.detail || '未知限制'})\n\n请考虑升级到专业版获得更多生成次数。`;
+                break;
+              case 500:
+                errorMessage = '服务器内部错误，请稍后重试';
+                break;
+              case 503:
+                errorMessage = '服务暂时不可用，请稍后重试';
+                break;
+              default:
+                errorMessage = `生成失败: ${errorData.detail || '未知错误'}`;
+            }
+          } catch (jsonError) {
+            console.error('JSON解析失败:', jsonError);
+            errorMessage = `服务器返回了无效的响应格式 (${response.status})`;
+          }
+        } else {
+          // 非JSON响应，尝试读取文本
+          try {
+            const errorText = await response.text();
+            console.error('服务器返回非JSON响应:', errorText);
+            errorMessage = `服务器错误 (${response.status}): ${errorText.substring(0, 100)}`;
+          } catch (textError) {
+            errorMessage = `服务器错误 (${response.status})`;
+          }
         }
         
         alert(errorMessage);
