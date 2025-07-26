@@ -14,7 +14,7 @@ const LanguageContext = createContext<{
 export const useLanguage = () => useContext(LanguageContext);
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [language, setLanguageState] = useState<Language>("cantonese");
+  const [language, setLanguageState] = useState<Language>("mandarin");
 
   useEffect(() => {
     const saved = localStorage.getItem("selected_language");
