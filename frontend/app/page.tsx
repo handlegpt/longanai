@@ -450,8 +450,8 @@ const translations = {
     heroSubtitle: 'Choose your podcast host, input content, and generate professional Cantonese podcasts with one click',
     
     // Language selection
-    selectLanguage: 'Input Language',
-    selectLanguageHint: 'Please select whether your input is Cantonese or Mandarin',
+    selectLanguage: 'Output Language',
+    selectLanguageHint: 'Please select whether to generate Cantonese or Mandarin podcast',
     cantoneseLang: 'Cantonese',
     guangdonghuaLang: 'Guangdong Dialect',
     mandarinLang: 'Mandarin',
