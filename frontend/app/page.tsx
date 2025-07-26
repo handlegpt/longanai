@@ -451,10 +451,10 @@ const translations = {
     
     // Language selection
     selectLanguage: 'Output Language',
-    selectLanguageHint: 'Please select whether to generate Cantonese or Mandarin podcast',
+    selectLanguageHint: 'Please select whether to generate Cantonese or English podcast',
     cantoneseLang: 'Cantonese',
     guangdonghuaLang: 'Guangdong Dialect',
-    mandarinLang: 'Mandarin',
+    mandarinLang: 'English',
     englishLang: 'English',
     
     // Voice selection
@@ -922,10 +922,13 @@ export default function Home() {
     setIsGenerating(true);
     
     try {
-      // First, translate Mandarin to Cantonese if needed
+      // First, translate text if needed
       let finalText = inputText;
       let isTranslated = false;
+      
+      // Check if translation is needed
       if (selectedLanguage === 'mandarin') {
+        // Chinese version: translate Mandarin to Cantonese
         try {
           const translationResponse = await fetch('/api/translate', {
             method: 'POST',
@@ -946,6 +949,32 @@ export default function Home() {
         } catch (error) {
           console.error('翻译失败，使用原文:', error);
         }
+      } else if (selectedLanguage === 'cantonese' && language === 'english') {
+        // English version: translate English to Cantonese when user wants Cantonese podcast
+        try {
+          const translationResponse = await fetch('/api/translate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: inputText,
+              targetLanguage: 'cantonese'
+            }),
+          });
+          
+          if (translationResponse.ok) {
+            const translationData = await translationResponse.json();
+            finalText = translationData.translatedText;
+            isTranslated = true;
+          }
+        } catch (error) {
+          console.error('Translation failed, using original text:', error);
+        }
+      } else if (selectedLanguage === 'mandarin' && language === 'english') {
+        // English version: user wants English podcast, no translation needed
+        // selectedLanguage is 'mandarin' but in English UI it means 'English'
+        isTranslated = false;
       }
       
       // Call real backend API to generate podcast
@@ -1292,11 +1321,13 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
                     {/* Input language selection */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg">🌐</span>
-                        <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.selectLanguage}</span>
+                      <div className="flex flex-col">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🌐</span>
+                          <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.selectLanguage}</span>
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1 ml-7">{t.selectLanguageHint}</div>
                       </div>
-                      <div className="text-xs text-gray-400 mb-2">{t.selectLanguageHint}</div>
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         <button
                           onClick={() => setSelectedLanguage('cantonese')}
