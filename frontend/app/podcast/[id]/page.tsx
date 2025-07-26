@@ -13,6 +13,7 @@ interface PodcastDetail {
   duration: string;
   createdAt: string;
   userEmail: string;
+  userDisplayName?: string;  // 添加用户显示名称字段
   tags: string;
   isPublic: boolean;
 }
@@ -57,7 +58,7 @@ export default function PodcastDetailPage() {
           )}
         </div>
         <h1 className="text-2xl font-bold mb-2">{podcast.title}</h1>
-        <div className="text-xs text-gray-500 mb-2">by {podcast.userEmail} | {podcast.duration} | {podcast.createdAt.slice(0,10)}</div>
+        <div className="text-xs text-gray-500 mb-2">by {podcast.userDisplayName || podcast.userEmail} | {podcast.duration} | {podcast.createdAt.slice(0,10)}</div>
         <div className="mb-3 text-gray-700">{podcast.description}</div>
         <audio controls src={podcast.audioUrl} className="w-full my-4" />
         <div className="mb-3 text-sm text-gray-500">{podcast.content}</div>

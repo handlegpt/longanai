@@ -558,9 +558,13 @@ def get_user_podcasts(user_email: str, db: Session = Depends(get_db)):
 # 新增：获取单个播客详情
 @router.get("/{podcast_id}")
 def get_podcast_detail(podcast_id: int, db: Session = Depends(get_db)):
-    podcast = db.query(Podcast).filter(Podcast.id == podcast_id).first()
-    if not podcast:
+    # 使用JOIN查询获取用户显示名称
+    result = db.query(Podcast, User.display_name).join(User, Podcast.user_email == User.email).filter(Podcast.id == podcast_id).first()
+    if not result:
         raise HTTPException(status_code=404, detail="播客不存在")
+    
+    podcast, display_name = result
+    
     return {
         "id": podcast.id,
         "title": podcast.title,
@@ -571,6 +575,7 @@ def get_podcast_detail(podcast_id: int, db: Session = Depends(get_db)):
         "duration": podcast.duration,
         "createdAt": podcast.created_at.isoformat() if podcast.created_at else None,
         "userEmail": podcast.user_email,
+        "userDisplayName": display_name,  # 添加用户显示名称
         "tags": podcast.tags,
         "isPublic": podcast.is_public,
     } 
