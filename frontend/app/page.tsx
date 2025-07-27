@@ -793,7 +793,7 @@ export default function Home() {
         
         console.log('Fetching Google voices for language:', languageParam);
         
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('auth_token');
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
         };
@@ -1132,7 +1132,7 @@ export default function Home() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
           },
           body: JSON.stringify({
             text: finalText,
