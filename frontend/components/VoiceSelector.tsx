@@ -83,9 +83,9 @@ export default function VoiceSelector({ selectedVoice, onVoiceChange, translatio
   const allVoices = [
     ...edgeVoices,
     ...googleVoices.map((voice, index) => ({
-      id: `google-${voice.name}`,
+      id: `google-${(voice as any).name}`,
       name: voice.display_name,
-      description: voice.description,
+      description: (voice as any).description,
       icon: index % 2 === 0 ? Mic : Volume2,
       color: index % 2 === 0 ? 'bg-green-500' : 'bg-orange-500',
       type: 'google',
@@ -151,14 +151,14 @@ export default function VoiceSelector({ selectedVoice, onVoiceChange, translatio
                     <div className="text-left">
                       <h4 className="font-medium text-gray-900">
                         {voice.type === 'edge' 
-                          ? translations[voice.nameKey as keyof typeof translations]
-                          : voice.name
+                          ? translations[(voice as any).nameKey as keyof typeof translations]
+                          : (voice as any).name
                         }
                       </h4>
                       <p className="text-sm text-gray-600">
                         {voice.type === 'edge'
-                          ? translations[voice.descKey as keyof typeof translations]
-                          : voice.description
+                          ? translations[(voice as any).descKey as keyof typeof translations]
+                          : (voice as any).description
                         }
                       </p>
                     </div>
