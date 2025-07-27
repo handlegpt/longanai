@@ -7,7 +7,7 @@ import io
 import logging
 import time
 
-from app.core.security import get_current_user
+# from app.core.security import get_current_user  # 临时注释掉认证
 from app.core.database import get_db
 from app.models.user import User
 from app.services.google_tts import GoogleTTSService
@@ -35,14 +35,14 @@ class TTSResponse(BaseModel):
 @router.post("/synthesize", response_model=TTSResponse)
 async def synthesize_speech(
     request: TTSRequest,
-    current_user: User = Depends(get_current_user)
+    # current_user: User = Depends(get_current_user)  # 临时移除认证
 ):
     """
     将文本转换为语音
     
     Args:
         request: TTS请求参数
-        current_user: 当前用户
+        # current_user: 当前用户  # 临时注释掉
         
     Returns:
         TTS响应，包含音频URL
@@ -77,7 +77,7 @@ async def synthesize_speech(
         )
         
         # 保存音频文件并获取URL
-        audio_url = tts_service.save_audio_to_file(audio_content, f"tts_{current_user.id}_{int(time.time())}.mp3")
+        audio_url = tts_service.save_audio_to_file(audio_content, f"tts_{int(time.time())}.mp3")
         
         # 计算音频时长（估算：假设每分钟150个字符）
         estimated_duration = len(request.text) / 150  # 分钟
@@ -97,14 +97,14 @@ async def synthesize_speech(
 @router.post("/synthesize-stream")
 async def synthesize_speech_stream(
     request: TTSRequest,
-    current_user: User = Depends(get_current_user)
+    # current_user: User = Depends(get_current_user)  # 临时移除认证
 ):
     """
     将文本转换为语音并直接返回音频流
     
     Args:
         request: TTS请求参数
-        current_user: 当前用户
+        # current_user: 当前用户  # 临时注释掉
         
     Returns:
         音频流响应
@@ -143,14 +143,14 @@ async def synthesize_speech_stream(
 @router.get("/voices")
 async def get_available_voices(
     language_code: Optional[str] = None,
-    current_user: User = Depends(get_current_user)
+    # current_user: User = Depends(get_current_user)  # 临时移除认证
 ):
     """
     获取可用的声音列表
     
     Args:
         language_code: 语言代码 (可选)
-        current_user: 当前用户
+        # current_user: 当前用户  # 临时注释掉
         
     Returns:
         可用声音列表
@@ -169,14 +169,14 @@ async def get_available_voices(
 @router.get("/voices/{language}")
 async def get_language_voices(
     language: str,
-    current_user: User = Depends(get_current_user)
+    # current_user: User = Depends(get_current_user)  # 临时移除认证
 ):
     """
     获取指定语言的可用音色列表
     
     Args:
         language: 语言代码 (cantonese, mandarin, english)
-        current_user: 当前用户
+        # current_user: 当前用户  # 临时注释掉
         
     Returns:
         该语言的可用音色列表
