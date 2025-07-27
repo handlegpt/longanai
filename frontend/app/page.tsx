@@ -803,6 +803,7 @@ export default function Home() {
         }
         
         console.log('Making API request to:', `/api/tts/voices/${languageParam}`);
+        console.log('Full URL:', window.location.origin + `/api/tts/voices/${languageParam}`);
         console.log('Headers:', headers);
         
         const response = await fetch(`/api/tts/voices/${languageParam}`, {
