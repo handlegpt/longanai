@@ -47,6 +47,11 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     setLanguageState(detectedLanguage);
     localStorage.setItem("selected_language", detectedLanguage);
   }, [pathname]);
+    // 添加这个函数
+    const setLanguage = (lang: Language) => {
+      setLanguageState(lang);
+      localStorage.setItem("selected_language", lang);
+    };
 
   const switchLanguageWithPath = (lang: Language) => {
     console.log('�� switchLanguageWithPath called with lang:', lang);
