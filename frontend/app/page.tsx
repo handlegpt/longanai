@@ -1352,7 +1352,7 @@ export default function Home() {
   const languageOptions = getLanguageOptions();
 
   // Edge TTS音色配置
-  const edgeVoices = {
+  const edgeVoices: Record<string, { id: string; name: string; description: string; }[]> = {
     cantonese: [
       { id: 'young-lady', name: '靓女', description: '温柔甜美的粤语女声' },
       { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' }
