@@ -800,6 +800,9 @@ export default function Home() {
         
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
+          console.log('Authorization header added');
+        } else {
+          console.log('No token found, request will be unauthenticated');
         }
         
         console.log('Making API request to:', `/api/tts/voices/${languageParam}`);
