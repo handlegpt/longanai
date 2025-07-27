@@ -1511,18 +1511,21 @@ export default function Home() {
                     
                     {/* Voice selection - improved version */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg">🎭</span>
-                        <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
+                      <div className="flex flex-col">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🎭</span>
+                          <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1 ml-7">选择播客主持人</div>
                       </div>
                       
-                      <div className="flex flex-wrap gap-2 sm:gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 w-full sm:w-auto">
                         {/* Edge TTS voices - 根据选择的语言显示对应音色 */}
                         {getEdgeVoicesForLanguage().map((voice) => (
                           <button
                             key={voice.id}
                             onClick={() => setSelectedVoice(voice.id)}
-                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                            className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 shadow-md ${
                               selectedVoice === voice.id
                                 ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
@@ -1537,7 +1540,7 @@ export default function Home() {
                           <button
                             key={voice.name}
                             onClick={() => setSelectedVoice(`google-${voice.name}`)}
-                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                            className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 shadow-md ${
                               selectedVoice === `google-${voice.name}`
                                 ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
