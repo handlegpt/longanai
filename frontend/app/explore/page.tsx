@@ -5,8 +5,8 @@ import Link from "next/link";
 const languageOptions = [
   { id: "cantonese", name: "粤语", flag: "🇭🇰" },
   { id: "mandarin", name: "普通话", flag: "🇨🇳" },
-  { id: "english", name: "English", flag: "����" },
-  { id: "all", name: "全部", flag: "��" }
+  { id: "english", name: "English", flag: "🇺🇸" },
+  { id: "all", name: "全部", flag: "🌍" }
 ];
 
 const translations = {
