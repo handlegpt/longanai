@@ -19,18 +19,72 @@ class GoogleTTSService:
         # 语言和声音映射
         self.voice_mapping = {
             'cantonese': {
+                'voices': [
+                    {
+                        'name': 'yue-HK-Standard-A',
+                        'display_name': '龙眼妹',
+                        'description': '温柔甜美的粤语女声，适合生活分享和情感内容',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'yue-HK-Standard-B', 
+                        'display_name': '大佬',
+                        'description': '成熟稳重的粤语男声，适合新闻播报和正式内容',
+                        'gender': 'MALE'
+                    },
+                    {
+                        'name': 'yue-HK-Standard-C',
+                        'display_name': '阿姐', 
+                        'description': '亲切自然的粤语女声，适合日常对话和轻松内容',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'yue-HK-Standard-D',
+                        'display_name': '收数佬',
+                        'description': '活力四射的粤语男声，适合娱乐节目和动感内容',
+                        'gender': 'MALE'
+                    }
+                ],
                 'language_code': 'yue-HK',
-                'voice_name': 'yue-HK-Standard-A',
+                'default_voice': 'yue-HK-Standard-A',
                 'name': '粤语'
             },
             'mandarin': {
+                'voices': [
+                    {
+                        'name': 'cmn-CN-Standard-A',
+                        'display_name': '小美',
+                        'description': '温柔甜美的普通话女声',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'cmn-CN-Standard-B',
+                        'display_name': '阿强', 
+                        'description': '成熟稳重的普通话男声',
+                        'gender': 'MALE'
+                    }
+                ],
                 'language_code': 'cmn-CN',
-                'voice_name': 'cmn-CN-Standard-A',
+                'default_voice': 'cmn-CN-Standard-A',
                 'name': '普通话'
             },
             'english': {
+                'voices': [
+                    {
+                        'name': 'en-US-Standard-A',
+                        'display_name': 'Sarah',
+                        'description': 'Clear and professional English female voice',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'en-US-Standard-B',
+                        'display_name': 'Mike',
+                        'description': 'Friendly and energetic English male voice',
+                        'gender': 'MALE'
+                    }
+                ],
                 'language_code': 'en-US',
-                'voice_name': 'en-US-Standard-A',
+                'default_voice': 'en-US-Standard-A',
                 'name': 'English'
             }
         }
@@ -65,7 +119,7 @@ class GoogleTTSService:
             # 设置声音参数
             voice = VoiceSelectionParams(
                 language_code=voice_config['language_code'],
-                name=voice_name or voice_config['voice_name']
+                name=voice_name or voice_config['default_voice']
             )
             
             # 设置音频配置

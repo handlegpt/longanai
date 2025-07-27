@@ -686,6 +686,8 @@ export default function Home() {
     thread_pool_workers: number;
     system_health: string;
   } | null>(null);
+  const [useGoogleTTS, setUseGoogleTTS] = useState(false);
+  const [googleVoices, setGoogleVoices] = useState<Array<{name: string; display_name: string; description: string; gender: string}>>([]);
   const t = translations[language as keyof typeof translations] || translations.cantonese;
 
   // slogans 多语言化
@@ -774,6 +776,23 @@ export default function Home() {
         console.log('无法获取系统状态');
       });
   }, []);
+
+  // 获取Google TTS音色
+  useEffect(() => {
+    const fetchGoogleVoices = async () => {
+      try {
+        const response = await fetch(`/api/tts/voices/${selectedLanguage}`);
+        if (response.ok) {
+          const data = await response.json();
+          setGoogleVoices(data.voices || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch Google voices:', error);
+      }
+    };
+
+    fetchGoogleVoices();
+  }, [selectedLanguage]);
 
   // Generate title from content
   const generateTitleFromContent = (content: string) => {
@@ -1068,105 +1087,96 @@ export default function Home() {
       }
       
       // Call real backend API to generate podcast
-      const response = await fetch('/api/podcast/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: finalText,
-          voice: selectedVoice,
-          emotion: 'normal',
-          speed: 1.0,
-          user_email: userEmail,  // 添加用户邮箱
-          title: generateTitleFromContent(inputText),  // 传递生成的标题
-          is_translated: isTranslated,  // 添加翻译状态
-          language: selectedLanguage,  // 直接使用选择的语言，简化映射逻辑
-        }),
-      });
+      if (useGoogleTTS) {
+        // 使用Google TTS
+        const googleVoiceName = selectedVoice.replace('google-', '');
+        const response = await fetch('/api/tts/synthesize', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({
+            text: finalText,
+            language: selectedLanguage,
+            voice_name: googleVoiceName,
+            speaking_rate: 1.0,
+            pitch: 0.0
+          }),
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        const generatedTitle = generateTitleFromContent(inputText);
-        setGeneratedPodcast({
-          audioUrl: data.audioUrl,
-          title: generatedTitle,
-          duration: data.duration || '00:00:00',
-          image: podcastImage || undefined
-        });
-        savePodcastToHistory({
-          audioUrl: data.audioUrl,
-          title: generatedTitle,
-          duration: data.duration || '00:00:00',
-          image: podcastImage || undefined
-        });
-        // Reset image after saving
-        setPodcastImage(null);
-        
-        // Show remaining generations if available
-        if (data.remainingGenerations !== undefined) {
-          if (data.remainingGenerations === -1) {
-            console.log('企业版用户，无生成限制');
-          } else {
-            console.log(`剩余生成次数: ${data.remainingGenerations}`);
-          }
-        }
-        
-        // Refresh user stats after successful generation
-        if (userEmail) {
-          fetchUserStats(userEmail);
+        if (response.ok) {
+          const data = await response.json();
+          const generatedTitle = generateTitleFromContent(inputText);
+          setGeneratedPodcast({
+            audioUrl: data.audio_url || '/api/tts/synthesize-stream', // 如果没有URL，使用流式API
+            title: generatedTitle,
+            duration: data.duration || '00:00:00',
+            image: podcastImage || undefined
+          });
+          savePodcastToHistory({
+            audioUrl: data.audio_url || '/api/tts/synthesize-stream',
+            title: generatedTitle,
+            duration: data.duration || '00:00:00',
+            image: podcastImage || undefined
+          });
+          setPodcastImage(null);
+        } else {
+          throw new Error('Google TTS generation failed');
         }
       } else {
-        let errorMessage = '生成失败';
-        
-        // 检查响应内容类型
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          try {
-            const errorData = await response.json();
-            // 根据不同的错误状态码提供具体的错误信息
-            switch (response.status) {
-              case 400:
-                errorMessage = `请求参数错误: ${errorData.detail || '请检查输入内容'}`;
-                break;
-              case 401:
-                errorMessage = '登录已过期，请重新登录';
-                setShowLogin(true);
-                break;
-              case 403:
-                errorMessage = '权限不足，请先验证邮箱';
-                break;
-              case 404:
-                errorMessage = '服务不可用，请稍后重试';
-                break;
-              case 429:
-                errorMessage = `已达到本月生成限制 (${errorData.detail || '未知限制'})\n\n请考虑升级到专业版获得更多生成次数。`;
-                break;
-              case 500:
-                errorMessage = '服务器内部错误，请稍后重试';
-                break;
-              case 503:
-                errorMessage = '服务暂时不可用，请稍后重试';
-                break;
-              default:
-                errorMessage = `生成失败: ${errorData.detail || '未知错误'}`;
+        // 使用Edge TTS（原有逻辑）
+        const response = await fetch('/api/podcast/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: finalText,
+            voice: selectedVoice,
+            emotion: 'normal',
+            speed: 1.0,
+            user_email: userEmail,  // 添加用户邮箱
+            title: generateTitleFromContent(inputText),  // 传递生成的标题
+            is_translated: isTranslated,  // 添加翻译状态
+            language: selectedLanguage,  // 直接使用选择的语言，简化映射逻辑
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const generatedTitle = generateTitleFromContent(inputText);
+          setGeneratedPodcast({
+            audioUrl: data.audioUrl,
+            title: generatedTitle,
+            duration: data.duration || '00:00:00',
+            image: podcastImage || undefined
+          });
+          savePodcastToHistory({
+            audioUrl: data.audioUrl,
+            title: generatedTitle,
+            duration: data.duration || '00:00:00',
+            image: podcastImage || undefined
+          });
+          // Reset image after saving
+          setPodcastImage(null);
+          
+          // Show remaining generations if available
+          if (data.remainingGenerations !== undefined) {
+            if (data.remainingGenerations === -1) {
+              console.log('企业版用户，无生成限制');
+            } else {
+              console.log(`剩余生成次数: ${data.remainingGenerations}`);
             }
-          } catch (jsonError) {
-            console.error('JSON解析失败:', jsonError);
-            errorMessage = `服务器返回了无效的响应格式 (${response.status})`;
+          }
+          
+          // Refresh user stats after successful generation
+          if (userEmail) {
+            fetchUserStats(userEmail);
           }
         } else {
-          // 非JSON响应，尝试读取文本
-          try {
-            const errorText = await response.text();
-            console.error('服务器返回非JSON响应:', errorText);
-            errorMessage = `服务器错误 (${response.status}): ${errorText.substring(0, 100)}`;
-          } catch (textError) {
-            errorMessage = `服务器错误 (${response.status})`;
-          }
+          throw new Error('Podcast generation failed');
         }
-        
-        alert(errorMessage);
       }
     } catch (error) {
       console.error('生成播客时出错:', error);
@@ -1476,20 +1486,59 @@ export default function Home() {
                         <span className="text-lg">🎭</span>
                         <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
                       </div>
+                      
+                      {/* TTS Type Selection */}
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => setUseGoogleTTS(false)}
+                          className={`px-3 py-1 rounded text-sm ${
+                            !useGoogleTTS ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                          }`}
+                        >
+                          Edge TTS
+                        </button>
+                        <button
+                          onClick={() => setUseGoogleTTS(true)}
+                          className={`px-3 py-1 rounded text-sm ${
+                            useGoogleTTS ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'
+                          }`}
+                        >
+                          Google TTS
+                        </button>
+                      </div>
+                      
                       <div className="flex flex-wrap gap-2 sm:gap-3">
-                        {voices.map((voice) => (
-                          <button
-                            key={voice.id}
-                            onClick={() => setSelectedVoice(voice.id)}
-                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
-                              selectedVoice === voice.id
-                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
-                            }`}
-                          >
-                            {voice.name}
-                          </button>
-                        ))}
+                        {!useGoogleTTS ? (
+                          // Edge TTS voices
+                          voices.map((voice) => (
+                            <button
+                              key={voice.id}
+                              onClick={() => setSelectedVoice(voice.id)}
+                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                                selectedVoice === voice.id
+                                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                              }`}
+                            >
+                              {voice.name}
+                            </button>
+                          ))
+                        ) : (
+                          // Google TTS voices
+                          googleVoices.map((voice) => (
+                            <button
+                              key={voice.name}
+                              onClick={() => setSelectedVoice(`google-${voice.name}`)}
+                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                                selectedVoice === `google-${voice.name}`
+                                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                              }`}
+                            >
+                              {voice.display_name}
+                            </button>
+                          ))
+                        )}
                       </div>
                     </div>
                     
