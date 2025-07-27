@@ -9,9 +9,9 @@ import { LanguageProvider } from '@/context/LanguageContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '龙眼AI - 智能粤语播客生成平台',
+  title: '龍眼AI - 用 AI 講粵語，做你自己嘅 Podcast',
   description: '用AI技术，一键生成地道嘅粤语播客内容',
-  keywords: '粤语,播客,AI,语音生成,龙眼AI',
+  keywords: '粤语,播客,AI,语音生成,龍眼AI,longan ai,longan podcast',
 };
 
 

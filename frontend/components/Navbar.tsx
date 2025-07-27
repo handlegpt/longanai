@@ -71,7 +71,7 @@ export default function Navbar() {
       case 'english':
         return 'Longan AI';
       default:
-        return '龙眼AI';
+        return '龍眼AI';
     }
   };
 
@@ -178,7 +178,7 @@ export default function Navbar() {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
-              <img src="/logo.png" alt="龙眼AI Logo" className="h-8 w-8" />
+              <img src="/logo.png" alt="龍眼AI Logo" className="h-8 w-8" />
               <span className="hidden sm:block">{getWebsiteName()}</span>
               <span className="sm:hidden">{getWebsiteName()}</span>
             </Link>

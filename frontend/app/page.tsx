@@ -239,7 +239,7 @@ const translations = {
   },
   mandarin: {
     // Header
-    title: '龙眼AI',
+    title: '龍眼AI',
     subtitle: '智能粤语播客生成平台',
     generatePodcast: '生成播客',
     history: '历史记录',
@@ -295,11 +295,11 @@ const translations = {
     podcastTitle: '生成的播客',
     
     // Footer
-    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龍眼AI. 保留所有权利.',
     slogan: '让AI讲好你的粤语故事',
     
     // Welcome message
-    welcomeTitle: '欢迎使用龙眼AI',
+    welcomeTitle: '欢迎使用龍眼AI',
     welcomeSubtitle: '请先登录以开始使用粤语播客生成功能',
     loginNow: '立即登录',
     
