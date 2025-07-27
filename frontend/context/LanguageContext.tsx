@@ -48,21 +48,23 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     localStorage.setItem("selected_language", detectedLanguage);
   }, [pathname]);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem("selected_language", lang);
-  };
-
-  // 切换语言并跳转到对应路径
   const switchLanguageWithPath = (lang: Language) => {
+    console.log('�� switchLanguageWithPath called with lang:', lang);
+    console.log('🔍 current pathname:', pathname);
+    
     setLanguageState(lang);
     localStorage.setItem("selected_language", lang);
     
     const targetPath = getLanguagePath(lang);
     const currentPath = pathname;
     
+    console.log('🔍 targetPath:', targetPath);
+    console.log('🔍 currentPath:', currentPath);
+    
     // 如果当前路径不是目标语言路径，则跳转
     if (!currentPath.startsWith(targetPath)) {
+      console.log('🚀 Will perform navigation');
+      
       // 移除当前语言前缀
       let newPath = currentPath;
       Object.values(languagePaths).forEach(path => {
@@ -78,7 +80,11 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       
       // 添加新的语言前缀
       const finalPath = targetPath + newPath;
+      console.log('�� finalPath:', finalPath);
+      
       router.push(finalPath);
+    } else {
+      console.log('❌ No navigation needed, already on target path');
     }
   };
 
