@@ -791,6 +791,8 @@ export default function Home() {
           languageParam = 'english';
         }
         
+        console.log('Fetching Google voices for language:', languageParam);
+        
         const token = localStorage.getItem('token');
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
@@ -800,15 +802,23 @@ export default function Home() {
           headers['Authorization'] = `Bearer ${token}`;
         }
         
+        console.log('Making API request to:', `/api/tts/voices/${languageParam}`);
+        console.log('Headers:', headers);
+        
         const response = await fetch(`/api/tts/voices/${languageParam}`, {
           headers
         });
         
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('Google voices data:', data);
           setGoogleVoices(data.voices || []);
         } else {
-          console.error('Failed to fetch Google voices:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('Failed to fetch Google voices:', response.status, response.statusText, errorText);
         }
       } catch (error) {
         console.error('Failed to fetch Google voices:', error);
