@@ -777,15 +777,17 @@ export default function Home() {
       });
   }, []);
 
-  // 获取Google TTS音色
+  // 当语言改变时，获取Google TTS音色
   useEffect(() => {
     const fetchGoogleVoices = async () => {
       try {
         // 根据选择的语言映射到后端参数
         let languageParam = selectedLanguage;
-        if (selectedLanguage === 'zh') {
+        if (selectedLanguage === 'cantonese') {
           languageParam = 'cantonese';
-        } else if (selectedLanguage === 'en') {
+        } else if (selectedLanguage === 'mandarin') {
+          languageParam = 'mandarin';
+        } else if (selectedLanguage === 'english') {
           languageParam = 'english';
         }
         
