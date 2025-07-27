@@ -687,7 +687,7 @@ export default function Home() {
     system_health: string;
   } | null>(null);
   const [useGoogleTTS, setUseGoogleTTS] = useState(false);
-  const [googleVoices, setGoogleVoices] = useState<Array<{name: string; display_name: string; description: string; gender: string}>>([]);
+  const [googleVoices, setGoogleVoices] = useState<any[]>([]);
   const t = translations[language as keyof typeof translations] || translations.cantonese;
 
   // slogans 多语言化
@@ -1095,7 +1095,7 @@ export default function Home() {
       }
       
       // Call real backend API to generate podcast
-      if (useGoogleTTS) {
+      if (selectedVoice.startsWith('google-')) {
         // 使用Google TTS
         const googleVoiceName = selectedVoice.replace('google-', '');
         const response = await fetch('/api/tts/synthesize', {
@@ -1166,22 +1166,7 @@ export default function Home() {
             duration: data.duration || '00:00:00',
             image: podcastImage || undefined
           });
-          // Reset image after saving
           setPodcastImage(null);
-          
-          // Show remaining generations if available
-          if (data.remainingGenerations !== undefined) {
-            if (data.remainingGenerations === -1) {
-              console.log('企业版用户，无生成限制');
-            } else {
-              console.log(`剩余生成次数: ${data.remainingGenerations}`);
-            }
-          }
-          
-          // Refresh user stats after successful generation
-          if (userEmail) {
-            fetchUserStats(userEmail);
-          }
         } else {
           throw new Error('Podcast generation failed');
         }
@@ -1381,18 +1366,11 @@ export default function Home() {
   // 当语言改变时，重置音色选择
   useEffect(() => {
     // 重置为默认音色
-    if (!useGoogleTTS) {
-      const edgeVoicesForLang = getEdgeVoicesForLanguage();
-      if (edgeVoicesForLang.length > 0) {
-        setSelectedVoice(edgeVoicesForLang[0].id);
-      }
-    } else {
-      // 对于Google TTS，等待音色加载完成后设置
-      if (googleVoices.length > 0) {
-        setSelectedVoice(`google-${googleVoices[0].name}`);
-      }
+    const edgeVoicesForLang = getEdgeVoicesForLanguage();
+    if (edgeVoicesForLang.length > 0) {
+      setSelectedVoice(edgeVoicesForLang[0].id);
     }
-  }, [selectedLanguage, useGoogleTTS, googleVoices]);
+  }, [selectedLanguage]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
@@ -1538,58 +1516,36 @@ export default function Home() {
                         <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
                       </div>
                       
-                      {/* TTS Type Selection */}
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => setUseGoogleTTS(false)}
-                          className={`px-3 py-1 rounded text-sm ${
-                            !useGoogleTTS ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-                          }`}
-                        >
-                          Edge TTS
-                        </button>
-                        <button
-                          onClick={() => setUseGoogleTTS(true)}
-                          className={`px-3 py-1 rounded text-sm ${
-                            useGoogleTTS ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'
-                          }`}
-                        >
-                          Google TTS
-                        </button>
-                      </div>
-                      
                       <div className="flex flex-wrap gap-2 sm:gap-3">
-                        {!useGoogleTTS ? (
-                          // Edge TTS voices - 根据选择的语言显示对应音色
-                          getEdgeVoicesForLanguage().map((voice) => (
-                            <button
-                              key={voice.id}
-                              onClick={() => setSelectedVoice(voice.id)}
-                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
-                                selectedVoice === voice.id
-                                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
-                              }`}
-                            >
-                              {voice.name}
-                            </button>
-                          ))
-                        ) : (
-                          // Google TTS voices - 根据选择的语言显示对应音色
-                          googleVoices.map((voice) => (
-                            <button
-                              key={voice.name}
-                              onClick={() => setSelectedVoice(`google-${voice.name}`)}
-                              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
-                                selectedVoice === `google-${voice.name}`
-                                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
-                              }`}
-                            >
-                              {voice.display_name}
-                            </button>
-                          ))
-                        )}
+                        {/* Edge TTS voices - 根据选择的语言显示对应音色 */}
+                        {getEdgeVoicesForLanguage().map((voice) => (
+                          <button
+                            key={voice.id}
+                            onClick={() => setSelectedVoice(voice.id)}
+                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                              selectedVoice === voice.id
+                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                            }`}
+                          >
+                            {voice.name}
+                          </button>
+                        ))}
+                        
+                        {/* Google TTS voices - 根据选择的语言显示对应音色 */}
+                        {googleVoices.map((voice) => (
+                          <button
+                            key={voice.name}
+                            onClick={() => setSelectedVoice(`google-${voice.name}`)}
+                            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 shadow-md ${
+                              selectedVoice === `google-${voice.name}`
+                                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
+                            }`}
+                          >
+                            {voice.display_name}
+                          </button>
+                        ))}
                       </div>
                     </div>
                     
