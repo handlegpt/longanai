@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import BaseModel
 import io
 import logging
+import time
 
 from app.core.security import get_current_user
 from app.core.database import get_db
@@ -75,13 +76,18 @@ async def synthesize_speech(
             pitch=request.pitch
         )
         
-        # 这里可以集成到你的存储服务中
-        # 暂时返回成功状态，实际项目中需要保存到云存储
+        # 保存音频文件并获取URL
+        audio_url = tts_service.save_audio_to_file(audio_content, f"tts_{current_user.id}_{int(time.time())}.mp3")
+        
+        # 计算音频时长（估算：假设每分钟150个字符）
+        estimated_duration = len(request.text) / 150  # 分钟
+        duration_seconds = estimated_duration * 60
+        
         return TTSResponse(
             success=True,
             message="TTS synthesis completed successfully",
-            audio_url=None,  # 需要集成存储服务
-            duration=None
+            audio_url=audio_url,
+            duration=duration_seconds
         )
         
     except Exception as e:

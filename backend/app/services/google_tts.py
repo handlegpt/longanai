@@ -169,19 +169,27 @@ class GoogleTTSService:
     
     def save_audio_to_file(self, audio_content: bytes, file_path: str) -> str:
         """
-        将音频内容保存到文件
+        将音频内容保存到文件并返回可访问的URL
         
         Args:
             audio_content: 音频字节数据
             file_path: 文件路径
             
         Returns:
-            保存的文件路径
+            可访问的音频URL
         """
         try:
-            with open(file_path, 'wb') as f:
+            # 创建uploads目录（如果不存在）
+            uploads_dir = "uploads/tts"
+            os.makedirs(uploads_dir, exist_ok=True)
+            
+            # 保存文件到uploads目录
+            full_path = os.path.join(uploads_dir, file_path)
+            with open(full_path, 'wb') as f:
                 f.write(audio_content)
-            return file_path
+            
+            # 返回可访问的URL
+            return f"/uploads/tts/{file_path}"
         except Exception as e:
             logger.error(f"Error saving audio file: {e}")
             raise Exception(f"Failed to save audio file: {str(e)}")
