@@ -1351,6 +1351,49 @@ export default function Home() {
 
   const languageOptions = getLanguageOptions();
 
+  // Edge TTS音色配置
+  const edgeVoices = {
+    cantonese: [
+      { id: 'young-lady', name: '靓女', description: '温柔甜美的粤语女声' },
+      { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' }
+    ],
+    mandarin: [
+      { id: 'young-lady', name: '小美', description: '温柔甜美的普通话女声' },
+      { id: 'young-man', name: '阿强', description: '成熟稳重的普通话男声' }
+    ],
+    english: [
+      { id: 'young-lady', name: 'Sarah', description: 'Clear and professional English female voice' },
+      { id: 'young-man', name: 'Mike', description: 'Friendly and energetic English male voice' }
+    ]
+  };
+
+  // 根据选择的语言获取Edge TTS音色
+  const getEdgeVoicesForLanguage = () => {
+    let languageKey = selectedLanguage;
+    if (selectedLanguage === 'zh') {
+      languageKey = 'cantonese';
+    } else if (selectedLanguage === 'en') {
+      languageKey = 'english';
+    }
+    return edgeVoices[languageKey] || edgeVoices.cantonese;
+  };
+
+  // 当语言改变时，重置音色选择
+  useEffect(() => {
+    // 重置为默认音色
+    if (!useGoogleTTS) {
+      const edgeVoicesForLang = getEdgeVoicesForLanguage();
+      if (edgeVoicesForLang.length > 0) {
+        setSelectedVoice(edgeVoicesForLang[0].id);
+      }
+    } else {
+      // 对于Google TTS，等待音色加载完成后设置
+      if (googleVoices.length > 0) {
+        setSelectedVoice(`google-${googleVoices[0].name}`);
+      }
+    }
+  }, [selectedLanguage, useGoogleTTS, googleVoices]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
       {/* Main content area with improved design */}
@@ -1517,8 +1560,8 @@ export default function Home() {
                       
                       <div className="flex flex-wrap gap-2 sm:gap-3">
                         {!useGoogleTTS ? (
-                          // Edge TTS voices
-                          voices.map((voice) => (
+                          // Edge TTS voices - 根据选择的语言显示对应音色
+                          getEdgeVoicesForLanguage().map((voice) => (
                             <button
                               key={voice.id}
                               onClick={() => setSelectedVoice(voice.id)}
@@ -1532,7 +1575,7 @@ export default function Home() {
                             </button>
                           ))
                         ) : (
-                          // Google TTS voices
+                          // Google TTS voices - 根据选择的语言显示对应音色
                           googleVoices.map((voice) => (
                             <button
                               key={voice.name}
