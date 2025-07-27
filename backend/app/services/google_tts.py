@@ -10,11 +10,23 @@ logger = logging.getLogger(__name__)
 class GoogleTTSService:
     def __init__(self):
         """初始化Google TTS服务"""
-        # 检查是否有Google Cloud凭证
-        if not os.getenv('GOOGLE_APPLICATION_CREDENTIALS'):
-            logger.warning("Google Cloud credentials not found. Please set GOOGLE_APPLICATION_CREDENTIALS environment variable.")
+        logger.info("Initializing Google TTS Service...")
         
-        self.client = texttospeech.TextToSpeechClient()
+        # 检查是否有Google Cloud凭证
+        credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+        logger.info(f"Google Cloud credentials path: {credentials_path}")
+        
+        if not credentials_path:
+            logger.warning("Google Cloud credentials not found. Please set GOOGLE_APPLICATION_CREDENTIALS environment variable.")
+        else:
+            logger.info(f"Google Cloud credentials file exists: {os.path.exists(credentials_path)}")
+        
+        try:
+            self.client = texttospeech.TextToSpeechClient()
+            logger.info("Google TTS client initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize Google TTS client: {e}")
+            raise Exception(f"Google TTS client initialization failed: {str(e)}")
         
         # 语言和声音映射
         self.voice_mapping = {

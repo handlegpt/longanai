@@ -48,6 +48,8 @@ async def synthesize_speech(
         TTS响应，包含音频URL
     """
     try:
+        logger.info(f"TTS synthesis request: text_length={len(request.text)}, language={request.language}, voice_name={request.voice_name}")
+        
         # 验证文本长度
         if len(request.text) > 5000:
             raise HTTPException(status_code=400, detail="Text too long. Maximum 5000 characters.")
@@ -67,6 +69,8 @@ async def synthesize_speech(
         if not (-20.0 <= request.pitch <= 20.0):
             raise HTTPException(status_code=400, detail="Pitch must be between -20.0 and 20.0")
         
+        logger.info("Starting Google TTS synthesis...")
+        
         # 执行TTS转换
         audio_content = tts_service.text_to_speech(
             text=request.text,
@@ -76,12 +80,21 @@ async def synthesize_speech(
             pitch=request.pitch
         )
         
+        logger.info(f"TTS synthesis completed, audio_content_size={len(audio_content)}")
+        
         # 保存音频文件并获取URL
-        audio_url = tts_service.save_audio_to_file(audio_content, f"tts_{int(time.time())}.mp3")
+        file_name = f"tts_{int(time.time())}.mp3"
+        logger.info(f"Saving audio file: {file_name}")
+        
+        audio_url = tts_service.save_audio_to_file(audio_content, file_name)
+        
+        logger.info(f"Audio file saved successfully: {audio_url}")
         
         # 计算音频时长（估算：假设每分钟150个字符）
         estimated_duration = len(request.text) / 150  # 分钟
         duration_seconds = estimated_duration * 60
+        
+        logger.info(f"Estimated duration: {duration_seconds} seconds")
         
         return TTSResponse(
             success=True,
@@ -92,6 +105,10 @@ async def synthesize_speech(
         
     except Exception as e:
         logger.error(f"TTS synthesis error: {e}")
+        logger.error(f"Exception type: {type(e)}")
+        logger.error(f"Exception details: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"TTS synthesis failed: {str(e)}")
 
 @router.post("/synthesize-stream")
