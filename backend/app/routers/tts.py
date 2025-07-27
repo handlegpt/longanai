@@ -162,8 +162,8 @@ async def get_available_voices(
 
 @router.get("/voices/{language}")
 async def get_language_voices(
-    language: str,
-    current_user: User = Depends(get_current_user)
+    language: str
+    # current_user: User = Depends(get_current_user)  # 暂时注释掉认证
 ):
     """
     获取指定语言的可用音色列表
