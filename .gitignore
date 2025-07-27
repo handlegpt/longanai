@@ -98,6 +98,13 @@ dist
 tmp/
 temp/
 
+# Google Cloud credentials
+google-credentials.json
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+
 # Editor directories and files
 .vscode/
 .idea/
