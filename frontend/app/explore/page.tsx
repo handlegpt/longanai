@@ -2,6 +2,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+const languageOptions = [
+  { id: "cantonese", name: "粤语", flag: "🇭🇰" },
+  { id: "mandarin", name: "普通话", flag: "🇨🇳" },
+  { id: "english", name: "English", flag: "����" },
+  { id: "all", name: "全部", flag: "��" }
+];
+
 const translations = {
   zh: {
     exploreTitle: "播客广场 Explore",
@@ -72,9 +79,18 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [tag, setTag] = useState("");
-  const [lang, setLang] = useState<string>(() => typeof window !== "undefined" ? localStorage.getItem("lang") || "zh" : "zh");
+  const [lang, setLang] = useState<string>(() => typeof window !== "undefined" ? localStorage.getItem("lang") || "cantonese" : "cantonese");
 
-  const t = translations[lang as "zh" | "en"];
+  // 根据选择的语言获取翻译
+const getTranslation = (lang: string) => {
+  if (lang === "english") {
+    return translations.en;
+  } else {
+    return translations.zh;
+  }
+};
+
+const t = getTranslation(lang);
 
   useEffect(() => {
     fetchPodcasts();
@@ -90,13 +106,28 @@ export default function ExplorePage() {
   const fetchPodcasts = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        page: String(page),
-        size: String(size),
-        search,
-        tag,
-        language: lang === "zh" ? "cantonese" : "english",  // 根据界面语言筛选播客
-      });
+      // 根据选择的语言映射到后端参数
+  let languageParam = "";
+  if (lang === "cantonese") {
+    languageParam = "cantonese";
+  } else if (lang === "mandarin") {
+    languageParam = "mandarin";
+  } else if (lang === "english") {
+    languageParam = "english";
+  } else if (lang === "all") {
+    languageParam = ""; // 全部语言，不传参数
+  } else {
+  // 兼容旧逻辑
+  languageParam = lang === "zh" ? "cantonese" : "english";
+  }
+
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+    search,
+    tag,
+    ...(languageParam && { language: languageParam }), // 只有当languageParam不为空时才添加
+  });
       const res = await fetch(`/api/podcast/public?${params.toString()}`);
       const data = await res.json();
       setPodcasts(data.podcasts || []);
@@ -122,8 +153,15 @@ export default function ExplorePage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-center">{t.exploreTitle}</h1>
         <div className="flex gap-2">
-          <button onClick={() => setLang("zh")} className={`px-3 py-1 rounded ${lang==="zh" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}>中文</button>
-          <button onClick={() => setLang("en")} className={`px-3 py-1 rounded ${lang==="en" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}>EN</button>
+        {languageOptions.map((option) => (
+  <button
+    key={option.id}
+    onClick={() => setLang(option.id)}
+    className={`px-3 py-1 rounded ${lang === option.id ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}
+  >
+    {option.flag} {option.name}
+  </button>
+))}
         </div>
       </div>
       <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
@@ -164,7 +202,7 @@ export default function ExplorePage() {
                 <span className="absolute top-2 right-2 bg-white/80 text-xs text-gray-500 px-2 py-0.5 rounded shadow">{podcast.duration}</span>
               </div>
               <h2 className="font-bold text-lg mb-1 truncate group-hover:text-blue-600 transition-colors">{podcast.title}</h2>
-              <div className="text-sm text-gray-700 mb-2 line-clamp-2">{podcast.description || (lang==="zh" ? "无简介" : "No description")}</div>
+              <div className="text-sm text-gray-700 mb-2 line-clamp-2">{podcast.description || (lang === "english" ? "No description" : "无简介")}</div>
               <audio controls src={podcast.audioUrl} className="w-full mt-auto rounded" />
               <div className="flex flex-wrap gap-2 mt-2">
                 {podcast.tags?.split(",").map(tg => tg && (
