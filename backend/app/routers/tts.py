@@ -1,12 +1,15 @@
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from sqlalchemy.orm import Session
 from typing import Optional
+from pydantic import BaseModel
 import io
 import logging
-from ..services.google_tts import GoogleTTSService
-from ..core.auth import get_current_user
-from ..models.user import User
+
+from app.core.security import get_current_user
+from app.core.database import get_db
+from app.models.user import User
+from app.services.google_tts import GoogleTTSService
 
 logger = logging.getLogger(__name__)
 
