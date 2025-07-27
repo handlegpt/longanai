@@ -791,10 +791,24 @@ export default function Home() {
           languageParam = 'english';
         }
         
-        const response = await fetch(`/api/tts/voices/${languageParam}`);
+        const token = localStorage.getItem('token');
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch(`/api/tts/voices/${languageParam}`, {
+          headers
+        });
+        
         if (response.ok) {
           const data = await response.json();
           setGoogleVoices(data.voices || []);
+        } else {
+          console.error('Failed to fetch Google voices:', response.status, response.statusText);
         }
       } catch (error) {
         console.error('Failed to fetch Google voices:', error);
