@@ -781,7 +781,15 @@ export default function Home() {
   useEffect(() => {
     const fetchGoogleVoices = async () => {
       try {
-        const response = await fetch(`/api/tts/voices/${selectedLanguage}`);
+        // 根据选择的语言映射到后端参数
+        let languageParam = selectedLanguage;
+        if (selectedLanguage === 'zh') {
+          languageParam = 'cantonese';
+        } else if (selectedLanguage === 'en') {
+          languageParam = 'english';
+        }
+        
+        const response = await fetch(`/api/tts/voices/${languageParam}`);
         if (response.ok) {
           const data = await response.json();
           setGoogleVoices(data.voices || []);
