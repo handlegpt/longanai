@@ -50,6 +50,7 @@ app.include_router(admin.router, prefix="/api/admin", tags=["管理员"])
 app.include_router(tts.router, prefix="/api/tts", tags=["TTS"])  # 添加在这里
 
 # Mount static files
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
