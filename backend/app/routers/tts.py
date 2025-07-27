@@ -13,7 +13,7 @@ from app.services.google_tts import GoogleTTSService
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/tts", tags=["TTS"])
+router = APIRouter(tags=["TTS"])
 
 # 初始化Google TTS服务
 tts_service = GoogleTTSService()
