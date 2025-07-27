@@ -729,14 +729,13 @@ export default function Home() {
     }
   };
 
-  // 根据界面语言自动设置默认输入语言
+  // 根据界面语言自动设置默认输入语言 - 只在组件首次加载时执行
   useEffect(() => {
-    if (language === 'english') {
-      setSelectedLanguage('english'); // 英文界面默认选择英文
-    } else {
-      setSelectedLanguage('cantonese'); // 中文界面默认选择粤语
+    const defaultLanguage = language === 'english' ? 'english' : 'cantonese';
+    if (selectedLanguage !== defaultLanguage) {
+      setSelectedLanguage(defaultLanguage);
     }
-  }, [language]);
+  }, [language]); // 只在language改变时执行，避免无限循环
 
   // Load podcast history from localStorage on component mount
   useEffect(() => {
