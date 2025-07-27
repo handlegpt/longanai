@@ -29,6 +29,8 @@ dist/
 *.sqlite3
 
 # Uploads
+!uploads/.gitkeep
+!uploads/*/.gitkeep
 uploads/
 static/
 
