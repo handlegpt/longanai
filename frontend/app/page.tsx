@@ -429,6 +429,8 @@ const translations = {
     termsOfService: '服务条款',
     contactUs: '联系我们',
     createButton: '创作',
+    loginRequired: '请先登录后再生成播客',
+    inputRequired: '请输入要转换的文本',
     slogans: [
       "选择主持人，输入内容，一键生成粤语播客",
       "释放你的创意，让AI为你讲述精彩的粤语故事",
