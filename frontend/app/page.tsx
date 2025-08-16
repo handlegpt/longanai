@@ -1542,19 +1542,16 @@ export default function Home() {
                     
                     {/* Voice selection - dropdown version */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                      <div className="flex flex-col">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg">🎭</span>
-                          <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
-                        </div>
-                        <div className="text-xs text-gray-400 mt-1 ml-7">选择播客主持人</div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg">🎭</span>
+                        <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
                       </div>
                       
                       <div className="relative w-full sm:w-auto">
                         <select
                           value={selectedVoice}
                           onChange={(e) => setSelectedVoice(e.target.value)}
-                          className="w-full sm:w-48 px-4 py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium bg-white border-2 border-gray-200 focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 shadow-md appearance-none cursor-pointer"
+                          className="w-full sm:w-36 px-3 py-2 rounded-lg text-sm font-medium bg-white border-2 border-gray-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 shadow-sm appearance-none cursor-pointer hover:border-gray-300"
                         >
                           {/* Edge TTS voices - 根据选择的语言显示对应音色 */}
                           {getEdgeVoicesForLanguage().map((voice) => (
@@ -1572,8 +1569,8 @@ export default function Home() {
                         </select>
                         
                         {/* Custom dropdown arrow */}
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                           </svg>
                         </div>
