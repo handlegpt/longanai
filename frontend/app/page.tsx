@@ -58,7 +58,7 @@ const translations = {
     selectLanguageHint: '请选择要生成的播客语言',
     cantoneseLang: '粵語',
     guangdonghuaLang: '廣東話',
-    mandarinLang: '普通話',
+    mandarinLang: '普通話轉粵語',
     englishLang: 'English',
     
     // Voice selection
@@ -273,11 +273,11 @@ const translations = {
     heroSubtitle: '选择你的播客主持人，输入内容，一键生成专业级的粤语播客',
     
     // Language selection
-    selectLanguage: '输出语言',
-    selectLanguageHint: '请选择要生成的播客语言',
-    cantoneseLang: '粤语',
-    guangdonghuaLang: '广东话',
-    mandarinLang: '普通话',
+    selectLanguage: '输入语言',
+    selectLanguageHint: '请选择输入内容的语言，最终生成粤语播客',
+    cantoneseLang: 'Cantonese',
+    guangdonghuaLang: 'Guangdong Dialect',
+    mandarinLang: 'Mandarin to Cantonese',
     englishLang: 'English',
     
     // Voice selection
@@ -496,7 +496,7 @@ const translations = {
     selectLanguageHint: 'Please select the language for your podcast',
     cantoneseLang: 'Cantonese',
     guangdonghuaLang: 'Guangdong Dialect',
-    mandarinLang: 'English',
+    mandarinLang: 'Mandarin to Cantonese',
     englishLang: 'English',
     
     // Voice selection
@@ -1080,10 +1080,36 @@ export default function Home() {
       
       // Check if translation is needed
       if (selectedLanguage === 'mandarin') {
-        // 选择普通话输入，不需要翻译，直接使用原文生成普通话播客
-        finalText = inputText;
-        isTranslated = false;
-        console.log('选择普通话，直接使用原文:', finalText);
+        // 选择普通话转粤语，需要将普通话翻译为粤语再生成播客
+        try {
+          console.log('开始翻译普通话到粤语:', inputText);
+          const translationResponse = await fetch('/api/translate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: inputText,
+              targetLanguage: 'cantonese'
+            }),
+          });
+          
+          if (translationResponse.ok) {
+            const translationData = await translationResponse.json();
+            finalText = translationData.translatedText;
+            isTranslated = true;
+            console.log('翻译成功:', finalText);
+          } else {
+            const errorData = await translationResponse.json();
+            console.error('翻译API返回错误:', translationResponse.status, errorData);
+            finalText = inputText;
+            isTranslated = false;
+          }
+        } catch (error) {
+          console.error('翻译失败，使用原文:', error);
+          finalText = inputText;
+          isTranslated = false;
+        }
       } else if (selectedLanguage === 'cantonese' && language === 'english') {
         // 英文界面下选择粤语，需要翻译英文为粤语
         try {

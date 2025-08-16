@@ -107,9 +107,9 @@ async def generate_podcast(
             # Validate voice based on language
             valid_voices = []
             if request.language == "mandarin":
+                # 普通话转粤语，使用粤语TTS语音
                 valid_voices = ["young-lady", "young-man", "grandma", "elderly-woman"]
-                # 对于普通话，使用对应的普通话TTS语音
-                voice_key = f"mandarin-{request.voice}"
+                voice_key = request.voice  # 使用粤语语音
             else:
                 valid_voices = ["young-lady", "young-man", "grandma", "elderly-woman"]
                 voice_key = request.voice
@@ -125,7 +125,7 @@ async def generate_podcast(
             if len(request.text) > 10000:  # 限制文本长度
                 raise HTTPException(status_code=400, detail="文本内容过长，请控制在10000字符以内")
             
-            # Get TTS voice
+            # Get TTS voice - 普通话转粤语时使用粤语TTS语音
             tts_voice = VOICE_MAPPING.get(voice_key, VOICE_MAPPING[request.voice])
             print(f"🎵 Using TTS voice: {tts_voice} for language: {request.language}")
             
@@ -145,12 +145,34 @@ async def generate_podcast(
                 return any(word in text for word in cantonese_keywords)
 
             tts_text = request.text
+            # 当选择mandarin时，表示用户想要将普通话转换为粤语播客
             # 只有当文本未翻译过且是中文但不是粤语时，才进行翻译
-            # 但是，如果用户明确选择了普通话语言，则不进行翻译
             if (not request.is_translated and 
                 is_chinese(request.text) and 
                 not is_cantonese(request.text) and 
-                request.language != "mandarin"):  # 添加语言检查
+                request.language == "mandarin"):  # 明确选择普通话转粤语
+                print("🔄 用户选择普通话转粤语，开始翻译...")
+                try:
+                    # 直接调用翻译函数，避免HTTP请求
+                    from app.routers.translate import translate_text
+                    from app.routers.translate import TranslationRequest
+                    
+                    translation_request = TranslationRequest(
+                        text=request.text,
+                        targetLanguage="cantonese"
+                    )
+                    
+                    translation_response = await translate_text(translation_request)
+                    tts_text = translation_response.translatedText
+                    print(f"✅ 普通话转粤语翻译成功: {tts_text}")
+                    
+                except Exception as e:
+                    print(f"⚠️ 翻译异常，使用原文: {str(e)}")
+                    tts_text = request.text
+            elif (not request.is_translated and 
+                  is_chinese(request.text) and 
+                  not is_cantonese(request.text) and 
+                  request.language != "mandarin"):  # 其他情况下的自动翻译
                 print("🔄 检测到普通话且未翻译，自动调用翻译服务...")
                 try:
                     # 直接调用翻译函数，避免HTTP请求
