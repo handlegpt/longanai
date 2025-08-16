@@ -66,26 +66,8 @@ export default function EmailLogin({ onLogin, translations }: EmailLoginProps) {
 
     setIsLoading(true);
     try {
-      // 先尝试直接登录（适用于已验证用户）
-      const loginResponse = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const loginData = await loginResponse.json();
-
-      if (loginResponse.ok) {
-        // 已验证用户，直接登录成功
-        onLogin(loginData.access_token, loginData.email);
-        toast.success(translations.loginSuccess);
-        return;
-      }
-
-      // 如果直接登录失败，尝试发送验证邮件（适用于未验证用户）
-      const response = await fetch('/api/auth/send-verification', {
+      // 统一发送登录验证码，无论用户是否已验证
+      const response = await fetch('/api/auth/send-login-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +98,7 @@ export default function EmailLogin({ onLogin, translations }: EmailLoginProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/verify-code', {
+      const response = await fetch('/api/auth/verify-login-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +127,7 @@ export default function EmailLogin({ onLogin, translations }: EmailLoginProps) {
   const handleResendCode = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/resend-verification', {
+      const response = await fetch('/api/auth/send-login-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

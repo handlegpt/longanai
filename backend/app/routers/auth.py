@@ -172,6 +172,89 @@ def login_with_email(request: EmailRequest, db: Session = Depends(get_db)):
         "is_verified": user.is_verified
     }
 
+@router.post("/send-login-code")
+def send_login_code(request: EmailRequest, db: Session = Depends(get_db)):
+    """发送登录验证码（适用于所有用户，包括已验证用户）"""
+    if not request.email or '@' not in request.email:
+        raise HTTPException(status_code=400, detail="Invalid email format")
+    
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        # 如果用户不存在，创建新用户
+        user = User(
+            email=request.email,
+            is_verified=False,
+            verification_token=None,
+            verification_expires=None
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    
+    # 生成6位数字验证码
+    import random
+    verification_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    
+    # 存储验证码到用户记录
+    user.verification_token = verification_code
+    user.verification_expires = datetime.utcnow() + timedelta(minutes=10)  # 10分钟过期
+    db.commit()
+    
+    # 发送验证码邮件
+    email_sent = email_service.send_verification_code_email(
+        request.email,
+        request.email.split('@')[0],
+        verification_code
+    )
+    
+    if email_sent:
+        return {"success": True, "message": "Login verification code sent successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send verification code")
+
+@router.post("/verify-login-code")
+def verify_login_code(request: dict, db: Session = Depends(get_db)):
+    """验证登录验证码"""
+    email = request.get("email")
+    code = request.get("code")
+    
+    if not email or not code:
+        raise HTTPException(status_code=400, detail="Email and verification code required")
+    
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # 检查验证码是否匹配且未过期
+    if (user.verification_token != code or 
+        not user.verification_expires or 
+        user.verification_expires < datetime.utcnow()):
+        raise HTTPException(status_code=400, detail="Invalid or expired verification code")
+    
+    # 清除验证码
+    user.verification_token = None
+    user.verification_expires = None
+    
+    # 如果是新用户，标记为已验证
+    if not user.is_verified:
+        user.is_verified = True
+    
+    db.commit()
+    
+    # 生成访问令牌
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    
+    return {
+        "success": True,
+        "access_token": access_token,
+        "token_type": "bearer",
+        "email": user.email,
+        "is_verified": user.is_verified
+    }
+
 @router.post("/resend-verification")
 def resend_verification(request: EmailRequest, db: Session = Depends(get_db)):
     if not request.email or '@' not in request.email:
