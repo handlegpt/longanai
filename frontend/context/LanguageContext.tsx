@@ -43,9 +43,17 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
   // 根据当前路径设置语言
   useEffect(() => {
-    const detectedLanguage = detectLanguageFromPath(pathname);
-    setLanguageState(detectedLanguage);
-    localStorage.setItem("selected_language", detectedLanguage);
+    // 首先尝试从localStorage获取保存的语言
+    const savedLanguage = localStorage.getItem("selected_language") as Language;
+    
+    if (savedLanguage && (savedLanguage === 'cantonese' || savedLanguage === 'mandarin' || savedLanguage === 'english')) {
+      setLanguageState(savedLanguage);
+    } else {
+      // 如果没有保存的语言，则根据路径检测
+      const detectedLanguage = detectLanguageFromPath(pathname);
+      setLanguageState(detectedLanguage);
+      localStorage.setItem("selected_language", detectedLanguage);
+    }
   }, [pathname]);
     // 添加这个函数
     const setLanguage = (lang: Language) => {
@@ -72,7 +80,8 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       
       // 移除当前语言前缀
       let newPath = currentPath;
-      Object.values(languagePaths).forEach(path => {
+      Object.keys(languagePaths).forEach(key => {
+        const path = languagePaths[key as keyof typeof languagePaths];
         if (newPath.startsWith(path)) {
           newPath = newPath.substring(path.length);
         }
