@@ -1615,16 +1615,16 @@ export default function Home() {
                       handleGenerate();
                     }}
                     disabled={isGenerating}
-                    className="btn-primary flex items-center space-x-3 sm:space-x-4 px-6 sm:px-10 py-3 sm:py-5 text-base sm:text-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200 shadow-xl w-full sm:w-auto bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
+                    className="btn-primary flex items-center justify-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-102 transition-all duration-200 shadow-lg w-full sm:w-auto bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-xl"
                   >
                     {isGenerating ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-b-2 border-white"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white"></div>
                         <span>{t.generating}</span>
                       </>
                     ) : (
                       <>
-                        <Play className="w-5 h-5 sm:w-6 sm:h-6" />
+                        <Play className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span>{t.createButton}</span>
                       </>
                     )}
