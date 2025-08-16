@@ -21,7 +21,8 @@ class EmailRequest(BaseModel):
 class TokenRequest(BaseModel):
     token: str
 
-email_service = EmailService()
+def get_email_service():
+    return EmailService()
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -102,6 +103,7 @@ def send_verification_email(request: EmailRequest, db: Session = Depends(get_db)
     user = db.query(User).filter(User.email == request.email).first()
     if user and user.is_verified:
         raise HTTPException(status_code=400, detail="Email already verified")
+    email_service = get_email_service()
     verification_token = email_service.create_verification_token(request.email)
     if user:
         user.verification_token = verification_token
@@ -136,6 +138,7 @@ def send_verification_email(request: EmailRequest, db: Session = Depends(get_db)
 @router.post("/verify-email")
 def verify_email(request: TokenRequest, db: Session = Depends(get_db)):
     token = request.token
+    email_service = get_email_service()
     email = email_service.verify_token(token)
     if not email:
         raise HTTPException(status_code=400, detail="Invalid or expired token")
@@ -218,6 +221,7 @@ def send_login_code(request: EmailRequest, db: Session = Depends(get_db)):
     
     # 发送验证码邮件
     try:
+        email_service = get_email_service()
         email_sent = email_service.send_verification_code_email(
             request.email,
             request.email.split('@')[0],
@@ -284,6 +288,7 @@ def resend_verification(request: EmailRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     if user.is_verified:
         raise HTTPException(status_code=400, detail="Email already verified")
+    email_service = get_email_service()
     verification_token = email_service.create_verification_token(request.email)
     user.verification_token = verification_token
     user.verification_expires = datetime.utcnow() + timedelta(hours=24)
