@@ -20,17 +20,12 @@ from app.models.user import User
 
 router = APIRouter()
 
-# Voice mapping
+# Voice mapping - 所有选项都使用粤语TTS语音，因为最终都生成粤语播客
 VOICE_MAPPING = {
     "young-lady": "zh-HK-HiuGaaiNeural",
     "young-man": "zh-HK-WanLungNeural", 
     "grandma": "zh-HK-HiuGaaiNeural",
     "elderly-woman": "zh-HK-HiuGaaiNeural",
-    # 普通话语音映射
-    "mandarin-young-lady": "zh-CN-XiaoxiaoNeural",
-    "mandarin-young-man": "zh-CN-YunxiNeural",
-    "mandarin-grandma": "zh-CN-XiaoyiNeural",
-    "mandarin-elderly-woman": "zh-CN-YunyangNeural",
 }
 
 # Subscription limits
@@ -104,19 +99,16 @@ async def generate_podcast(
                     detail=f"已达到本月生成限制 ({user_limit} 个)。请升级到专业版获得更多生成次数。"
                 )
             
-            # Validate voice based on language
-            valid_voices = []
-            if request.language == "mandarin":
-                # 普通话转粤语，使用粤语TTS语音
-                valid_voices = ["young-lady", "young-man", "grandma", "elderly-woman"]
-                voice_key = request.voice  # 使用粤语语音
-            else:
-                valid_voices = ["young-lady", "young-man", "grandma", "elderly-woman"]
-                voice_key = request.voice
+            # Validate voice - 所有语言选项都使用相同的粤语语音
+            valid_voices = ["young-lady", "young-man", "grandma", "elderly-woman"]
             
             if request.voice not in valid_voices:
-                print(f"❌ Invalid voice: {request.voice} for language: {request.language}")
+                print(f"❌ Invalid voice: {request.voice}")
                 raise HTTPException(status_code=400, detail="无效的声音选择")
+            
+            # Get TTS voice - 所有选项都使用粤语TTS语音
+            tts_voice = VOICE_MAPPING[request.voice]
+            print(f"🎵 Using TTS voice: {tts_voice} for language: {request.language}")
             
             # Validate text length
             if not request.text or len(request.text.strip()) == 0:
@@ -124,10 +116,6 @@ async def generate_podcast(
             
             if len(request.text) > 10000:  # 限制文本长度
                 raise HTTPException(status_code=400, detail="文本内容过长，请控制在10000字符以内")
-            
-            # Get TTS voice - 普通话转粤语时使用粤语TTS语音
-            tts_voice = VOICE_MAPPING.get(voice_key, VOICE_MAPPING[request.voice])
-            print(f"🎵 Using TTS voice: {tts_voice} for language: {request.language}")
             
             # 增加中文检测逻辑
             def is_chinese(text):

@@ -1443,14 +1443,16 @@ export default function Home() {
       { id: 'elderly-woman', name: '阿姐', description: '亲切自然的粤语女声，适合日常对话和轻松内容' }
     ],
     mandarin: [
-      { id: 'young-lady', name: '小美', description: '温柔甜美的普通话女声' },
-      { id: 'young-man', name: '阿强', description: '成熟稳重的普通话男声' },
-      { id: 'grandma', name: '小芳', description: '亲切自然的普通话女声，适合生活分享' },
-      { id: 'elderly-woman', name: '老李', description: '成熟稳重的普通话男声，适合正式内容' }
+      { id: 'young-lady', name: '靓女', description: '温柔甜美的粤语女声' },
+      { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' },
+      { id: 'grandma', name: '龍眼妹', description: '温柔亲切，适合生活分享同情感内容' },
+      { id: 'elderly-woman', name: '阿姐', description: '亲切自然的粤语女声，适合日常对话和轻松内容' }
     ],
     english: [
-      { id: 'young-lady', name: 'Sarah', description: 'Clear and professional English female voice' },
-      { id: 'young-man', name: 'Mike', description: 'Friendly and energetic English male voice' }
+      { id: 'young-lady', name: '靓女', description: '温柔甜美的粤语女声' },
+      { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' },
+      { id: 'grandma', name: '龍眼妹', description: '温柔亲切，适合生活分享同情感内容' },
+      { id: 'elderly-woman', name: '阿姐', description: '亲切自然的粤语女声，适合日常对话和轻松内容' }
     ]
   };
 
