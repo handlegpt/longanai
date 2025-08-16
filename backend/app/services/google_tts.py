@@ -65,7 +65,7 @@ class GoogleTTSService:
                 'voices': [
                     {
                         'name': 'cmn-CN-Standard-A',
-                        'display_name': '小美',
+                        'display_name': '小芳',
                         'description': '温柔甜美的普通话女声',
                         'gender': 'FEMALE'
                     },
@@ -73,6 +73,18 @@ class GoogleTTSService:
                         'name': 'cmn-CN-Standard-B',
                         'display_name': '阿强', 
                         'description': '成熟稳重的普通话男声',
+                        'gender': 'MALE'
+                    },
+                    {
+                        'name': 'cmn-CN-Standard-C',
+                        'display_name': '小丽',
+                        'description': '亲切自然的普通话女声，适合生活分享',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'cmn-CN-Standard-D',
+                        'display_name': '老李',
+                        'description': '成熟稳重的普通话男声，适合正式内容',
                         'gender': 'MALE'
                     }
                 ],

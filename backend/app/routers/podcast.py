@@ -24,6 +24,13 @@ router = APIRouter()
 VOICE_MAPPING = {
     "young-lady": "zh-HK-HiuGaaiNeural",
     "young-man": "zh-HK-WanLungNeural", 
+    "grandma": "zh-HK-HiuGaaiNeural",
+    "elderly-woman": "zh-HK-HiuGaaiNeural",
+    # 普通话语音映射
+    "mandarin-young-lady": "zh-CN-XiaoxiaoNeural",
+    "mandarin-young-man": "zh-CN-YunxiNeural",
+    "mandarin-grandma": "zh-CN-XiaoyiNeural",
+    "mandarin-elderly-woman": "zh-CN-YunyangNeural",
 }
 
 # Subscription limits
@@ -97,10 +104,19 @@ async def generate_podcast(
                     detail=f"已达到本月生成限制 ({user_limit} 个)。请升级到专业版获得更多生成次数。"
                 )
             
-            # Validate voice
-            if request.voice not in VOICE_MAPPING:
-                print(f"❌ Invalid voice: {request.voice}")
-                raise HTTPException(status_code=400, detail="无效的声音选择，请选择靓女或靓仔")
+            # Validate voice based on language
+            valid_voices = []
+            if request.language == "mandarin":
+                valid_voices = ["young-lady", "young-man", "grandma", "elderly-woman"]
+                # 对于普通话，使用对应的普通话TTS语音
+                voice_key = f"mandarin-{request.voice}"
+            else:
+                valid_voices = ["young-lady", "young-man", "grandma", "elderly-woman"]
+                voice_key = request.voice
+            
+            if request.voice not in valid_voices:
+                print(f"❌ Invalid voice: {request.voice} for language: {request.language}")
+                raise HTTPException(status_code=400, detail="无效的声音选择")
             
             # Validate text length
             if not request.text or len(request.text.strip()) == 0:
@@ -110,8 +126,8 @@ async def generate_podcast(
                 raise HTTPException(status_code=400, detail="文本内容过长，请控制在10000字符以内")
             
             # Get TTS voice
-            tts_voice = VOICE_MAPPING[request.voice]
-            print(f"🎵 Using TTS voice: {tts_voice}")
+            tts_voice = VOICE_MAPPING.get(voice_key, VOICE_MAPPING[request.voice])
+            print(f"🎵 Using TTS voice: {tts_voice} for language: {request.language}")
             
             # 增加中文检测逻辑
             def is_chinese(text):
@@ -130,7 +146,11 @@ async def generate_podcast(
 
             tts_text = request.text
             # 只有当文本未翻译过且是中文但不是粤语时，才进行翻译
-            if not request.is_translated and is_chinese(request.text) and not is_cantonese(request.text):
+            # 但是，如果用户明确选择了普通话语言，则不进行翻译
+            if (not request.is_translated and 
+                is_chinese(request.text) and 
+                not is_cantonese(request.text) and 
+                request.language != "mandarin"):  # 添加语言检查
                 print("🔄 检测到普通话且未翻译，自动调用翻译服务...")
                 try:
                     # 直接调用翻译函数，避免HTTP请求
@@ -150,7 +170,7 @@ async def generate_podcast(
                     print(f"⚠️ 后端翻译异常，使用原文: {str(e)}")
                     tts_text = request.text
             else:
-                print(f"✅ 使用前端提供的文本（已翻译: {request.is_translated}）")
+                print(f"✅ 使用前端提供的文本（已翻译: {request.is_translated}, 语言: {request.language}）")
                 tts_text = request.text
             
             # Validate text length and duration

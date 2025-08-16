@@ -79,18 +79,26 @@ export default function VoiceSelector({ selectedVoice, onVoiceChange, translatio
     fetchGoogleVoices();
   }, [selectedLanguage]);
 
-  // 合并所有音色
+  // 合并所有音色，避免重复
   const allVoices = [
     ...edgeVoices,
-    ...googleVoices.map((voice, index) => ({
-      id: `google-${(voice as any).name}`,
-      name: voice.display_name,
-      description: (voice as any).description,
-      icon: index % 2 === 0 ? Mic : Volume2,
-      color: index % 2 === 0 ? 'bg-green-500' : 'bg-orange-500',
-      type: 'google',
-      googleVoice: voice
-    }))
+    ...googleVoices
+      .filter((voice, index) => {
+        // 过滤掉与Edge TTS音色名称重复的Google TTS音色
+        const edgeVoiceNames = edgeVoices.map(v => 
+          translations[(v as any).nameKey as keyof typeof translations]
+        );
+        return !edgeVoiceNames.includes(voice.display_name);
+      })
+      .map((voice, index) => ({
+        id: `google-${(voice as any).name}`,
+        name: voice.display_name,
+        description: (voice as any).description,
+        icon: index % 2 === 0 ? Mic : Volume2,
+        color: index % 2 === 0 ? 'bg-green-500' : 'bg-orange-500',
+        type: 'google',
+        googleVoice: voice
+      }))
   ];
 
   return (

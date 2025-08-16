@@ -1080,38 +1080,10 @@ export default function Home() {
       
       // Check if translation is needed
       if (selectedLanguage === 'mandarin') {
-        // 选择普通话输入，需要翻译为粤语
-        try {
-          console.log('开始翻译普通话到粤语:', inputText);
-          const translationResponse = await fetch('/api/translate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              text: inputText,
-              targetLanguage: 'cantonese'
-            }),
-          });
-          
-          if (translationResponse.ok) {
-            const translationData = await translationResponse.json();
-            finalText = translationData.translatedText;
-            isTranslated = true;
-            console.log('翻译成功:', finalText);
-          } else {
-            const errorData = await translationResponse.json();
-            console.error('翻译API返回错误:', translationResponse.status, errorData);
-            // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
-            finalText = inputText;
-            isTranslated = false;
-          }
-        } catch (error) {
-          console.error('翻译失败，使用原文:', error);
-          // 翻译失败时使用原文，但标记为未翻译（让后端有机会检查）
-          finalText = inputText;
-          isTranslated = false;
-        }
+        // 选择普通话输入，不需要翻译，直接使用原文生成普通话播客
+        finalText = inputText;
+        isTranslated = false;
+        console.log('选择普通话，直接使用原文:', finalText);
       } else if (selectedLanguage === 'cantonese' && language === 'english') {
         // 英文界面下选择粤语，需要翻译英文为粤语
         try {
@@ -1446,7 +1418,9 @@ export default function Home() {
     ],
     mandarin: [
       { id: 'young-lady', name: '小美', description: '温柔甜美的普通话女声' },
-      { id: 'young-man', name: '阿强', description: '成熟稳重的普通话男声' }
+      { id: 'young-man', name: '阿强', description: '成熟稳重的普通话男声' },
+      { id: 'grandma', name: '小芳', description: '亲切自然的普通话女声，适合生活分享' },
+      { id: 'elderly-woman', name: '老李', description: '成熟稳重的普通话男声，适合正式内容' }
     ],
     english: [
       { id: 'young-lady', name: 'Sarah', description: 'Clear and professional English female voice' },
