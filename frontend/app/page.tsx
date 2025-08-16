@@ -320,7 +320,7 @@ const translations = {
     verificationSentTitle: '验证邮件已发送',
     verificationSentSubtitle: '我们已向 {email} 发送验证邮件',
     nextStepsTitle: '下一步',
-    step1: '检查你嘅邮箱收件箱',
+    step1: '检查你的邮箱收件箱',
     step2: '点击验证链接',
     step3: '返回这里继续使用',
     backToLogin: '返回登录',
@@ -627,6 +627,8 @@ const translations = {
     termsOfService: 'Terms of Service',
     contactUs: 'Contact Us',
     createButton: 'Create',
+    loginRequired: 'Please login first to generate podcasts',
+    inputRequired: 'Please enter text to convert',
     slogans: [
       "Choose a host, input content, generate a Cantonese podcast with one click",
       "Unleash your creativity, let AI tell wonderful Cantonese stories",
