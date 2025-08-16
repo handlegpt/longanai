@@ -3,9 +3,11 @@
 import EmailLogin from '@/components/EmailLogin';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function EnglishLoginPage() {
   const router = useRouter();
+  const { language } = useLanguage();
   const [loginSuccess, setLoginSuccess] = useState(false);
 
   // English translations
