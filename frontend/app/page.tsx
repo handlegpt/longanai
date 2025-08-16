@@ -1777,27 +1777,25 @@ export default function Home() {
             )}
           </div>
         </motion.div>
-      </main>
-
       {/* 最新播客（全站公开） */}
-      {publicPodcasts.length > 0 && (
-        <section className="bg-gray-50 py-12">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <div className="text-center sm:text-left">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.latestPodcastsTitle}</h2>
-                <p className="text-gray-600">{t.latestPodcastsSubtitle}</p>
-              </div>
-              <Link 
-                href="/explore" 
-                className="hidden sm:inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-              >
-                <span>{t.viewMore}</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+      <section className="bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <div className="text-center sm:text-left">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.latestPodcastsTitle}</h2>
+              <p className="text-gray-600">{t.latestPodcastsSubtitle}</p>
             </div>
+            <Link 
+              href="/explore" 
+              className="hidden sm:inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+            >
+              <span>{t.viewMore}</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+          {publicPodcasts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {publicPodcasts.map((podcast) => (
                 <motion.div
@@ -1851,27 +1849,31 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
-            {loadingPublic && (
-              <div className="text-center py-8 text-gray-400">{t.loadingPodcasts}</div>
-            )}
-            {!loadingPublic && publicPodcasts.length === 0 && (
-              <div className="text-center py-8 text-gray-400">{t.noPublicPodcasts}</div>
-            )}
-            {/* Mobile "查看更多" button */}
-            <div className="text-center sm:hidden mt-8">
-              <Link 
-                href="/explore" 
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-              >
-                <span>{t.viewMore}</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+          ) : (
+            <div className="text-center py-12">
+              {loadingPublic ? (
+                <div className="text-gray-400">{t.loadingPodcasts}</div>
+              ) : (
+                <div className="text-gray-400">{t.noPublicPodcasts}</div>
+              )}
             </div>
+          )}
+          {/* Mobile "查看更多" button */}
+          <div className="text-center sm:hidden mt-8">
+            <Link 
+              href="/explore" 
+              className="inline-flex items-center space-x-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+            >
+              <span>{t.viewMore}</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
+
+      </main>
 
       {/* Features and Statistics section */}
       <section className="bg-white border-t border-gray-200">

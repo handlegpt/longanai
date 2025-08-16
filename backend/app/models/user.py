@@ -13,5 +13,8 @@ class User(Base):
     verification_token = Column(String(500), nullable=True)
     verification_expires = Column(DateTime, nullable=True)
     google_id = Column(String(100), nullable=True)
+    subscription_plan = Column(String(50), default='free')  # 订阅计划
+    monthly_generation_count = Column(Integer, default=0)  # 本月生成次数
+    last_generation_reset = Column(DateTime, nullable=True)  # 上次重置生成次数的时间
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
