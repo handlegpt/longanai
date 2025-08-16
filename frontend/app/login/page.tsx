@@ -48,7 +48,9 @@ export default function LoginPage() {
       verifyButton: '驗證',
       verifyLoading: '驗證中...',
       codeRequired: '請輸入驗證碼',
-      invalidCode: '驗證碼錯誤'
+      invalidCode: '驗證碼錯誤',
+      googleLoginButton: '使用 Google 登入',
+      orEmailLogin: '或郵箱登入'
     },
     mandarin: {
       loginTitle: '邮箱登录',
@@ -86,7 +88,9 @@ export default function LoginPage() {
       verifyButton: '验证',
       verifyLoading: '验证中...',
       codeRequired: '请输入验证码',
-      invalidCode: '验证码错误'
+      invalidCode: '验证码错误',
+      googleLoginButton: '使用 Google 登录',
+      orEmailLogin: '或邮箱登录'
     },
     english: {
       loginTitle: 'Email Login',
@@ -124,7 +128,9 @@ export default function LoginPage() {
       verifyButton: 'Verify',
       verifyLoading: 'Verifying...',
       codeRequired: 'Please enter verification code',
-      invalidCode: 'Invalid verification code'
+      invalidCode: 'Invalid verification code',
+      googleLoginButton: 'Sign in with Google',
+      orEmailLogin: 'or email login'
     }
   };
 

@@ -187,13 +187,13 @@ export default function EmailLogin({ onLogin, translations }: EmailLoginProps) {
                 </g>
               </svg>
             </span>
-            <span>使用 Google 登录</span>
+            <span>{translations.googleLoginButton || '使用 Google 登录'}</span>
           </button>
 
           {/* 分割线 */}
           <div className="flex items-center my-4">
             <div className="flex-grow h-px bg-gray-200" />
-            <span className="mx-2 text-gray-400 text-xs">或邮箱登录</span>
+            <span className="mx-2 text-gray-400 text-xs">{translations.orEmailLogin || '或邮箱登录'}</span>
             <div className="flex-grow h-px bg-gray-200" />
           </div>
 

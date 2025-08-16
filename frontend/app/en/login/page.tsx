@@ -47,7 +47,9 @@ export default function EnglishLoginPage() {
     verifyButton: 'Verify',
     verifyLoading: 'Verifying...',
     codeRequired: 'Please enter verification code',
-    invalidCode: 'Invalid verification code'
+    invalidCode: 'Invalid verification code',
+    googleLoginButton: 'Sign in with Google',
+    orEmailLogin: 'or email login'
   };
 
   // Handle login success

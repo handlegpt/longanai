@@ -47,7 +47,9 @@ export default function CantoneseLoginPage() {
     verifyButton: '驗證',
     verifyLoading: '驗證中...',
     codeRequired: '請輸入驗證碼',
-    invalidCode: '驗證碼錯誤'
+    invalidCode: '驗證碼錯誤',
+    googleLoginButton: '使用 Google 登入',
+    orEmailLogin: '或郵箱登入'
   };
 
   // Handle login success
