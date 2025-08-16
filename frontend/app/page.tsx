@@ -1369,7 +1369,9 @@ export default function Home() {
   const edgeVoices: Record<string, { id: string; name: string; description: string; }[]> = {
     cantonese: [
       { id: 'young-lady', name: '靓女', description: '温柔甜美的粤语女声' },
-      { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' }
+      { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' },
+      { id: 'grandma', name: '龙眼妹', description: '温柔亲切，适合生活分享同情感内容' },
+      { id: 'elderly-woman', name: '阿姐', description: '亲切自然的粤语女声，适合日常对话和轻松内容' }
     ],
     mandarin: [
       { id: 'young-lady', name: '小美', description: '温柔甜美的普通话女声' },
@@ -1538,7 +1540,7 @@ export default function Home() {
                       </div>
                     </div>
                     
-                    {/* Voice selection - improved version */}
+                    {/* Voice selection - dropdown version */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                       <div className="flex flex-col">
                         <div className="flex items-center space-x-2">
@@ -1548,36 +1550,33 @@ export default function Home() {
                         <div className="text-xs text-gray-400 mt-1 ml-7">选择播客主持人</div>
                       </div>
                       
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 w-full sm:w-auto">
-                        {/* Edge TTS voices - 根据选择的语言显示对应音色 */}
-                        {getEdgeVoicesForLanguage().map((voice) => (
-                          <button
-                            key={voice.id}
-                            onClick={() => setSelectedVoice(voice.id)}
-                            className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 shadow-md ${
-                              selectedVoice === voice.id
-                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg scale-105'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
-                            }`}
-                          >
-                            {voice.name}
-                          </button>
-                        ))}
+                      <div className="relative w-full sm:w-auto">
+                        <select
+                          value={selectedVoice}
+                          onChange={(e) => setSelectedVoice(e.target.value)}
+                          className="w-full sm:w-48 px-4 py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium bg-white border-2 border-gray-200 focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 shadow-md appearance-none cursor-pointer"
+                        >
+                          {/* Edge TTS voices - 根据选择的语言显示对应音色 */}
+                          {getEdgeVoicesForLanguage().map((voice) => (
+                            <option key={voice.id} value={voice.id}>
+                              {voice.name}
+                            </option>
+                          ))}
+                          
+                          {/* Google TTS voices - 根据选择的语言显示对应音色 */}
+                          {googleVoices.map((voice) => (
+                            <option key={voice.name} value={`google-${voice.name}`}>
+                              {voice.display_name}
+                            </option>
+                          ))}
+                        </select>
                         
-                        {/* Google TTS voices - 根据选择的语言显示对应音色 */}
-                        {googleVoices.map((voice) => (
-                          <button
-                            key={voice.name}
-                            onClick={() => setSelectedVoice(`google-${voice.name}`)}
-                            className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 shadow-md ${
-                              selectedVoice === `google-${voice.name}`
-                                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg scale-105'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105 hover:shadow-lg'
-                            }`}
-                          >
-                            {voice.display_name}
-                          </button>
-                        ))}
+                        {/* Custom dropdown arrow */}
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
                       </div>
                     </div>
                     
