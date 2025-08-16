@@ -229,6 +229,8 @@ const translations = {
     termsOfService: '服务条款',
     contactUs: '联系我们',
     createButton: '創作',
+    loginRequired: '请先登录后再生成播客',
+    inputRequired: '请输入要转换嘅文本',
     slogans: [
       "揀主持人、輸入內容，一鍵生成粵語播客",
       "释放你嘅创意，让AI为你讲述精彩嘅粤语故事",
@@ -998,13 +1000,13 @@ export default function Home() {
   const handleGenerate = async () => {
     // Check if user is logged in
     if (!isLoggedIn) {
-      alert('请先登录后再生成播客');
+      alert(t.loginRequired);
       setShowLogin(true);
       return;
     }
     
     if (!inputText.trim()) {
-      alert('请输入要转换的文本');
+      alert(t.inputRequired);
       return;
     }
     
@@ -1458,7 +1460,7 @@ export default function Home() {
                   <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="输入你的播客内容..."
+                    placeholder={t.inputPlaceholder}
                     className="w-full h-32 sm:h-48 p-4 sm:p-8 border-2 border-gray-200 rounded-xl sm:rounded-2xl resize-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200 text-base sm:text-lg leading-relaxed"
                   />
                   <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 flex items-center space-x-2 sm:space-x-4">
@@ -1474,7 +1476,7 @@ export default function Home() {
                       <label
                         htmlFor="image-upload"
                         className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg cursor-pointer hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-md"
-                        title="添加封面"
+                        title={t.addCover}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -1495,7 +1497,7 @@ export default function Home() {
                       <label
                         htmlFor="file-upload"
                         className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg cursor-pointer hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-md"
-                        title="上传文件"
+                        title={t.uploadFile}
                       >
                         <Upload className="w-4 h-4" />
                       </label>
@@ -1609,7 +1611,7 @@ export default function Home() {
                         return;
                       }
                       if (!inputText.trim()) {
-                        alert('请输入要转换的文本');
+                        alert(t.inputRequired);
                         return;
                       }
                       handleGenerate();
