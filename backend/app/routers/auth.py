@@ -200,17 +200,37 @@ def send_login_code(request: EmailRequest, db: Session = Depends(get_db)):
     user.verification_expires = datetime.utcnow() + timedelta(minutes=10)  # 10分钟过期
     db.commit()
     
-    # 发送验证码邮件
-    email_sent = email_service.send_verification_code_email(
-        request.email,
-        request.email.split('@')[0],
-        verification_code
-    )
+    # 检查Resend配置
+    print(f"DEBUG: RESEND_API_KEY = {settings.RESEND_API_KEY[:10]}..." if settings.RESEND_API_KEY else "DEBUG: RESEND_API_KEY = None")
+    print(f"DEBUG: RESEND_FROM = {settings.RESEND_FROM}")
     
-    if email_sent:
-        return {"success": True, "message": "Login verification code sent successfully"}
-    else:
-        raise HTTPException(status_code=500, detail="Failed to send verification code")
+    if not settings.RESEND_API_KEY or settings.RESEND_API_KEY == "":
+        print("Warning: RESEND_API_KEY not configured")
+        # 在开发环境中，直接返回验证码（仅用于测试）
+        if settings.DEBUG:
+            return {
+                "success": True, 
+                "message": f"Login verification code sent successfully (DEV MODE: {verification_code})",
+                "debug_code": verification_code
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Email service not configured")
+    
+    # 发送验证码邮件
+    try:
+        email_sent = email_service.send_verification_code_email(
+            request.email,
+            request.email.split('@')[0],
+            verification_code
+        )
+        
+        if email_sent:
+            return {"success": True, "message": "Login verification code sent successfully"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to send verification code")
+    except Exception as e:
+        print(f"Error sending verification code: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Email service error: {str(e)}")
 
 @router.post("/verify-login-code")
 def verify_login_code(request: dict, db: Session = Depends(get_db)):
