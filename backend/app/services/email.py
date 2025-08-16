@@ -127,3 +127,27 @@ class EmailService:
         except Exception as e:
             print(f"Failed to send welcome email: {str(e)}")
             return False 
+
+    def send_verification_code_email(self, email: str, username: str, code: str) -> bool:
+        """发送登录验证码邮件"""
+        try:
+            subject = f"登录验证码 - {code}"
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333;">你好 {username}！</h2>
+                <p>你的登录验证码是：</p>
+                <div style="background: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0;">
+                    <h1 style="color: #007bff; font-size: 32px; margin: 0; letter-spacing: 5px;">{code}</h1>
+                </div>
+                <p>验证码将在10分钟后过期。</p>
+                <p>如果这不是你的操作，请忽略此邮件。</p>
+                <hr style="margin: 30px 0;">
+                <p style="color: #666; font-size: 12px;">此邮件由龙眼AI系统自动发送，请勿回复。</p>
+            </div>
+            """
+            
+            result = resend_send_verification_email(email, subject, html_content)
+            return bool(result and result.get('id'))
+        except Exception as e:
+            print(f"Failed to send verification code email: {str(e)}")
+            return False 

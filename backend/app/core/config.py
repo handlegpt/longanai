@@ -75,7 +75,10 @@ class Settings(BaseSettings):
     
     # File Retention Settings
     AUDIO_RETENTION_DAYS: int = int(os.getenv("AUDIO_RETENTION_DAYS", "365"))
-    UPLOAD_RETENTION_DAYS: int = int(os.getenv("UPLOAD_RETENTION_DAYS", "30"))
+    UPLOAD_RETENTION_DAYS: int = int(os.getenv("AUDIO_RETENTION_DAYS", "30"))
+    
+    # Debug Settings
+    DEBUG: bool = os.getenv("DEBUG", "True").lower() == "true"
     
     class Config:
         env_file = ".env"
