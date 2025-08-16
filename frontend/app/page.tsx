@@ -425,13 +425,7 @@ const translations = {
     contentRequired: '请输入播客内容',
     generatedResult: '生成结果',
     
-    // Feature highlights
-    feature1Title: '智能语音合成',
-    feature1Desc: '使用先进的Edge TTS技术，生成自然流畅的粤语语音，让每个字都充满情感',
-    feature2Title: '多种音色选择',
-    feature2Desc: '靓女、靓仔两种不同风格的播客主持人，满足不同内容需求',
-    feature3Title: '一键生成下载',
-    feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
+
     
     // Buy Me a Coffee section
     supportTitle: '请我喝一杯咖啡，支持我们继续开发！',
