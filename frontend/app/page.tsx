@@ -54,8 +54,8 @@ const translations = {
     heroSubtitle: '选择你嘅播客主持人，输入内容，一键生成专业级嘅粤语播客',
     
     // Language selection
-    selectLanguage: '输出语言',
-    selectLanguageHint: '请选择要生成的播客语言',
+    selectLanguage: '輸入語言',
+    selectLanguageHint: '請選擇輸入內容的語言，最終生成粵語播客',
     cantoneseLang: '粵語',
     guangdonghuaLang: '廣東話',
     mandarinLang: '普通話轉粵語',
@@ -273,8 +273,8 @@ const translations = {
     heroSubtitle: '选择你的播客主持人，输入内容，一键生成专业级的粤语播客',
     
     // Language selection
-    selectLanguage: '输入语言',
-    selectLanguageHint: '请选择输入内容的语言，最终生成粤语播客',
+    selectLanguage: '輸入語言',
+    selectLanguageHint: '請選擇輸入內容的語言，最終生成粵語播客',
     cantoneseLang: 'Cantonese',
     guangdonghuaLang: 'Guangdong Dialect',
     mandarinLang: 'Mandarin to Cantonese',
