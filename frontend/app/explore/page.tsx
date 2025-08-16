@@ -10,7 +10,24 @@ const languageOptions = [
 ];
 
 const translations = {
-  zh: {
+  cantonese: {
+    exploreTitle: "播客廣場 Explore",
+    searchPlaceholder: "搜索播客標題...",
+    tagPlaceholder: "標籤篩選...",
+    noPodcast: "暫無公開播客",
+    loading: "加載中...",
+    detail: "詳情 & 播放頁",
+    by: "作者",
+    duration: "時長",
+    prev: "上一頁",
+    next: "下一頁",
+    page: "第",
+    page2: "頁",
+    back: "返回",
+    all: "全部",
+    noDescription: "無簡介"
+  },
+  mandarin: {
     exploreTitle: "播客广场 Explore",
     searchPlaceholder: "搜索播客标题...",
     tagPlaceholder: "标签筛选...",
@@ -24,9 +41,10 @@ const translations = {
     page: "第",
     page2: "页",
     back: "返回",
-    all: "全部"
+    all: "全部",
+    noDescription: "无简介"
   },
-  en: {
+  english: {
     exploreTitle: "Podcast Explore",
     searchPlaceholder: "Search podcast title...",
     tagPlaceholder: "Filter by tag...",
@@ -40,7 +58,8 @@ const translations = {
     page: "Page",
     page2: "",
     back: "Back",
-    all: "All"
+    all: "All",
+    noDescription: "No description"
   }
 };
 
@@ -84,9 +103,11 @@ export default function ExplorePage() {
   // 根据选择的语言获取翻译
 const getTranslation = (lang: string) => {
   if (lang === "english") {
-    return translations.en;
+    return translations.english;
+  } else if (lang === "mandarin") {
+    return translations.mandarin;
   } else {
-    return translations.zh;
+    return translations.cantonese;
   }
 };
 
@@ -202,7 +223,7 @@ const t = getTranslation(lang);
                 <span className="absolute top-2 right-2 bg-white/80 text-xs text-gray-500 px-2 py-0.5 rounded shadow">{podcast.duration}</span>
               </div>
               <h2 className="font-bold text-lg mb-1 truncate group-hover:text-blue-600 transition-colors">{podcast.title}</h2>
-              <div className="text-sm text-gray-700 mb-2 line-clamp-2">{podcast.description || (lang === "english" ? "No description" : "无简介")}</div>
+              <div className="text-sm text-gray-700 mb-2 line-clamp-2">{podcast.description || t.noDescription}</div>
               <audio controls src={podcast.audioUrl} className="w-full mt-auto rounded" />
               <div className="flex flex-wrap gap-2 mt-2">
                 {podcast.tags?.split(",").map(tg => tg && (
