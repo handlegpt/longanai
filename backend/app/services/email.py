@@ -1,6 +1,6 @@
 import emails
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from app.core.config import settings
 from app.utils.email import send_verification_email as resend_send_verification_email
@@ -35,7 +35,7 @@ class EmailService:
         """Create email verification token"""
         payload = {
             'email': email,
-            'exp': datetime.utcnow() + timedelta(hours=24),  # 24 hours expiration
+            'exp': datetime.now(timezone.utc) + timedelta(hours=24),  # 24 hours expiration
             'type': 'email_verification'
         }
         return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)

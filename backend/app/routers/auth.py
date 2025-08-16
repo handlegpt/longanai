@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from typing import Optional
 from pydantic import BaseModel
@@ -107,13 +107,13 @@ def send_verification_email(request: EmailRequest, db: Session = Depends(get_db)
     verification_token = email_service.create_verification_token(request.email)
     if user:
         user.verification_token = verification_token
-        user.verification_expires = datetime.utcnow() + timedelta(hours=24)
+        user.verification_expires = datetime.now(timezone.utc) + timedelta(hours=24)
     else:
         user = User(
             email=request.email,
             is_verified=False,
             verification_token=verification_token,
-            verification_expires=datetime.utcnow() + timedelta(hours=24)
+            verification_expires=datetime.now(timezone.utc) + timedelta(hours=24)
         )
         db.add(user)
     db.commit()
@@ -200,7 +200,7 @@ def send_login_code(request: EmailRequest, db: Session = Depends(get_db)):
     
     # 存储验证码到用户记录
     user.verification_token = verification_code
-    user.verification_expires = datetime.utcnow() + timedelta(minutes=10)  # 10分钟过期
+    user.verification_expires = datetime.now(timezone.utc) + timedelta(minutes=10)  # 10分钟过期
     db.commit()
     
     # 检查Resend配置
@@ -252,7 +252,7 @@ def verify_login_code(request: dict, db: Session = Depends(get_db)):
     # 检查验证码是否匹配且未过期
     if (user.verification_token != code or 
         not user.verification_expires or 
-        user.verification_expires < datetime.utcnow()):
+        user.verification_expires < datetime.now(timezone.utc)):
         raise HTTPException(status_code=400, detail="Invalid or expired verification code")
     
     # 清除验证码
@@ -291,7 +291,7 @@ def resend_verification(request: EmailRequest, db: Session = Depends(get_db)):
     email_service = get_email_service()
     verification_token = email_service.create_verification_token(request.email)
     user.verification_token = verification_token
-    user.verification_expires = datetime.utcnow() + timedelta(hours=24)
+    user.verification_expires = datetime.now(timezone.utc) + timedelta(hours=24)
     db.commit()
     email_sent = email_service.send_verification_email(request.email, request.email.split('@')[0], verification_token)
     if email_sent:
