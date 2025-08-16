@@ -44,6 +44,8 @@ interface EmailLoginProps {
     verifyLoading: string;
     codeRequired: string;
     invalidCode: string;
+    googleLoginButton: string;
+    orEmailLogin: string;
   };
 }
 
