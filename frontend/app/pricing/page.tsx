@@ -82,7 +82,7 @@ const translations = {
       }
     ],
     faqTitle: '常見問題',
-    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龍眼AI. 保留所有权利.',
     slogan: '让AI讲好你嘅粤语故事，让粤语传承下去'
   },
   mandarin: {
@@ -159,7 +159,7 @@ const translations = {
       }
     ],
     faqTitle: '常见问题',
-    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龍眼AI. 保留所有权利.',
     slogan: '让AI讲好你的粤语故事'
   },
   english: {
@@ -236,7 +236,7 @@ const translations = {
       }
     ],
     faqTitle: 'Frequently Asked Questions',
-    copyright: '© 2025 Longan AI. All rights reserved.',
+    copyright: '© 2025 龍眼AI. All rights reserved.',
     slogan: 'Let AI tell your Cantonese stories well'
   }
 };

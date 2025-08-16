@@ -26,7 +26,7 @@ const translations = {
     resendEmail: '重新发送验证邮件',
     backHome: '返回首页',
     slogan: '让AI讲好你嘅粤语故事，让粤语传承下去',
-    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龍眼AI. 保留所有权利.',
     contactSupport: '请联系客服重新发送验证邮件'
   },
   mandarin: {
@@ -46,7 +46,7 @@ const translations = {
     resendEmail: '重新发送验证邮件',
     backHome: '返回首页',
     slogan: '让AI讲好你的粤语故事',
-    copyright: '© 2025 龙眼AI. 保留所有权利.',
+    copyright: '© 2025 龍眼AI. 保留所有权利.',
     contactSupport: '请联系客服重新发送验证邮件'
   },
   english: {
@@ -66,7 +66,7 @@ const translations = {
     resendEmail: 'Resend Verification Email',
     backHome: 'Back to Homepage',
     slogan: 'Let AI tell your Cantonese stories well',
-    copyright: '© 2025 Longan AI. All rights reserved.',
+    copyright: '© 2025 龍眼AI. All rights reserved.',
     contactSupport: 'Please contact support to resend verification email'
   }
 };

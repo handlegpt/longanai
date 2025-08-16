@@ -7,7 +7,7 @@ from app.utils.email import send_verification_email as resend_send_verification_
 
 EMAIL_TEMPLATES = {
     "zh": {
-        "subject": "龙眼AI - 邮箱验证",
+        "subject": "龍眼AI - 邮箱验证",
         "body": """<p>你好，{username}！</p>\n<p>请点击以下链接完成邮箱验证：</p>\n<p><a href=\"{url}\">{url}</a></p>\n<p>如果不是你本人操作，请忽略此邮件。</p>"""
     },
     "yue": {
@@ -73,7 +73,7 @@ class EmailService:
             <html>
             <head>
                 <meta charset="utf-8">
-                <title>龙眼AI - 欢迎加入</title>
+                <title>龍眼AI - 欢迎加入</title>
                 <style>
                     body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
                     .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
@@ -86,12 +86,12 @@ class EmailService:
             <body>
                 <div class="container">
                     <div class="header">
-                        <h1>龙眼AI</h1>
+                        <h1>龍眼AI</h1>
                         <p>智能粤语播客生成平台</p>
                     </div>
                     <div class="content">
                         <h2>欢迎加入，{username}！</h2>
-                        <p>恭喜你成功验证邮箱！现在你可以开始使用龙眼AI嘅所有功能：</p>
+                        <p>恭喜你成功验证邮箱！现在你可以开始使用龍眼AI嘅所有功能：</p>
                         <ul>
                             <li>🎤 生成粤语播客</li>
                             <li>🎭 选择不同嘅声音角色</li>
@@ -104,7 +104,7 @@ class EmailService:
                     </div>
                     <div class="footer">
                         <p>让AI讲好你嘅粤语故事，让粤语传承下去</p>
-                        <p>&copy; 2024 龙眼AI. 保留所有权利.</p>
+                        <p>&copy; 2024 龍眼AI. 保留所有权利.</p>
                     </div>
                 </div>
             </body>
@@ -112,7 +112,7 @@ class EmailService:
             """
             
             message = emails.Message(
-                subject="龙眼AI - 欢迎加入",
+                subject="龍眼AI - 欢迎加入",
                 html=html_content,
                 mail_from=(settings.FROM_NAME, settings.FROM_EMAIL)
             )
@@ -142,7 +142,7 @@ class EmailService:
                 <p>验证码将在10分钟后过期。</p>
                 <p>如果这不是你的操作，请忽略此邮件。</p>
                 <hr style="margin: 30px 0;">
-                <p style="color: #666; font-size: 12px;">此邮件由龙眼AI系统自动发送，请勿回复。</p>
+                <p style="color: #666; font-size: 12px;">此邮件由龍眼AI系统自动发送，请勿回复。</p>
             </div>
             """
             

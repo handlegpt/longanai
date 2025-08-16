@@ -65,8 +65,8 @@ export default function HistoryPage() {
     try {
       if (navigator.share && navigator.canShare) {
         const shareData = {
-          title: "龙眼AI播客",
-          text: "我用龙眼AI生成的粤语播客",
+          title: "龍眼AI播客",
+text: "我用龍眼AI生成的粤语播客",
           url: window.location.origin + audioUrl,
         };
         if (navigator.canShare(shareData)) {

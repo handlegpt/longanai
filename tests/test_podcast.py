@@ -8,7 +8,7 @@ def test_root():
     """Test root endpoint"""
     response = client.get("/")
     assert response.status_code == 200
-    assert "龙眼AI" in response.json()["message"]
+    assert "龍眼AI" in response.json()["message"]
 
 def test_health():
     """Test health check endpoint"""

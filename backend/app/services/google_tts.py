@@ -34,7 +34,7 @@ class GoogleTTSService:
                 'voices': [
                     {
                         'name': 'yue-HK-Standard-A',
-                        'display_name': '龙眼妹',
+                        'display_name': '龍眼妹',
                         'description': '温柔甜美的粤语女声，适合生活分享和情感内容',
                         'gender': 'FEMALE'
                     },

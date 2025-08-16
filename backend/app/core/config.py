@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     FROM_EMAIL: str = "noreply@longan.ai"
-    FROM_NAME: str = "龙眼AI"
+    FROM_NAME: str = "龍眼AI"
     
     # OpenAI Settings (for GPT translation)
     OPENAI_API_KEY: Optional[str] = None

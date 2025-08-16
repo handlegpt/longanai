@@ -28,7 +28,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
 export const websiteStructuredData = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "龙眼AI",
+  "name": "龍眼AI",
   "alternateName": "Longan AI",
   "url": "https://longan.ai",
   "description": "智能粤语播客生成平台",
@@ -43,7 +43,7 @@ export const websiteStructuredData = {
 export const organizationStructuredData = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "龙眼AI",
+  "name": "龍眼AI",
   "url": "https://longan.ai",
   "logo": "https://longan.ai/logo.png",
   "description": "智能粤语播客生成平台",
@@ -57,7 +57,7 @@ export const organizationStructuredData = {
 export const productStructuredData = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "龙眼AI播客生成器",
+  "name": "龍眼AI播客生成器",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Web Browser",
   "description": "AI驱动的粤语播客生成平台",

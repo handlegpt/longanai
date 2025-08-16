@@ -33,7 +33,7 @@ SMTP_PASSWORD=your-16-character-app-password
 SMTP_TLS=true
 SMTP_SSL=false
 FROM_EMAIL=noreply@longan.ai
-FROM_NAME=龙眼AI
+FROM_NAME=龍眼AI
 ```
 
 ### Step 4: Test Email Configuration

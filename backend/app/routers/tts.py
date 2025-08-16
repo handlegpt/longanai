@@ -232,7 +232,7 @@ async def get_supported_languages():
             "name": "粤语",
             "voice_count": 4,
             "voices": [
-                {"name": "yue-HK-Standard-A", "display_name": "龙眼妹", "description": "温柔甜美的粤语女声，适合生活分享和情感内容", "gender": "FEMALE"},
+                {"name": "yue-HK-Standard-A", "display_name": "龍眼妹", "description": "温柔甜美的粤语女声，适合生活分享和情感内容", "gender": "FEMALE"},
                 {"name": "yue-HK-Standard-B", "display_name": "大佬", "description": "成熟稳重的粤语男声，适合新闻播报和正式内容", "gender": "MALE"},
                 {"name": "yue-HK-Standard-C", "display_name": "阿姐", "description": "亲切自然的粤语女声，适合日常对话和轻松内容", "gender": "FEMALE"},
                 {"name": "yue-HK-Standard-D", "display_name": "收数佬", "description": "活力四射的粤语男声，适合娱乐节目和动感内容", "gender": "MALE"}

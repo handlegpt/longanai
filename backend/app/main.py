@@ -56,7 +56,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 async def root():
     return {
-        "message": "龙眼AI - 智能粤语播客生成平台",
+        "message": "龍眼AI - 智能粤语播客生成平台",
         "version": "1.0.0",
         "status": "running"
     }

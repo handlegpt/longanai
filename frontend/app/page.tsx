@@ -108,13 +108,13 @@ const translations = {
     feature1Title: '智能播客生成',
     feature1Desc: '使用最新嘅AI技术，将文本转换为自然流畅嘅粤语播客',
     feature2Title: '多样化声音',
-    feature2Desc: '选择唔同嘅播客主持人，包括靓女、靓仔、龙眼妹等特色声音',
+    feature2Desc: '选择唔同嘅播客主持人，包括靓女、靓仔、龍眼妹等特色声音',
     feature3Title: '快速生成',
     feature3Desc: '几秒钟内生成高质量嘅播客，支持多种文件格式上传',
     testimonialsTitle: '用户评价',
-    testimonial1: '用龙眼AI制作公司产品嘅宣传音频真系好方便！',
+    testimonial1: '用龍眼AI制作公司产品嘅宣传音频真系好方便！',
     testimonial2: '听到熟悉嘅粤语口音真系好亲切，好真实！',
-    testimonial3: '每日开车嘅时候都会打开龙眼AI听我收藏嘅文章',
+    testimonial3: '每日开车嘅时候都会打开龍眼AI听我收藏嘅文章',
     slogan: '让AI讲好你嘅粤语故事，让粤语传承下去',
     
     // Welcome message
@@ -325,13 +325,13 @@ const translations = {
     feature1Title: '智能播客生成',
     feature1Desc: '使用最新的AI技术，将文本转换为自然流畅的粤语播客',
     feature2Title: '多样化声音',
-    feature2Desc: '选择不同的播客主持人，包括靓女、靓仔、龙眼妹等特色声音',
+    feature2Desc: '选择不同的播客主持人，包括靓女、靓仔、龍眼妹等特色声音',
     feature3Title: '快速生成',
     feature3Desc: '几秒钟内生成高质量的播客，支持多种文件格式上传',
     testimonialsTitle: '用户评价',
-    testimonial1: '用龙眼AI制作公司产品的宣传音频真的很方便！',
+    testimonial1: '用龍眼AI制作公司产品的宣传音频真的很方便！',
     testimonial2: '听到熟悉的粤语口音真的很亲切，很真实！',
-    testimonial3: '每天开车的时候都会打开龙眼AI听我收藏的文章',
+    testimonial3: '每天开车的时候都会打开龍眼AI听我收藏的文章',
     slogan: '让AI讲好你的粤语故事',
     
     // Welcome message
@@ -1435,7 +1435,7 @@ export default function Home() {
     cantonese: [
       { id: 'young-lady', name: '靓女', description: '温柔甜美的粤语女声' },
       { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' },
-      { id: 'grandma', name: '龙眼妹', description: '温柔亲切，适合生活分享同情感内容' },
+      { id: 'grandma', name: '龍眼妹', description: '温柔亲切，适合生活分享同情感内容' },
       { id: 'elderly-woman', name: '阿姐', description: '亲切自然的粤语女声，适合日常对话和轻松内容' }
     ],
     mandarin: [
