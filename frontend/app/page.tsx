@@ -136,6 +136,12 @@ const translations = {
     networkError: '网络错误，请重试',
     loginSuccess: '登录成功！',
     loginFailed: '登录失败',
+    codeLabel: '验证码',
+    codePlaceholder: '请输入6位验证码',
+    verifyButton: '验证',
+    verifyLoading: '验证中...',
+    codeRequired: '请输入验证码',
+    invalidCode: '验证码错误',
     
     // HistoryPanel component translations
     historyTitle: '历史记录',
@@ -336,6 +342,12 @@ const translations = {
     networkError: '网络错误，请重试',
     loginSuccess: '登录成功！',
     loginFailed: '登录失败',
+    codeLabel: '验证码',
+    codePlaceholder: '请输入6位验证码',
+    verifyButton: '验证',
+    verifyLoading: '验证中...',
+    codeRequired: '请输入验证码',
+    invalidCode: '验证码错误',
     
     // HistoryPanel component translations
     historyTitle: '历史记录',
@@ -536,6 +548,12 @@ const translations = {
     networkError: 'Network error, please try again',
     loginSuccess: 'Login successful!',
     loginFailed: 'Login failed',
+    codeLabel: 'Verification Code',
+    codePlaceholder: 'Please enter 6-digit verification code',
+    verifyButton: 'Verify',
+    verifyLoading: 'Verifying...',
+    codeRequired: 'Please enter verification code',
+    invalidCode: 'Invalid verification code',
     
     // HistoryPanel component translations
     historyTitle: 'History',
@@ -1348,6 +1366,12 @@ export default function Home() {
             networkError: t.networkError,
             loginSuccess: t.loginSuccess,
             loginFailed: t.loginFailed,
+            codeLabel: t.codeLabel,
+            codePlaceholder: t.codePlaceholder,
+            verifyButton: t.verifyButton,
+            verifyLoading: t.verifyLoading,
+            codeRequired: t.codeRequired,
+            invalidCode: t.invalidCode,
           }}
         />
       </div>
