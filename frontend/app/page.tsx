@@ -1616,7 +1616,6 @@ export default function Home() {
                     {/* Voice selection - dropdown version */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                       <div className="flex items-center space-x-2">
-                        <span className="text-lg">🎭</span>
                         <span className="text-sm sm:text-lg font-semibold text-gray-700">{t.voiceSelectorTitle}</span>
                       </div>
                       
