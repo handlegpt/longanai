@@ -1405,6 +1405,8 @@ export default function Home() {
             verifyLoading: t.verifyLoading,
             codeRequired: t.codeRequired,
             invalidCode: t.invalidCode,
+            googleLoginButton: t.googleLoginButton,
+            orEmailLogin: t.orEmailLogin,
           }}
         />
       </div>
