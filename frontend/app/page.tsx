@@ -98,6 +98,23 @@ const translations = {
     
     // Footer
     copyright: '© 2025 龍眼AI. 保留所有权利.',
+    
+    // Statistics and Features
+    statisticsTitle: '我们的成就',
+    podcastsCreated: '播客已生成',
+    activeUsers: '活跃用户',
+    uptime: '服务可用性',
+    featuresTitle: '核心功能',
+    feature1Title: '智能播客生成',
+    feature1Desc: '使用最新的AI技术，将文本转换为自然流畅的粤语播客',
+    feature2Title: '多样化声音',
+    feature2Desc: '选择不同的播客主持人，包括靓女、靓仔、龙眼妹等特色声音',
+    feature3Title: '快速生成',
+    feature3Desc: '几秒钟内生成高质量的播客，支持多种文件格式上传',
+    testimonialsTitle: '用户评价',
+    testimonial1: '用龙眼AI制作公司产品的宣传音频真的很方便！',
+    testimonial2: '听到熟悉的粤语口音真的很亲切，很真实！',
+    testimonial3: '每天开车的时候都会打开龙眼AI听我收藏的文章',
     slogan: '让AI讲好你嘅粤语故事，让粤语传承下去',
     
     // Welcome message
@@ -191,13 +208,7 @@ const translations = {
     contentRequired: '请输入播客内容',
     generatedResult: '生成结果',
     
-    // Feature highlights
-    feature1Title: '智能语音合成',
-    feature1Desc: '用先进嘅Edge TTS技术，生成自然流畅嘅粤语语音，等每个字都充满情感',
-    feature2Title: '多种音色选择',
-    feature2Desc: '靓女、靓仔两种唔同风格嘅播客主持人，满足唔同内容需求',
-    feature3Title: '一键生成下载',
-    feature3Desc: '输入文本，选择音色，一键生成并下载播客音频，简单高效',
+
     
     // Buy Me a Coffee section
     supportTitle: '请我饮一杯咖啡，支持我哋继续搞落去！',
@@ -510,6 +521,23 @@ const translations = {
     
     // Footer
     copyright: '© 2025 Longan AI. All rights reserved.',
+    
+    // Statistics and Features
+    statisticsTitle: 'Our Achievements',
+    podcastsCreated: 'Podcasts Created',
+    activeUsers: 'Active Users',
+    uptime: 'Uptime',
+    featuresTitle: 'Core Features',
+    feature1Title: 'Smart Podcast Generation',
+    feature1Desc: 'Use the latest AI technology to convert text into natural and fluent Cantonese podcasts',
+    feature2Title: 'Diverse Voices',
+    feature2Desc: 'Choose from different podcast hosts including Young Lady, Young Man, Longan Girl and more',
+    feature3Title: 'Fast Generation',
+    feature3Desc: 'Generate high-quality podcasts in seconds, supporting multiple file formats',
+    testimonialsTitle: 'User Testimonials',
+    testimonial1: 'It\'s super convenient to use Longan AI to create promotional audio for company products!',
+    testimonial2: 'Hearing that familiar Cantonese accent just felt awesome—it\'s so authentic!',
+    testimonial3: 'Every day when I\'m driving, I turn on Longan AI and listen to my collection of articles',
     slogan: 'Let AI tell your Cantonese stories well',
     
     // Welcome message
@@ -603,13 +631,7 @@ const translations = {
     contentRequired: 'Please enter podcast content',
     generatedResult: 'Generated Result',
     
-    // Feature highlights
-    feature1Title: 'Intelligent Voice Synthesis',
-    feature1Desc: 'Using advanced Edge TTS technology to generate natural and fluent Cantonese speech with emotional depth',
-    feature2Title: 'Multiple Voice Options',
-    feature2Desc: 'Two different podcast hosts - Young Lady and Young Man - to meet various content needs',
-    feature3Title: 'One-Click Generation & Download',
-    feature3Desc: 'Input text, select voice, and generate and download podcast audio with one click - simple and efficient',
+
     
     // Buy Me a Coffee section
     supportTitle: 'Buy me a coffee to support our development!',
@@ -1831,6 +1853,101 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      {/* Features and Statistics section */}
+      <section className="bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Statistics */}
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">{t.statisticsTitle}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl p-8">
+                <div className="text-4xl font-bold text-primary-600 mb-2">30,000+</div>
+                <div className="text-gray-600">{t.podcastsCreated}</div>
+              </div>
+              <div className="bg-gradient-to-br from-secondary-50 to-secondary-100 rounded-2xl p-8">
+                <div className="text-4xl font-bold text-secondary-600 mb-2">10,000+</div>
+                <div className="text-gray-600">{t.activeUsers}</div>
+              </div>
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8">
+                <div className="text-4xl font-bold text-purple-600 mb-2">99.9%</div>
+                <div className="text-gray-600">{t.uptime}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-12">{t.featuresTitle}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <span className="text-2xl">🎙️</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">{t.feature1Title}</h3>
+                <p className="text-gray-600 leading-relaxed">{t.feature1Desc}</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-secondary-500 to-secondary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <span className="text-2xl">🎭</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">{t.feature2Title}</h3>
+                <p className="text-gray-600 leading-relaxed">{t.feature2Desc}</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <span className="text-2xl">🚀</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">{t.feature3Title}</h3>
+                <p className="text-gray-600 leading-relaxed">{t.feature3Desc}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* User Testimonials */}
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-12">{t.testimonialsTitle}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-gray-50 rounded-2xl p-8">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
+                    J
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-900">Jessica</div>
+                    <div className="text-sm text-gray-500">内容创作者</div>
+                  </div>
+                </div>
+                <p className="text-gray-600 italic">"{t.testimonial1}"</p>
+              </div>
+              <div className="bg-gray-50 rounded-2xl p-8">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
+                    R
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-900">Rosia</div>
+                    <div className="text-sm text-gray-500">粤语学习者</div>
+                  </div>
+                </div>
+                <p className="text-gray-600 italic">"{t.testimonial2}"</p>
+              </div>
+              <div className="bg-gray-50 rounded-2xl p-8">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
+                    W
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-900">Wilson</div>
+                    <div className="text-sm text-gray-500">通勤族</div>
+                  </div>
+                </div>
+                <p className="text-gray-600 italic">"{t.testimonial3}"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Buy Me a Coffee section */}
       <section className="bg-gradient-to-r from-yellow-50 to-orange-50 border-t border-yellow-200">
