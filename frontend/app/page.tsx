@@ -159,6 +159,8 @@ const translations = {
     verifyLoading: '验证中...',
     codeRequired: '请输入验证码',
     invalidCode: '验证码错误',
+    googleLoginButton: '使用 Google 登入',
+    orEmailLogin: '或郵箱登入',
     
     // HistoryPanel component translations
     historyTitle: '历史记录',
@@ -376,6 +378,8 @@ const translations = {
     verifyLoading: '验证中...',
     codeRequired: '请输入验证码',
     invalidCode: '验证码错误',
+    googleLoginButton: '使用 Google 登录',
+    orEmailLogin: '或邮箱登录',
     
     // HistoryPanel component translations
     historyTitle: '历史记录',
@@ -593,6 +597,8 @@ const translations = {
     verifyLoading: 'Verifying...',
     codeRequired: 'Please enter verification code',
     invalidCode: 'Invalid verification code',
+    googleLoginButton: 'Sign in with Google',
+    orEmailLogin: 'or email login',
     
     // HistoryPanel component translations
     historyTitle: 'History',
