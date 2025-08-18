@@ -1449,22 +1449,26 @@ export default function Home() {
       { id: 'elderly-woman', name: '阿姐', description: '亲切自然的粤语女声，适合日常对话和轻松内容' }
     ],
     english: [
-      { id: 'young-lady', name: '靓女', description: '温柔甜美的粤语女声' },
-      { id: 'young-man', name: '靓仔', description: '活力四射的粤语男声' },
-      { id: 'grandma', name: '龍眼妹', description: '温柔亲切，适合生活分享同情感内容' },
-      { id: 'elderly-woman', name: '阿姐', description: '亲切自然的粤语女声，适合日常对话和轻松内容' }
+      { id: 'young-lady', name: 'Young Lady', description: 'Sweet and gentle Cantonese female voice' },
+      { id: 'young-man', name: 'Young Man', description: 'Energetic Cantonese male voice' },
+      { id: 'grandma', name: 'Longan Girl', description: 'Warm and friendly, perfect for life sharing and emotional content' },
+      { id: 'elderly-woman', name: 'Sister', description: 'Natural Cantonese female voice, suitable for daily conversations and light content' }
     ]
   };
 
-  // 根据选择的语言获取Edge TTS音色
+  // 根据界面语言获取Edge TTS音色（所有输出都是粤语播客，但主持人名字根据界面语言显示）
   const getEdgeVoicesForLanguage = () => {
-    let languageKey = selectedLanguage;
-    if (selectedLanguage === 'zh') {
-      languageKey = 'cantonese';
-    } else if (selectedLanguage === 'en') {
-      languageKey = 'english';
+    // 所有输出都是粤语播客，但主持人名字根据界面语言显示
+    console.log('当前界面语言:', language);
+    console.log('当前选择的输入语言:', selectedLanguage);
+    
+    if (language === 'english') {
+      console.log('返回英文主持人名字');
+      return edgeVoices.english; // 英文界面显示英文主持人名字
+    } else {
+      console.log('返回粤语主持人名字');
+      return edgeVoices.cantonese; // 中文界面显示粤语主持人名字
     }
-    return edgeVoices[languageKey] || edgeVoices.cantonese;
   };
 
   // 当语言改变时，重置音色选择
