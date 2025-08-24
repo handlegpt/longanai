@@ -94,13 +94,19 @@ async def synthesize_speech(
         estimated_duration = len(request.text) / 150  # 分钟
         duration_seconds = estimated_duration * 60
         
-        logger.info(f"Estimated duration: {duration_seconds} seconds")
+        # 格式化时长为 HH:MM:SS 格式
+        hours = int(duration_seconds // 3600)
+        minutes = int((duration_seconds % 3600) // 60)
+        seconds = int(duration_seconds % 60)
+        formatted_duration = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+        
+        logger.info(f"Estimated duration: {duration_seconds} seconds ({formatted_duration})")
         
         return TTSResponse(
             success=True,
             message="TTS synthesis completed successfully",
             audio_url=audio_url,
-            duration=duration_seconds
+            duration=formatted_duration
         )
         
     except Exception as e:
