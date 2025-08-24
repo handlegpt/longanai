@@ -2017,6 +2017,9 @@ export default function Home() {
                 <Link href="/explore" className="block text-sm text-gray-600 hover:text-primary transition">
                   {t.explore}
                 </Link>
+                <Link href="/social" className="block text-sm text-gray-600 hover:text-primary transition">
+                  社交功能
+                </Link>
                 <Link href="/pricing" className="block text-sm text-gray-600 hover:text-primary transition">
                   {t.pricing}
                 </Link>
