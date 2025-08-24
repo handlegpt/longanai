@@ -232,7 +232,7 @@ async def generate_podcast(
                 
                 # 如果文件太小（小于1KB），认为生成失败
                 if file_size < 1024:
-                    print(f"⚠️ Generated file too small ({file_size} bytes), triggering fallback")
+                    print(f"⚠️ Generated file too small ({file_size} bytes), Edge TTS failed")
                     # 删除无效文件
                     try:
                         os.remove(filepath)
@@ -240,92 +240,22 @@ async def generate_podcast(
                     except:
                         pass
                     
-                    # 尝试使用 Google TTS 作为回退
-                    print("🔄 Trying Google TTS as fallback...")
-                    try:
-                        from app.services.google_tts import GoogleTTSService
-                        tts_service = GoogleTTSService()
-                        
-                        # 将粤语文本转换为英文（Google TTS 对粤语支持有限）
-                        fallback_text = tts_text
-                        if any(char in tts_text for char in ['嘅', '咗', '咁', '唔', '係', '喺', '嘅', '喇', '嘢', '咩', '點', '邊', '乜']):
-                            # 如果包含粤语特征字符，尝试翻译为英文
-                            try:
-                                from app.routers.translate import translate_text, TranslationRequest
-                                translation_request = TranslationRequest(
-                                    text=tts_text,
-                                    targetLanguage="english"
-                                )
-                                translation_response = await translate_text(translation_request)
-                                fallback_text = translation_response.translatedText
-                                print(f"🔄 Translated to English for Google TTS: {fallback_text}")
-                            except Exception as trans_error:
-                                print(f"⚠️ Translation to English failed: {trans_error}")
-                                fallback_text = tts_text
-                        
-                        # 使用 Google TTS 生成音频
-                        audio_content = tts_service.text_to_speech(
-                            text=fallback_text,
-                            language="english",  # Google TTS 使用英文
-                            voice_name="en-US-Neural2-F",  # 使用英文女声
-                            speaking_rate=1.0,
-                            pitch=0.0
-                        )
-                        
-                        # 保存音频文件
-                        audio_url = tts_service.save_audio_to_file(audio_content, filename)
-                        print(f"✅ Google TTS fallback successful: {audio_url}")
-                        
-                        # 更新文件路径为 Google TTS 保存的路径
-                        filepath = os.path.join("uploads", "tts", filename)
-                        print(f"🔄 Updated filepath for Google TTS: {filepath}")
-                        
-                    except Exception as google_error:
-                        print(f"❌ Google TTS fallback also failed: {google_error}")
-                        raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
+                    # 对于粤语播客，不使用 Google TTS 回退，因为 Google TTS 不支持粤语
+                    print("❌ Edge TTS failed for Cantonese, Google TTS does not support Cantonese")
+                    raise HTTPException(
+                        status_code=500, 
+                        detail="粤语播客生成失败，Edge TTS 服务暂时不可用。请稍后重试。"
+                    )
                 else:
                     print("✅ Edge TTS file is valid")
             else:
-                print("⚠️ Generated file does not exist, triggering fallback")
-                # 尝试使用 Google TTS 作为回退
-                print("🔄 Trying Google TTS as fallback...")
-                try:
-                    from app.services.google_tts import GoogleTTSService
-                    tts_service = GoogleTTSService()
-                    
-                    # 将粤语文本转换为英文（Google TTS 对粤语支持有限）
-                    fallback_text = tts_text
-                    if any(char in tts_text for char in ['嘅', '咗', '咁', '唔', '係', '喺', '嘅', '喇', '嘢', '咩', '點', '邊', '乜']):
-                        # 如果包含粤语特征字符，尝试翻译为英文
-                        try:
-                            from app.routers.translate import translate_text, TranslationRequest
-                            translation_request = TranslationRequest(
-                                text=tts_text,
-                                targetLanguage="english"
-                            )
-                            translation_response = await translate_text(translation_request)
-                            fallback_text = translation_response.translatedText
-                            print(f"🔄 Translated to English for Google TTS: {fallback_text}")
-                        except Exception as trans_error:
-                            print(f"⚠️ Translation to English failed: {trans_error}")
-                            fallback_text = tts_text
-                    
-                    # 使用 Google TTS 生成音频
-                    audio_content = tts_service.text_to_speech(
-                        text=fallback_text,
-                        language="english",  # Google TTS 使用英文
-                        voice_name="en-US-Neural2-F",  # 使用英文女声
-                        speaking_rate=1.0,
-                        pitch=0.0
-                    )
-                    
-                    # 保存音频文件
-                    audio_url = tts_service.save_audio_to_file(audio_content, filename)
-                    print(f"✅ Google TTS fallback successful: {audio_url}")
-                    
-                except Exception as google_error:
-                    print(f"❌ Google TTS fallback also failed: {google_error}")
-                    raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
+                print("⚠️ Generated file does not exist, Edge TTS failed")
+                # 对于粤语播客，不使用 Google TTS 回退，因为 Google TTS 不支持粤语
+                print("❌ Edge TTS failed for Cantonese, Google TTS does not support Cantonese")
+                raise HTTPException(
+                    status_code=500, 
+                    detail="粤语播客生成失败，Edge TTS 服务暂时不可用。请稍后重试。"
+                )
             
             # Calculate audio duration
             try:
@@ -368,7 +298,7 @@ async def generate_podcast(
                 voice=request.voice,
                 emotion=request.emotion,
                 speed=request.speed,
-                audio_url=f"/uploads/tts/{filename}" if "uploads/tts" in filepath else f"/static/{filename}",
+                audio_url=f"/static/{filename}",
                 cover_image_url=request.cover_image_url,
                 duration=duration_str,
                 file_size=file_size,
@@ -401,7 +331,7 @@ async def generate_podcast(
         except Exception as e:
             print(f"❌ Error during podcast generation: {str(e)}")
             print(f"🔍 Full traceback: {traceback.format_exc()}")
-            raise HTTPException(status_code=500, detail=f"生成失败: {str(e)}")
+            raise HTTPException(status_code=500, detail="播客生成失败，请稍后重试")
 
 @router.get("/history")
 def get_podcast_history(db: Session = Depends(get_db)):
