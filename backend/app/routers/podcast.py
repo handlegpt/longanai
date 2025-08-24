@@ -276,6 +276,10 @@ async def generate_podcast(
                         audio_url = tts_service.save_audio_to_file(audio_content, filename)
                         print(f"✅ Google TTS fallback successful: {audio_url}")
                         
+                        # 更新文件路径为 Google TTS 保存的路径
+                        filepath = os.path.join("uploads", "tts", filename)
+                        print(f"🔄 Updated filepath for Google TTS: {filepath}")
+                        
                     except Exception as google_error:
                         print(f"❌ Google TTS fallback also failed: {google_error}")
                         raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
