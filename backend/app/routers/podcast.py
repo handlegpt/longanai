@@ -214,6 +214,20 @@ async def generate_podcast(
                     timeout=180.0
                 )
                 print("✅ Audio file generated successfully")
+                
+                # 检查生成的文件是否有效
+                if os.path.exists(filepath):
+                    file_size = os.path.getsize(filepath)
+                    print(f"📊 Generated file size: {file_size} bytes")
+                    
+                    # 如果文件太小（小于1KB），认为生成失败
+                    if file_size < 1024:
+                        print(f"⚠️ Generated file too small ({file_size} bytes), triggering fallback")
+                        raise Exception("Generated file too small")
+                else:
+                    print("⚠️ Generated file does not exist, triggering fallback")
+                    raise Exception("Generated file does not exist")
+                    
             except asyncio.TimeoutError:
                 raise HTTPException(status_code=408, detail="生成超时，请稍后重试或减少文本长度")
             except Exception as e:
