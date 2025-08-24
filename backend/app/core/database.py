@@ -30,6 +30,10 @@ def init_db():
         # Import all models to ensure they are registered
         from app.models.podcast import Podcast
         from app.models.user import User
+        from app.models.social import (
+            UserFollow, PodcastComment, PodcastLike, PodcastShare,
+            Community, CommunityMember, CommunityPost
+        )
         
         # Create all tables
         # Base.metadata.create_all(bind=engine)

@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Text, Float, Boolean
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class Podcast(Base):
@@ -21,4 +22,10 @@ class Podcast(Base):
     is_public = Column(Boolean, default=True)  # 是否公开
     language = Column(String(20), default="cantonese")  # 播客语言：cantonese, mandarin, english
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # 社交功能关系
+    comments = relationship("PodcastComment", back_populates="podcast")
+    likes = relationship("PodcastLike", back_populates="podcast")
+    shares = relationship("PodcastShare", back_populates="podcast")
+    community_posts = relationship("CommunityPost", back_populates="podcast") 

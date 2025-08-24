@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class User(Base):
@@ -22,4 +23,14 @@ class User(Base):
     preferred_voice = Column(String(50), nullable=True, server_default='young-lady')  # 偏好声音
     preferred_language = Column(String(20), nullable=True, server_default='cantonese')  # 偏好语言
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # 社交功能关系
+    following = relationship("UserFollow", foreign_keys="UserFollow.follower_id", back_populates="follower")
+    followers = relationship("UserFollow", foreign_keys="UserFollow.following_id", back_populates="following")
+    comments = relationship("PodcastComment", back_populates="user")
+    likes = relationship("PodcastLike", back_populates="user")
+    shares = relationship("PodcastShare", back_populates="user")
+    created_communities = relationship("Community", back_populates="creator")
+    community_memberships = relationship("CommunityMember", back_populates="user")
+    community_posts = relationship("CommunityPost", back_populates="user") 
