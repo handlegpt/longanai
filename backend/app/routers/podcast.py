@@ -217,8 +217,47 @@ async def generate_podcast(
             except asyncio.TimeoutError:
                 raise HTTPException(status_code=408, detail="生成超时，请稍后重试或减少文本长度")
             except Exception as e:
-                print(f"❌ Audio generation failed: {e}")
-                raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
+                print(f"❌ Edge TTS generation failed: {e}")
+                print("🔄 Trying Google TTS as fallback...")
+                
+                # 尝试使用 Google TTS 作为回退
+                try:
+                    from app.services.google_tts import GoogleTTSService
+                    tts_service = GoogleTTSService()
+                    
+                    # 将粤语文本转换为英文（Google TTS 对粤语支持有限）
+                    fallback_text = tts_text
+                    if any(char in tts_text for char in ['嘅', '咗', '咁', '唔', '係', '喺', '嘅', '喇', '嘢', '咩', '點', '邊', '乜']):
+                        # 如果包含粤语特征字符，尝试翻译为英文
+                        try:
+                            from app.routers.translate import translate_text, TranslationRequest
+                            translation_request = TranslationRequest(
+                                text=tts_text,
+                                targetLanguage="english"
+                            )
+                            translation_response = await translate_text(translation_request)
+                            fallback_text = translation_response.translatedText
+                            print(f"🔄 Translated to English for Google TTS: {fallback_text}")
+                        except Exception as trans_error:
+                            print(f"⚠️ Translation to English failed: {trans_error}")
+                            fallback_text = tts_text
+                    
+                    # 使用 Google TTS 生成音频
+                    audio_content = tts_service.text_to_speech(
+                        text=fallback_text,
+                        language="english",  # Google TTS 使用英文
+                        voice_name="en-US-Neural2-F",  # 使用英文女声
+                        speaking_rate=1.0,
+                        pitch=0.0
+                    )
+                    
+                    # 保存音频文件
+                    audio_url = tts_service.save_audio_to_file(audio_content, filename)
+                    print(f"✅ Google TTS fallback successful: {audio_url}")
+                    
+                except Exception as google_error:
+                    print(f"❌ Google TTS fallback also failed: {google_error}")
+                    raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
             
             # Calculate audio duration
             try:
