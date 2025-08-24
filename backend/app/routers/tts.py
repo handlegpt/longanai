@@ -30,7 +30,7 @@ class TTSResponse(BaseModel):
     success: bool
     message: str
     audio_url: Optional[str] = None
-    duration: Optional[float] = None
+    duration: Optional[str] = None  # 改为字符串类型以支持 HH:MM:SS 格式
 
 @router.post("/synthesize", response_model=TTSResponse)
 async def synthesize_speech(
