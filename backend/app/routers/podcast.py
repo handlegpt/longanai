@@ -240,22 +240,62 @@ async def generate_podcast(
                     except:
                         pass
                     
-                    # 对于粤语播客，不使用 Google TTS 回退，因为 Google TTS 不支持粤语
-                    print("❌ Edge TTS failed for Cantonese, Google TTS does not support Cantonese")
-                    raise HTTPException(
-                        status_code=500, 
-                        detail="粤语播客生成失败，Edge TTS 服务暂时不可用。请稍后重试。"
-                    )
+                    # 尝试使用 Google TTS 作为回退，Google TTS 支持粤语
+                    print("🔄 Trying Google TTS as fallback for Cantonese...")
+                    try:
+                        from app.services.google_tts import GoogleTTSService
+                        tts_service = GoogleTTSService()
+                        
+                        # 使用 Google TTS 的粤语语音生成音频
+                        audio_content = tts_service.text_to_speech(
+                            text=tts_text,  # 直接使用粤语文本，不翻译
+                            language="cantonese",  # 使用粤语
+                            voice_name="yue-HK-Standard-A",  # 使用粤语女声
+                            speaking_rate=1.0,
+                            pitch=0.0
+                        )
+                        
+                        # 保存音频文件
+                        audio_url = tts_service.save_audio_to_file(audio_content, filename)
+                        print(f"✅ Google TTS fallback successful: {audio_url}")
+                        
+                        # 更新文件路径为 Google TTS 保存的路径
+                        filepath = os.path.join("uploads", "tts", filename)
+                        print(f"🔄 Updated filepath for Google TTS: {filepath}")
+                        
+                    except Exception as google_error:
+                        print(f"❌ Google TTS fallback also failed: {google_error}")
+                        raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
                 else:
                     print("✅ Edge TTS file is valid")
             else:
                 print("⚠️ Generated file does not exist, Edge TTS failed")
-                # 对于粤语播客，不使用 Google TTS 回退，因为 Google TTS 不支持粤语
-                print("❌ Edge TTS failed for Cantonese, Google TTS does not support Cantonese")
-                raise HTTPException(
-                    status_code=500, 
-                    detail="粤语播客生成失败，Edge TTS 服务暂时不可用。请稍后重试。"
-                )
+                # 尝试使用 Google TTS 作为回退，Google TTS 支持粤语
+                print("🔄 Trying Google TTS as fallback for Cantonese...")
+                try:
+                    from app.services.google_tts import GoogleTTSService
+                    tts_service = GoogleTTSService()
+                    
+                    # 使用 Google TTS 的粤语语音生成音频
+                    audio_content = tts_service.text_to_speech(
+                        text=tts_text,  # 直接使用粤语文本，不翻译
+                        language="cantonese",  # 使用粤语
+                        voice_name="yue-HK-Standard-A",  # 使用粤语女声
+                        speaking_rate=1.0,
+                        pitch=0.0
+                    )
+                    
+                    # 保存音频文件
+                    audio_url = tts_service.save_audio_to_file(audio_content, filename)
+                    print(f"✅ Google TTS fallback successful: {audio_url}")
+                    
+                    # 更新文件路径为 Google TTS 保存的路径
+                    filepath = os.path.join("uploads", "tts", filename)
+                    print(f"🔄 Updated filepath for Google TTS: {filepath}")
+                    
+                except Exception as google_error:
+                    print(f"❌ Google TTS fallback also failed: {google_error}")
+                    raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
             
             # Calculate audio duration
             try:
@@ -298,7 +338,7 @@ async def generate_podcast(
                 voice=request.voice,
                 emotion=request.emotion,
                 speed=request.speed,
-                audio_url=f"/static/{filename}",
+                audio_url=f"/uploads/tts/{filename}" if "uploads/tts" in filepath else f"/static/{filename}",
                 cover_image_url=request.cover_image_url,
                 duration=duration_str,
                 file_size=file_size,
