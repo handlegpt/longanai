@@ -368,7 +368,7 @@ async def generate_podcast(
                 voice=request.voice,
                 emotion=request.emotion,
                 speed=request.speed,
-                audio_url=f"/static/{filename}",
+                audio_url=f"/uploads/tts/{filename}" if "uploads/tts" in filepath else f"/static/{filename}",
                 cover_image_url=request.cover_image_url,
                 duration=duration_str,
                 file_size=file_size,
