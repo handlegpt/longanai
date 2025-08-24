@@ -59,11 +59,29 @@ export default function Navbar() {
   // 获取当前翻译
   const t = translations[language as keyof typeof translations] || translations.cantonese;
 
-  const languages = [
-    { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
-    { id: 'mandarin', name: '中文', flag: '🇨🇳' },
-    { id: 'english', name: 'English', flag: '🇺🇸' },
-  ];
+  // 根据当前语言获取语言选项
+  const getLanguages = (currentLang: string) => {
+    const options = {
+      cantonese: [
+        { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
+        { id: 'mandarin', name: '中文', flag: '🇨🇳' },
+        { id: 'english', name: 'English', flag: '🇺🇸' },
+      ],
+      mandarin: [
+        { id: 'cantonese', name: '粤语', flag: '🇭🇰' },
+        { id: 'mandarin', name: '中文', flag: '🇨🇳' },
+        { id: 'english', name: 'English', flag: '🇺🇸' },
+      ],
+      english: [
+        { id: 'cantonese', name: 'Cantonese', flag: '🇭🇰' },
+        { id: 'mandarin', name: 'Mandarin', flag: '🇨🇳' },
+        { id: 'english', name: 'English', flag: '🇺🇸' },
+      ]
+    };
+    return options[currentLang as keyof typeof options] || options.cantonese;
+  };
+
+  const languages = getLanguages(language);
 
   // 根据语言获取网站名称
   const getWebsiteName = () => {

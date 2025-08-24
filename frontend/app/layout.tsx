@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
 import { LanguageProvider } from '@/context/LanguageContext';
+import DynamicTitle from '@/components/DynamicTitle';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -53,6 +54,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className + " bg-gray-50 min-h-screen"}>
         <LanguageProvider>
+          <DynamicTitle />
           <Navbar />
           <main className="pt-4">{children}</main>
           <Toaster position="top-right" />

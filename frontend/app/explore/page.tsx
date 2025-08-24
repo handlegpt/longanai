@@ -11,6 +11,31 @@ const languageOptions = [
   { id: "all", name: "全部", flag: "🌍" }
 ];
 
+// 根据当前语言显示对应的语言选项名称
+const getLanguageOptions = (currentLang: string) => {
+  const options = {
+    cantonese: [
+      { id: "cantonese", name: "粤语", flag: "🇭🇰" },
+      { id: "mandarin", name: "普通话", flag: "🇨🇳" },
+      { id: "english", name: "English", flag: "🇺🇸" },
+      { id: "all", name: "全部", flag: "🌍" }
+    ],
+    mandarin: [
+      { id: "cantonese", name: "粤语", flag: "🇭🇰" },
+      { id: "mandarin", name: "普通话", flag: "🇨🇳" },
+      { id: "english", name: "English", flag: "🇺🇸" },
+      { id: "all", name: "全部", flag: "🌍" }
+    ],
+    english: [
+      { id: "cantonese", name: "Cantonese", flag: "🇭🇰" },
+      { id: "mandarin", name: "Mandarin", flag: "🇨🇳" },
+      { id: "english", name: "English", flag: "🇺🇸" },
+      { id: "all", name: "All", flag: "🌍" }
+    ]
+  };
+  return options[currentLang as keyof typeof options] || options.cantonese;
+};
+
 const translations = {
   cantonese: {
     exploreTitle: "播客廣場 Explore",
@@ -186,7 +211,7 @@ const t = getTranslation(lang);
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-center">{t.exploreTitle}</h1>
         <div className="flex gap-2">
-        {languageOptions.map((option) => (
+        {getLanguageOptions(lang).map((option) => (
   <button
     key={option.id}
     onClick={() => setLang(option.id)}
