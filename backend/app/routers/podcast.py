@@ -621,25 +621,35 @@ def get_public_podcasts(
     total = query.count()
     results = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
     
+    # 获取点赞数和评论数
+    from app.models.social import PodcastLike, PodcastComment
+    
+    podcasts_with_stats = []
+    for p, display_name in results:
+        like_count = db.query(PodcastLike).filter(PodcastLike.podcast_id == p.id).count()
+        comment_count = db.query(PodcastComment).filter(PodcastComment.podcast_id == p.id).count()
+        
+        podcasts_with_stats.append({
+            "id": p.id,
+            "title": p.title,
+            "description": p.description,
+            "audioUrl": p.audio_url,
+            "coverImageUrl": p.cover_image_url,
+            "duration": p.duration,
+            "createdAt": p.created_at.isoformat() if p.created_at else None,
+            "userEmail": p.user_email,
+            "userDisplayName": display_name,  # 添加用户昵称
+            "tags": p.tags,
+            "language": p.language,  # 添加语言字段到返回结果
+            "like_count": like_count,  # 添加点赞数
+            "comment_count": comment_count,  # 添加评论数
+        })
+    
     return {
         "total": total,
         "page": page,
         "size": size,
-        "podcasts": [
-            {
-                "id": p.id,
-                "title": p.title,
-                "description": p.description,
-                "audioUrl": p.audio_url,
-                "coverImageUrl": p.cover_image_url,
-                "duration": p.duration,
-                "createdAt": p.created_at.isoformat() if p.created_at else None,
-                "userEmail": p.user_email,
-                "userDisplayName": display_name,  # 添加用户昵称
-                "tags": p.tags,
-                "language": p.language,  # 添加语言字段到返回结果
-            } for p, display_name in results
-        ]
+        "podcasts": podcasts_with_stats
     }
 
 # 新增：获取某用户所有播客
@@ -672,19 +682,29 @@ def get_podcast_detail(podcast_id: int, db: Session = Depends(get_db)):
     
     podcast, display_name = result
     
+    # 获取点赞数和评论数
+    from app.models.social import PodcastLike, PodcastComment
+    like_count = db.query(PodcastLike).filter(PodcastLike.podcast_id == podcast_id).count()
+    comment_count = db.query(PodcastComment).filter(PodcastComment.podcast_id == podcast_id).count()
+    
     return {
         "id": podcast.id,
         "title": podcast.title,
         "description": podcast.description,
         "content": podcast.content,
-        "audioUrl": podcast.audio_url,
-        "coverImageUrl": podcast.cover_image_url,
+        "audio_url": podcast.audio_url,  # 修改字段名称
+        "cover_image_url": podcast.cover_image_url,  # 修改字段名称
         "duration": podcast.duration,
-        "createdAt": podcast.created_at.isoformat() if podcast.created_at else None,
-        "userEmail": podcast.user_email,
-        "userDisplayName": display_name,  # 添加用户显示名称
+        "created_at": podcast.created_at.isoformat() if podcast.created_at else None,  # 修改字段名称
+        "user_email": podcast.user_email,  # 修改字段名称
+        "user_display_name": display_name,  # 修改字段名称
         "tags": podcast.tags,
-        "isPublic": podcast.is_public,
+        "is_public": podcast.is_public,  # 修改字段名称
+        "language": podcast.language,  # 添加语言字段
+        "file_size": podcast.file_size,  # 添加文件大小字段
+        "like_count": like_count,  # 添加点赞数
+        "comment_count": comment_count,  # 添加评论数
+        "view_count": comment_count,  # 暂时用评论数作为观看数
     } 
 
 # 管理员权限依赖

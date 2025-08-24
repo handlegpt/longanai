@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Heart, MessageCircle, Share2, User } from "lucide-react";
+import toast from "react-hot-toast";
 
 const languageOptions = [
   { id: "cantonese", name: "粤语", flag: "🇭🇰" },
@@ -72,7 +74,10 @@ interface Podcast {
   duration: string;
   createdAt: string;
   userEmail: string;
+  userDisplayName?: string;
   tags: string;
+  like_count?: number;
+  comment_count?: number;
 }
 
 const SkeletonCard = () => (
@@ -99,6 +104,7 @@ export default function ExplorePage() {
   const [search, setSearch] = useState("");
   const [tag, setTag] = useState("");
   const [lang, setLang] = useState<string>(() => typeof window !== "undefined" ? localStorage.getItem("lang") || "cantonese" : "cantonese");
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   // 根据选择的语言获取翻译
 const getTranslation = (lang: string) => {
@@ -112,6 +118,12 @@ const getTranslation = (lang: string) => {
 };
 
 const t = getTranslation(lang);
+
+  useEffect(() => {
+    // 获取用户邮箱
+    const email = localStorage.getItem('userEmail');
+    setUserEmail(email);
+  }, []);
 
   useEffect(() => {
     fetchPodcasts();
@@ -224,7 +236,49 @@ const t = getTranslation(lang);
               </div>
               <h2 className="font-bold text-lg mb-1 truncate group-hover:text-blue-600 transition-colors">{podcast.title}</h2>
               <div className="text-sm text-gray-700 mb-2 line-clamp-2">{podcast.description || t.noDescription}</div>
+              
+              {/* 用户信息 */}
+              <div className="flex items-center text-xs text-gray-500 mb-2">
+                <User className="w-3 h-3 mr-1" />
+                <span>{podcast.userDisplayName || podcast.userEmail.split('@')[0]}</span>
+              </div>
+              
               <audio controls src={podcast.audioUrl} className="w-full mt-auto rounded" />
+              
+              {/* 社交功能 */}
+              <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center space-x-4 text-xs text-gray-500">
+                  <div className="flex items-center">
+                    <Heart className="w-3 h-3 mr-1" />
+                    <span>{podcast.like_count || 0}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <MessageCircle className="w-3 h-3 mr-1" />
+                    <span>{podcast.comment_count || 0}</span>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: podcast.title,
+                          text: `${podcast.title} - ${podcast.userDisplayName || podcast.userEmail.split('@')[0]}`,
+                          url: `${window.location.origin}/podcast/${podcast.id}`,
+                        });
+                      } else {
+                        navigator.clipboard.writeText(`${window.location.origin}/podcast/${podcast.id}`);
+                        toast.success('链接已复制到剪贴板');
+                      }
+                    }}
+                    className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="分享"
+                  >
+                    <Share2 className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              
               <div className="flex flex-wrap gap-2 mt-2">
                 {podcast.tags?.split(",").map(tg => tg && (
                   <button key={tg} onClick={() => handleTagClick(tg)} className="bg-blue-50 hover:bg-blue-200 text-blue-600 px-2 py-0.5 rounded text-xs cursor-pointer transition-all">#{tg}</button>
