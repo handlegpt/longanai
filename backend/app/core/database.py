@@ -34,6 +34,7 @@ def init_db():
             UserFollow, PodcastComment, PodcastLike, PodcastShare,
             Community, CommunityMember, CommunityPost
         )
+        from app.models.notification import Notification, NotificationSetting
         
         # Create all tables
         # Base.metadata.create_all(bind=engine)

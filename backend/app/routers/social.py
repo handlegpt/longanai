@@ -12,6 +12,7 @@ from app.models.social import (
 )
 from app.models.user import User
 from app.models.podcast import Podcast
+from app.services.notification_service import NotificationService
 
 router = APIRouter()
 
@@ -76,6 +77,9 @@ async def follow_user(
     )
     db.add(follow)
     db.commit()
+    
+    # 发送关注通知
+    NotificationService.send_follow_notification(db, user_email, request.following_email)
     
     return {"message": "关注成功"}
 
@@ -191,6 +195,9 @@ async def add_comment(
     db.commit()
     db.refresh(comment)
     
+    # 发送评论通知
+    NotificationService.send_comment_notification(db, user_email, podcast_id)
+    
     return {
         "id": comment.id,
         "content": comment.content,
@@ -261,6 +268,9 @@ async def like_podcast(
     db.add(like)
     db.commit()
     
+    # 发送点赞通知
+    NotificationService.send_like_notification(db, user_email, podcast_id)
+    
     return {"message": "点赞成功"}
 
 @router.delete("/podcasts/{podcast_id}/unlike")
@@ -325,6 +335,9 @@ async def share_podcast(
     )
     db.add(share)
     db.commit()
+    
+    # 发送分享通知
+    NotificationService.send_share_notification(db, user_email, podcast_id)
     
     return {
         "share_url": share_url,

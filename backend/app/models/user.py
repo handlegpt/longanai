@@ -33,4 +33,9 @@ class User(Base):
     shares = relationship("PodcastShare", back_populates="user")
     created_communities = relationship("Community", back_populates="creator")
     community_memberships = relationship("CommunityMember", back_populates="user")
-    community_posts = relationship("CommunityPost", back_populates="user") 
+    community_posts = relationship("CommunityPost", back_populates="user")
+    
+    # 通知功能关系
+    notifications = relationship("Notification", foreign_keys="Notification.user_email", back_populates="user")
+    sent_notifications = relationship("Notification", foreign_keys="Notification.sender_email", back_populates="sender")
+    notification_settings = relationship("NotificationSetting", back_populates="user") 
