@@ -215,7 +215,7 @@ async def generate_podcast(
                 )
                 print("✅ Audio file generated successfully")
                 
-                # 检查生成的文件是否有效
+                # 立即检查生成的文件是否有效
                 if os.path.exists(filepath):
                     file_size = os.path.getsize(filepath)
                     print(f"📊 Generated file size: {file_size} bytes")
