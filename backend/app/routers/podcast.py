@@ -198,11 +198,16 @@ async def generate_podcast(
             # Create unique filename
             filename = f"podcast_{uuid.uuid4()}.mp3"
             
-            # 暂时使用本地存储，避免云存储初始化问题
+            # 启用云存储、文件优化和CDN功能
             print(f"📁 Audio file path: {filename}")
             
-            # 创建文件路径
-            filepath = os.path.join("static", filename)
+            # 导入云存储、文件优化和CDN服务
+            from app.services.cloud_storage import cloud_storage_service
+            from app.services.file_optimizer import file_optimizer
+            from app.services.cdn_service import cdn_service
+            
+            # 创建临时文件路径
+            temp_filepath = os.path.join("static", filename)
             os.makedirs("static", exist_ok=True)
             
             try:
@@ -213,7 +218,7 @@ async def generate_podcast(
                 
                 loop = asyncio.get_event_loop()
                 await asyncio.wait_for(
-                    loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(filepath))),
+                    loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(temp_filepath))),
                     timeout=180.0
                 )
                 
@@ -238,24 +243,59 @@ async def generate_podcast(
                         pitch=0.0
                     )
                     
-                    # 保存音频文件
-                    audio_url = tts_service.save_audio_to_file(audio_content, filename)
-                    print(f"✅ Google TTS fallback successful: {audio_url}")
+                    # 保存音频文件到临时位置
+                    temp_audio_url = tts_service.save_audio_to_file(audio_content, filename)
+                    print(f"✅ Google TTS fallback successful: {temp_audio_url}")
                     
-                    # 更新文件路径为 Google TTS 保存的路径
-                    filepath = os.path.join("uploads", "tts", filename)
-                    print(f"🔄 Updated filepath for Google TTS: {filepath}")
+                    # 更新临时文件路径为 Google TTS 保存的路径
+                    temp_filepath = os.path.join("uploads", "tts", filename)
+                    print(f"🔄 Updated temp_filepath for Google TTS: {temp_filepath}")
                     
                 except Exception as google_error:
                     print(f"❌ Google TTS fallback also failed: {google_error}")
                     raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
             
-            # 生成音频URL
-            audio_url = f"/static/{filename}"
+            # 文件优化、云存储上传和CDN URL生成
+            print("🔧 Starting file optimization and cloud storage upload...")
+            
+            try:
+                # 读取临时文件内容
+                with open(temp_filepath, 'rb') as f:
+                    audio_content = f.read()
+                
+                # 文件优化
+                print("🔧 Optimizing audio file...")
+                optimized_content, optimization_info = await file_optimizer.optimize_file(
+                    audio_content, 
+                    filename
+                )
+                print(f"✅ File optimization completed: {optimization_info}")
+                
+                # 上传到云存储
+                print("☁️ Uploading to cloud storage...")
+                storage_path = f"podcasts/{datetime.now().strftime('%Y/%m/%d')}/{filename}"
+                uploaded_path = await cloud_storage_service.upload_file(
+                    optimized_content,
+                    storage_path,
+                    "audio/mpeg"
+                )
+                print(f"✅ Cloud storage upload completed: {uploaded_path}")
+                
+                # 生成CDN URL
+                cdn_url = cdn_service.get_cdn_url(storage_path, "audio")
+                print(f"🚀 CDN URL generated: {cdn_url}")
+                
+                # 使用CDN URL作为最终音频URL
+                audio_url = cdn_url
+                
+            except Exception as e:
+                print(f"⚠️ Cloud storage/optimization failed, using local URL: {e}")
+                # 如果云存储失败，回退到本地URL
+                audio_url = f"/static/{filename}"
             
             # Calculate audio duration
             try:
-                audio = AudioSegment.from_mp3(filepath)
+                audio = AudioSegment.from_mp3(temp_filepath)
                 duration_seconds = len(audio) / 1000.0  # Convert milliseconds to seconds
                 duration_str = format_duration(duration_seconds)
                 print(f"⏱️ Audio duration: {duration_str}")
@@ -264,7 +304,7 @@ async def generate_podcast(
                 duration_str = "00:00:00"
             
             # Get file size
-            file_size = os.path.getsize(filepath)
+            file_size = os.path.getsize(temp_filepath)
             print(f"📊 File size: {file_size} bytes")
             
             # Generate title from content if not provided
@@ -294,7 +334,7 @@ async def generate_podcast(
                 voice=request.voice,
                 emotion=request.emotion,
                 speed=request.speed,
-                audio_url=f"/uploads/tts/{filename}" if "uploads/tts" in filepath else f"/static/{filename}",
+                audio_url=audio_url,  # 使用优化后的CDN URL或本地URL
                 cover_image_url=request.cover_image_url,
                 duration=duration_str,
                 file_size=file_size,

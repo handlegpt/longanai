@@ -16,6 +16,7 @@ from app.core.error_handlers import (
     http_exception_handler
 )
 from app.middleware.rate_limit import rate_limit_middleware
+from app.services.cdn_service import CDNMiddleware
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -52,8 +53,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 添加速率限制中间件
+# 添加中间件
 app.middleware("http")(rate_limit_middleware)
+app.middleware("http")(CDNMiddleware)
 
 # 注册异常处理器
 app.add_exception_handler(LonganAIException, longan_ai_exception_handler)
