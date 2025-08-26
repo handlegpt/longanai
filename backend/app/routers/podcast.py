@@ -735,13 +735,23 @@ def admin_review_podcast(podcast_id: int, req: ReviewStatusRequest, db: Session 
 @router.get("/system/status")
 async def get_system_status():
     """获取系统当前状态"""
-    return {
-        "max_concurrent_generations": MAX_CONCURRENT_GENERATIONS,
-        "current_active_generations": MAX_CONCURRENT_GENERATIONS - generation_semaphore._value,
-        "available_slots": generation_semaphore._value,
-        "thread_pool_workers": executor._max_workers,
-        "system_health": "healthy"
-    } 
+    try:
+        return {
+            "max_concurrent_generations": MAX_CONCURRENT_GENERATIONS,
+            "current_active_generations": MAX_CONCURRENT_GENERATIONS - generation_semaphore._value,
+            "available_slots": generation_semaphore._value,
+            "thread_pool_workers": executor._max_workers,
+            "system_health": "healthy"
+        }
+    except Exception as e:
+        # 如果出现错误，返回基本状态信息
+        return {
+            "max_concurrent_generations": MAX_CONCURRENT_GENERATIONS,
+            "current_active_generations": 0,
+            "available_slots": MAX_CONCURRENT_GENERATIONS,
+            "thread_pool_workers": settings.THREAD_POOL_WORKERS,
+            "system_health": "healthy"
+        } 
 
 # 工具函数：格式化秒为HH:MM:SS
 

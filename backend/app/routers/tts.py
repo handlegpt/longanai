@@ -210,8 +210,71 @@ async def get_language_voices(
         if language not in valid_languages:
             raise HTTPException(status_code=400, detail=f"Invalid language. Must be one of: {valid_languages}")
         
-        # 获取该语言的音色列表
-        voices = tts_service.voice_mapping.get(language, {}).get('voices', [])
+        # 直接返回硬编码的语音列表，避免Google Cloud API调用
+        voice_mapping = {
+            'cantonese': {
+                'voices': [
+                    {
+                        'name': 'yue-HK-Standard-A',
+                        'display_name': '龍眼妹',
+                        'description': '温柔甜美的粤语女声，适合生活分享和情感内容',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'yue-HK-Standard-B', 
+                        'display_name': '大佬',
+                        'description': '成熟稳重的粤语男声，适合新闻播报和正式内容',
+                        'gender': 'MALE'
+                    },
+                    {
+                        'name': 'yue-HK-Standard-C',
+                        'display_name': '阿姐', 
+                        'description': '亲切自然的粤语女声，适合日常对话和轻松内容',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'yue-HK-Standard-D',
+                        'display_name': '收数佬',
+                        'description': '活力四射的粤语男声，适合娱乐节目和动感内容',
+                        'gender': 'MALE'
+                    }
+                ]
+            },
+            'mandarin': {
+                'voices': [
+                    {
+                        'name': 'cmn-CN-Standard-A',
+                        'display_name': '小美',
+                        'description': '温柔甜美的普通话女声',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'cmn-CN-Standard-B',
+                        'display_name': '阿强', 
+                        'description': '成熟稳重的普通话男声',
+                        'gender': 'MALE'
+                    }
+                ]
+            },
+            'english': {
+                'voices': [
+                    {
+                        'name': 'en-US-Standard-A',
+                        'display_name': 'Sarah',
+                        'description': 'Clear and professional English female voice',
+                        'gender': 'FEMALE'
+                    },
+                    {
+                        'name': 'en-US-Standard-B',
+                        'display_name': 'John',
+                        'description': 'Clear and professional English male voice',
+                        'gender': 'MALE'
+                    }
+                ]
+            }
+        }
+        
+        voices = voice_mapping.get(language, {}).get('voices', [])
         
         return {
             "success": True,
