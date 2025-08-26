@@ -30,12 +30,11 @@ def init_db():
         # Import all models to ensure they are registered
         from app.models.podcast import Podcast
         from app.models.user import User
-        # 暂时禁用社交模型导入，避免关系定义冲突
-        # from app.models.social import (
-        #     UserFollow, PodcastComment, PodcastLike, PodcastShare,
-        #     Community, CommunityMember, CommunityPost
-        # )
-        # from app.models.notification import Notification, NotificationSetting
+        from app.models.social import (
+            UserFollow, PodcastComment, PodcastLike, PodcastShare,
+            Community, CommunityMember, CommunityPost
+        )
+        from app.models.notification import Notification, NotificationSetting
         
         # Create all tables
         Base.metadata.create_all(bind=engine)

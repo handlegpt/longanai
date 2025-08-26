@@ -24,8 +24,8 @@ class Podcast(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
-    # 暂时禁用社交功能关系，避免数据库表不存在的问题
-    # comments = relationship("PodcastComment", back_populates="podcast")
-    # likes = relationship("PodcastLike", back_populates="podcast")
-    # shares = relationship("PodcastShare", back_populates="podcast")
-    # community_posts = relationship("CommunityPost", back_populates="podcast") 
+    # 社交功能关系
+    comments = relationship("PodcastComment", back_populates="podcast")
+    likes = relationship("PodcastLike", back_populates="podcast")
+    shares = relationship("PodcastShare", back_populates="podcast")
+    community_posts = relationship("CommunityPost", back_populates="podcast") 

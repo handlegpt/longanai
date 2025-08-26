@@ -577,9 +577,14 @@ def get_public_podcasts(
     total = query.count()
     results = query.order_by(Podcast.created_at.desc()).offset((page-1)*size).limit(size).all()
     
-    # 暂时禁用社交功能统计，避免数据库表不存在的问题
+    # 获取点赞数和评论数
+    from app.models.social import PodcastLike, PodcastComment
+    
     podcasts_with_stats = []
     for p, display_name in results:
+        like_count = db.query(PodcastLike).filter(PodcastLike.podcast_id == p.id).count()
+        comment_count = db.query(PodcastComment).filter(PodcastComment.podcast_id == p.id).count()
+        
         podcasts_with_stats.append({
             "id": p.id,
             "title": p.title,
@@ -592,8 +597,8 @@ def get_public_podcasts(
             "userDisplayName": display_name,  # 添加用户昵称
             "tags": p.tags,
             "language": p.language,  # 添加语言字段到返回结果
-            "like_count": 0,  # 暂时设为0
-            "comment_count": 0,  # 暂时设为0
+            "like_count": like_count,  # 添加点赞数
+            "comment_count": comment_count,  # 添加评论数
         })
     
     return {
@@ -633,9 +638,10 @@ def get_podcast_detail(podcast_id: int, db: Session = Depends(get_db)):
     
     podcast, display_name = result
     
-    # 暂时禁用社交功能统计，避免数据库表不存在的问题
-    like_count = 0
-    comment_count = 0
+    # 获取点赞数和评论数
+    from app.models.social import PodcastLike, PodcastComment
+    like_count = db.query(PodcastLike).filter(PodcastLike.podcast_id == podcast_id).count()
+    comment_count = db.query(PodcastComment).filter(PodcastComment.podcast_id == podcast_id).count()
     
     return {
         "id": podcast.id,
