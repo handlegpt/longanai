@@ -31,5 +31,13 @@ python-docx==0.8.11  # Word文档处理
 # 云存储依赖
 boto3>=1.26.0  # AWS S3
 oss2>=2.18.0   # 阿里云OSS
+
+# 文件优化依赖
+Pillow>=10.1.0  # 图片处理
+pydub>=0.25.1   # 音频处理
+
+# CDN和缓存依赖
+requests>=2.31.0  # HTTP请求
+
 # Google TTS依赖
 google-cloud-texttospeech>=2.16.0

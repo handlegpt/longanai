@@ -55,7 +55,26 @@ class Settings(BaseSettings):
     GOOGLE_REDIRECT_URI: str = os.getenv("GOOGLE_REDIRECT_URI", "http://longan.ai/api/auth/callback/google")
     
     # Storage Settings
-    STORAGE_TYPE: str = os.getenv("STORAGE_TYPE", "local")  # local, s3, aliyun_oss
+    STORAGE_TYPE: str = "local"  # local, s3, oss
+    
+    # AWS S3 Settings
+    AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
+    AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+    AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "longanai-storage")
+    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "us-east-1")
+    
+    # Aliyun OSS Settings
+    ALIYUN_ACCESS_KEY_ID: str = os.getenv("ALIYUN_ACCESS_KEY_ID", "")
+    ALIYUN_ACCESS_KEY_SECRET: str = os.getenv("ALIYUN_ACCESS_KEY_SECRET", "")
+    ALIYUN_OSS_BUCKET: str = os.getenv("ALIYUN_OSS_BUCKET", "longanai-storage")
+    ALIYUN_OSS_ENDPOINT: str = os.getenv("ALIYUN_OSS_ENDPOINT", "https://oss-cn-hangzhou.aliyuncs.com")
+    
+    # CDN Settings
+    CDN_ENABLED: bool = os.getenv("CDN_ENABLED", "false").lower() == "true"
+    CDN_PROVIDER: str = os.getenv("CDN_PROVIDER", "cloudflare")  # cloudflare, aliyun
+    CDN_BASE_URL: str = os.getenv("CDN_BASE_URL", "")
+    CDN_API_KEY: str = os.getenv("CDN_API_KEY", "")
+    CDN_ZONE_ID: str = os.getenv("CDN_ZONE_ID", "") os.getenv("STORAGE_TYPE", "local")  # local, s3, aliyun_oss
     LOCAL_STORAGE_PATH: str = os.getenv("LOCAL_STORAGE_PATH", "static")
     
     # AWS S3 Settings

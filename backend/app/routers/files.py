@@ -1,231 +1,377 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
-from fastapi.responses import FileResponse
 import os
-import uuid
-import magic
-import hashlib
-import re
-from typing import List
-from app.core.config import settings
-from app.core.security import get_current_user
+import logging
+from typing import List, Optional
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, status
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.auth import get_current_user
 from app.models.user import User
+from app.services.cloud_storage import cloud_storage_service
+from app.services.file_optimizer import file_optimizer
+from app.services.cdn_service import cdn_service
+from app.services.file_security import FileSecurityService
+import uuid
+from datetime import datetime
 
-router = APIRouter()
+logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/api/files", tags=["files"])
 
-# 安全的文件类型配置
-ALLOWED_EXTENSIONS = {
-    '.txt': 'text/plain',
-    '.pdf': 'application/pdf', 
-    '.doc': 'application/msword',
-    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    '.md': 'text/markdown'
-}
-
-# 文件大小限制（字节）
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
-
-# 危险文件扩展名黑名单
-DANGEROUS_EXTENSIONS = {
-    '.exe', '.bat', '.cmd', '.com', '.pif', '.scr', '.vbs', '.js', '.jar',
-    '.php', '.asp', '.aspx', '.jsp', '.py', '.pl', '.rb', '.sh', '.cgi',
-    '.dll', '.so', '.dylib', '.sys', '.drv', '.bin', '.msi', '.app'
-}
-
-def validate_file_extension(filename: str) -> bool:
-    """验证文件扩展名是否安全"""
-    if not filename:
-        return False
-    
-    # 获取文件扩展名
-    file_ext = os.path.splitext(filename.lower())[1]
-    
-    # 检查是否在黑名单中
-    if file_ext in DANGEROUS_EXTENSIONS:
-        return False
-    
-    # 检查是否在允许列表中
-    return file_ext in ALLOWED_EXTENSIONS
-
-def validate_file_content(file_content: bytes) -> bool:
-    """验证文件内容类型"""
-    try:
-        # 使用 python-magic 检测文件类型
-        mime_type = magic.from_buffer(file_content, mime=True)
-        
-        # 检查是否为允许的 MIME 类型
-        allowed_mime_types = set(ALLOWED_EXTENSIONS.values())
-        return mime_type in allowed_mime_types
-    except Exception:
-        return False
-
-def sanitize_filename(filename: str) -> str:
-    """清理文件名，防止路径遍历攻击"""
-    # 移除路径分隔符
-    filename = os.path.basename(filename)
-    
-    # 移除危险字符
-    filename = re.sub(r'[<>:"/\\|?*]', '_', filename)
-    
-    # 限制长度
-    if len(filename) > 100:
-        name, ext = os.path.splitext(filename)
-        filename = name[:100-len(ext)] + ext
-    
-    return filename
-
-def calculate_file_hash(content: bytes) -> str:
-    """计算文件哈希值"""
-    return hashlib.sha256(content).hexdigest()
-
-def check_file_size(content: bytes) -> bool:
-    """检查文件大小"""
-    return len(content) <= MAX_FILE_SIZE
+# 文件安全服务实例
+file_security = FileSecurityService()
 
 @router.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
-    current_user: User = Depends(get_current_user)
+    file_type: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
-    """安全上传文件用于播客生成"""
-    
-    # 1. 基础验证
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="文件名不能为空")
-    
-    # 2. 文件扩展名验证
-    if not validate_file_extension(file.filename):
-        raise HTTPException(
-            status_code=400, 
-            detail=f"不支持的文件格式。支持格式: {', '.join(ALLOWED_EXTENSIONS.keys())}"
-        )
-    
-    # 3. 读取文件内容
+    """上传文件到云存储"""
     try:
-        content = await file.read()
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"文件读取失败: {str(e)}")
-    
-    # 4. 文件大小验证
-    if not check_file_size(content):
-        raise HTTPException(
-            status_code=400, 
-            detail=f"文件太大。最大允许: {MAX_FILE_SIZE // (1024*1024)}MB"
+        # 读取文件内容
+        file_content = await file.read()
+        
+        # 文件安全检查
+        security_result = file_security.validate_file(
+            file_content, 
+            file.filename, 
+            file.content_type
         )
-    
-    # 5. 文件内容类型验证
-    if not validate_file_content(content):
-        raise HTTPException(
-            status_code=400, 
-            detail="文件内容类型不匹配，可能包含恶意内容"
+        
+        if not security_result['valid']:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"文件安全检查失败: {security_result['reason']}"
+            )
+        
+        # 生成唯一文件名
+        file_extension = os.path.splitext(file.filename)[1]
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
+        
+        # 确定文件类型
+        if not file_type:
+            if file.content_type and file.content_type.startswith('image/'):
+                file_type = 'images'
+            elif file.content_type and file.content_type.startswith('audio/'):
+                file_type = 'audio'
+            else:
+                file_type = 'documents'
+        
+        # 构建存储路径
+        timestamp = datetime.now().strftime("%Y/%m/%d")
+        storage_path = f"{file_type}/{timestamp}/{unique_filename}"
+        
+        # 优化文件
+        logger.info(f"🔧 Optimizing file: {file.filename}")
+        optimized_content, optimization_info = await file_optimizer.optimize_file(
+            file_content, 
+            unique_filename
         )
-    
-    # 6. 计算文件哈希（用于去重和审计）
-    file_hash = calculate_file_hash(content)
-    
-    # 7. 生成安全的文件名
-    original_name = sanitize_filename(file.filename)
-    file_extension = os.path.splitext(original_name)[1]
-    unique_filename = f"{uuid.uuid4()}{file_extension}"
-    
-    # 8. 确保上传目录存在且安全
-    upload_dir = os.path.abspath(settings.UPLOAD_DIR)
-    os.makedirs(upload_dir, exist_ok=True)
-    
-    # 9. 验证最终路径安全性
-    filepath = os.path.join(upload_dir, unique_filename)
-    if not filepath.startswith(upload_dir):
-        raise HTTPException(status_code=400, detail="文件路径不安全")
-    
-    # 10. 保存文件
-    try:
-        with open(filepath, "wb") as buffer:
-            buffer.write(content)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"文件保存失败: {str(e)}")
-    
-    # 11. 记录上传日志（可选）
-    print(f"📁 File uploaded: {original_name} -> {unique_filename} (User: {current_user.email})")
-    
-    return {
-        "filename": unique_filename,
-        "original_name": original_name,
-        "size": len(content),
-        "hash": file_hash,
-        "url": f"/static/{unique_filename}",
-        "message": "文件上传成功"
-    }
-
-@router.get("/download/{filename}")
-async def download_file(
-    filename: str,
-    current_user: User = Depends(get_current_user)
-):
-    """安全下载上传的文件"""
-    
-    # 1. 验证文件名安全性
-    if not filename or '..' in filename or '/' in filename:
-        raise HTTPException(status_code=400, detail="无效的文件名")
-    
-    # 2. 构建安全路径
-    upload_dir = os.path.abspath(settings.UPLOAD_DIR)
-    filepath = os.path.join(upload_dir, filename)
-    
-    # 3. 验证路径安全性
-    if not filepath.startswith(upload_dir):
-        raise HTTPException(status_code=400, detail="文件路径不安全")
-    
-    # 4. 检查文件是否存在
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="文件不存在")
-    
-    # 5. 记录下载日志
-    print(f"📥 File downloaded: {filename} (User: {current_user.email})")
-    
-    return FileResponse(filepath, filename=filename)
-
-@router.delete("/files/{filename}")
-async def delete_file(
-    filename: str,
-    current_user: User = Depends(get_current_user)
-):
-    """删除上传的文件"""
-    
-    # 1. 验证文件名安全性
-    if not filename or '..' in filename or '/' in filename:
-        raise HTTPException(status_code=400, detail="无效的文件名")
-    
-    # 2. 构建安全路径
-    upload_dir = os.path.abspath(settings.UPLOAD_DIR)
-    filepath = os.path.join(upload_dir, filename)
-    
-    # 3. 验证路径安全性
-    if not filepath.startswith(upload_dir):
-        raise HTTPException(status_code=400, detail="文件路径不安全")
-    
-    # 4. 检查文件是否存在
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="文件不存在")
-    
-    # 5. 删除文件
-    try:
-        os.remove(filepath)
-        print(f"🗑️ File deleted: {filename} (User: {current_user.email})")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"文件删除失败: {str(e)}")
-    
-    return {"message": "文件删除成功"}
-
-@router.get("/files/info")
-async def get_upload_info():
-    """获取文件上传信息"""
-    return {
-        "allowed_extensions": list(ALLOWED_EXTENSIONS.keys()),
-        "max_file_size_mb": MAX_FILE_SIZE // (1024 * 1024),
-        "supported_formats": {
-            "TXT": "纯文本文件",
-            "PDF": "PDF文档", 
-            "DOC": "Word 97-2003文档",
-            "DOCX": "Word 2007+文档",
-            "MD": "Markdown文档"
+        
+        # 上传到云存储
+        logger.info(f"☁️ Uploading to cloud storage: {storage_path}")
+        uploaded_path = await cloud_storage_service.upload_file(
+            optimized_content,
+            storage_path,
+            file.content_type
+        )
+        
+        # 获取CDN URL
+        cdn_url = cdn_service.get_cdn_url(storage_path, file_type)
+        
+        # 获取文件信息
+        file_info = file_optimizer.get_file_info(optimized_content, unique_filename)
+        
+        # 构建响应
+        response_data = {
+            "success": True,
+            "file_info": {
+                "original_name": file.filename,
+                "filename": unique_filename,
+                "file_path": storage_path,
+                "file_type": file_type,
+                "content_type": file.content_type,
+                "size_bytes": len(optimized_content),
+                "size_mb": round(len(optimized_content) / (1024 * 1024), 2),
+                "local_url": f"/static/{storage_path}",
+                "cdn_url": cdn_url,
+                "uploaded_at": datetime.now().isoformat()
+            },
+            "optimization_info": optimization_info,
+            "cdn_info": cdn_service.get_file_info(storage_path)
         }
-    } 
+        
+        # 添加文件特定信息
+        if file_type == 'images':
+            response_data["file_info"].update({
+                "width": file_info.get('width'),
+                "height": file_info.get('height'),
+                "format": file_info.get('format')
+            })
+        elif file_type == 'audio':
+            response_data["file_info"].update({
+                "duration_seconds": file_info.get('duration_seconds'),
+                "channels": file_info.get('channels'),
+                "sample_rate": file_info.get('sample_rate')
+            })
+        
+        logger.info(f"✅ File uploaded successfully: {storage_path}")
+        return JSONResponse(content=response_data, status_code=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        logger.error(f"❌ File upload failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"文件上传失败: {str(e)}"
+        )
+
+@router.post("/upload/multiple")
+async def upload_multiple_files(
+    files: List[UploadFile] = File(...),
+    file_type: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """批量上传文件"""
+    try:
+        uploaded_files = []
+        
+        for file in files:
+            try:
+                # 读取文件内容
+                file_content = await file.read()
+                
+                # 文件安全检查
+                security_result = file_security.validate_file(
+                    file_content, 
+                    file.filename, 
+                    file.content_type
+                )
+                
+                if not security_result['valid']:
+                    uploaded_files.append({
+                        "filename": file.filename,
+                        "success": False,
+                        "error": f"文件安全检查失败: {security_result['reason']}"
+                    })
+                    continue
+                
+                # 生成唯一文件名
+                file_extension = os.path.splitext(file.filename)[1]
+                unique_filename = f"{uuid.uuid4()}{file_extension}"
+                
+                # 确定文件类型
+                if not file_type:
+                    if file.content_type and file.content_type.startswith('image/'):
+                        file_type = 'images'
+                    elif file.content_type and file.content_type.startswith('audio/'):
+                        file_type = 'audio'
+                    else:
+                        file_type = 'documents'
+                
+                # 构建存储路径
+                timestamp = datetime.now().strftime("%Y/%m/%d")
+                storage_path = f"{file_type}/{timestamp}/{unique_filename}"
+                
+                # 优化文件
+                optimized_content, optimization_info = await file_optimizer.optimize_file(
+                    file_content, 
+                    unique_filename
+                )
+                
+                # 上传到云存储
+                uploaded_path = await cloud_storage_service.upload_file(
+                    optimized_content,
+                    storage_path,
+                    file.content_type
+                )
+                
+                # 获取CDN URL
+                cdn_url = cdn_service.get_cdn_url(storage_path, file_type)
+                
+                # 获取文件信息
+                file_info = file_optimizer.get_file_info(optimized_content, unique_filename)
+                
+                uploaded_files.append({
+                    "filename": file.filename,
+                    "success": True,
+                    "file_info": {
+                        "original_name": file.filename,
+                        "filename": unique_filename,
+                        "file_path": storage_path,
+                        "file_type": file_type,
+                        "content_type": file.content_type,
+                        "size_bytes": len(optimized_content),
+                        "size_mb": round(len(optimized_content) / (1024 * 1024), 2),
+                        "local_url": f"/static/{storage_path}",
+                        "cdn_url": cdn_url,
+                        "uploaded_at": datetime.now().isoformat()
+                    },
+                    "optimization_info": optimization_info
+                })
+                
+            except Exception as e:
+                logger.error(f"❌ Failed to upload file {file.filename}: {e}")
+                uploaded_files.append({
+                    "filename": file.filename,
+                    "success": False,
+                    "error": str(e)
+                })
+        
+        # 统计上传结果
+        successful_uploads = [f for f in uploaded_files if f["success"]]
+        failed_uploads = [f for f in uploaded_files if not f["success"]]
+        
+        response_data = {
+            "success": True,
+            "total_files": len(files),
+            "successful_uploads": len(successful_uploads),
+            "failed_uploads": len(failed_uploads),
+            "files": uploaded_files
+        }
+        
+        logger.info(f"✅ Batch upload completed: {len(successful_uploads)}/{len(files)} files uploaded")
+        return JSONResponse(content=response_data, status_code=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        logger.error(f"❌ Batch upload failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"批量上传失败: {str(e)}"
+        )
+
+@router.delete("/{file_path:path}")
+async def delete_file(
+    file_path: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """删除文件"""
+    try:
+        # 检查文件是否存在
+        if not await cloud_storage_service.file_exists(file_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="文件不存在"
+            )
+        
+        # 删除文件
+        success = await cloud_storage_service.delete_file(file_path)
+        
+        if success:
+            # 清除CDN缓存
+            await cdn_service.purge_cache([file_path])
+            
+            logger.info(f"✅ File deleted successfully: {file_path}")
+            return JSONResponse(content={
+                "success": True,
+                "message": "文件删除成功"
+            })
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="文件删除失败"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ File deletion failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"文件删除失败: {str(e)}"
+        )
+
+@router.get("/info/{file_path:path}")
+async def get_file_info(
+    file_path: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取文件信息"""
+    try:
+        # 检查文件是否存在
+        if not await cloud_storage_service.file_exists(file_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="文件不存在"
+            )
+        
+        # 获取文件内容
+        file_content = await cloud_storage_service.download_file(file_path)
+        
+        # 获取文件信息
+        filename = os.path.basename(file_path)
+        file_info = file_optimizer.get_file_info(file_content, filename)
+        
+        # 获取CDN信息
+        cdn_info = cdn_service.get_file_info(file_path)
+        
+        response_data = {
+            "success": True,
+            "file_info": file_info,
+            "cdn_info": cdn_info,
+            "storage_info": {
+                "provider": cloud_storage_service.provider.__class__.__name__ if cloud_storage_service.provider else "local",
+                "file_path": file_path
+            }
+        }
+        
+        return JSONResponse(content=response_data)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Get file info failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"获取文件信息失败: {str(e)}"
+        )
+
+@router.get("/cdn/stats")
+async def get_cdn_stats(
+    current_user: User = Depends(get_current_user)
+):
+    """获取CDN统计信息"""
+    try:
+        stats = cdn_service.get_cdn_stats()
+        return JSONResponse(content={
+            "success": True,
+            "cdn_stats": stats
+        })
+    except Exception as e:
+        logger.error(f"❌ Get CDN stats failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"获取CDN统计信息失败: {str(e)}"
+        )
+
+@router.post("/cdn/purge")
+async def purge_cdn_cache(
+    file_paths: List[str],
+    current_user: User = Depends(get_current_user)
+):
+    """清除CDN缓存"""
+    try:
+        success = await cdn_service.purge_cache(file_paths)
+        
+        if success:
+            return JSONResponse(content={
+                "success": True,
+                "message": f"成功清除 {len(file_paths)} 个文件的CDN缓存"
+            })
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="CDN缓存清除失败"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ CDN cache purge failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"CDN缓存清除失败: {str(e)}"
+        ) 

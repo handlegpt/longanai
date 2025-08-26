@@ -197,105 +197,88 @@ async def generate_podcast(
             
             # Create unique filename
             filename = f"podcast_{uuid.uuid4()}.mp3"
-            filepath = os.path.join("static", filename)
-            print(f"📁 Audio file path: {filepath}")
             
-            # Ensure static directory exists
-            os.makedirs("static", exist_ok=True)
-            print("✅ Static directory ensured")
+            # 使用云存储服务
+            from app.services.cloud_storage import cloud_storage_service
+            from app.services.file_optimizer import file_optimizer
+            from app.services.cdn_service import cdn_service
             
-            # Generate audio file in thread pool with timeout
-            print("🎵 Generating audio file...")
-            print(f"🔍 Debug: Text to synthesize: {tts_text[:100]}...")
-            print(f"🔍 Debug: Voice: {tts_voice}")
-            print(f"🔍 Debug: Filepath: {filepath}")
+            print(f"📁 Audio file path: {filename}")
+            
+            # 生成音频内容
+            audio_content = None
             
             try:
+                # 尝试Edge TTS
+                print("🎵 Generating audio with Edge TTS...")
+                print(f"🔍 Debug: Text to synthesize: {tts_text[:100]}...")
+                print(f"🔍 Debug: Voice: {tts_voice}")
+                
+                # 创建临时文件路径
+                temp_filepath = os.path.join("static", filename)
+                os.makedirs("static", exist_ok=True)
+                
                 loop = asyncio.get_event_loop()
-                # 设置180秒超时
                 await asyncio.wait_for(
-                    loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(filepath))),
+                    loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(temp_filepath))),
                     timeout=180.0
                 )
-                print("✅ Audio file generated successfully")
+                
+                # 读取生成的音频文件
+                if os.path.exists(temp_filepath):
+                    with open(temp_filepath, 'rb') as f:
+                        audio_content = f.read()
+                    
+                    # 删除临时文件
+                    os.remove(temp_filepath)
+                    print("✅ Edge TTS audio generated successfully")
+                else:
+                    raise Exception("Edge TTS file not found")
                 
             except asyncio.TimeoutError:
                 raise HTTPException(status_code=408, detail="生成超时，请稍后重试或减少文本长度")
             except Exception as e:
-                print(f"❌ Edge TTS save failed: {e}")
-            
-            # 无论是否抛出异常，都检查生成的文件是否有效
-            print("🔍 Checking generated file...")
-            if os.path.exists(filepath):
-                file_size = os.path.getsize(filepath)
-                print(f"📊 Generated file size: {file_size} bytes")
+                print(f"❌ Edge TTS failed: {e}")
                 
-                # 如果文件太小（小于1KB），认为生成失败
-                if file_size < 1024:
-                    print(f"⚠️ Generated file too small ({file_size} bytes), Edge TTS failed")
-                    # 删除无效文件
-                    try:
-                        os.remove(filepath)
-                        print("🗑️ Removed invalid file")
-                    except:
-                        pass
-                    
-                    # 尝试使用 Google TTS 作为回退，Google TTS 支持粤语
-                    print("🔄 Trying Google TTS as fallback for Cantonese...")
-                    try:
-                        from app.services.google_tts import GoogleTTSService
-                        tts_service = GoogleTTSService()
-                        
-                        # 使用 Google TTS 的粤语语音生成音频
-                        audio_content = tts_service.text_to_speech(
-                            text=tts_text,  # 直接使用粤语文本，不翻译
-                            language="cantonese",  # 使用粤语
-                            voice_name="yue-HK-Standard-A",  # 使用粤语女声
-                            speaking_rate=1.0,
-                            pitch=0.0
-                        )
-                        
-                        # 保存音频文件
-                        audio_url = tts_service.save_audio_to_file(audio_content, filename)
-                        print(f"✅ Google TTS fallback successful: {audio_url}")
-                        
-                        # 更新文件路径为 Google TTS 保存的路径
-                        filepath = os.path.join("uploads", "tts", filename)
-                        print(f"🔄 Updated filepath for Google TTS: {filepath}")
-                        
-                    except Exception as google_error:
-                        print(f"❌ Google TTS fallback also failed: {google_error}")
-                        raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
-                else:
-                    print("✅ Edge TTS file is valid")
-            else:
-                print("⚠️ Generated file does not exist, Edge TTS failed")
-                # 尝试使用 Google TTS 作为回退，Google TTS 支持粤语
-                print("🔄 Trying Google TTS as fallback for Cantonese...")
+                # 尝试Google TTS作为回退
+                print("🔄 Trying Google TTS as fallback...")
                 try:
                     from app.services.google_tts import GoogleTTSService
                     tts_service = GoogleTTSService()
                     
-                    # 使用 Google TTS 的粤语语音生成音频
                     audio_content = tts_service.text_to_speech(
-                        text=tts_text,  # 直接使用粤语文本，不翻译
-                        language="cantonese",  # 使用粤语
-                        voice_name="yue-HK-Standard-A",  # 使用粤语女声
+                        text=tts_text,
+                        language="cantonese",
+                        voice_name="yue-HK-Standard-A",
                         speaking_rate=1.0,
                         pitch=0.0
                     )
-                    
-                    # 保存音频文件
-                    audio_url = tts_service.save_audio_to_file(audio_content, filename)
-                    print(f"✅ Google TTS fallback successful: {audio_url}")
-                    
-                    # 更新文件路径为 Google TTS 保存的路径
-                    filepath = os.path.join("uploads", "tts", filename)
-                    print(f"🔄 Updated filepath for Google TTS: {filepath}")
+                    print("✅ Google TTS fallback successful")
                     
                 except Exception as google_error:
                     print(f"❌ Google TTS fallback also failed: {google_error}")
                     raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
+            
+            if not audio_content:
+                raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
+            
+            # 优化音频文件
+            print("🔧 Optimizing audio file...")
+            optimized_audio, optimization_info = await file_optimizer.optimize_audio(audio_content, filename)
+            
+            # 上传到云存储
+            print("☁️ Uploading to cloud storage...")
+            uploaded_path = await cloud_storage_service.upload_file(
+                optimized_audio, 
+                f"podcasts/{filename}", 
+                "audio/mpeg"
+            )
+            
+            # 获取CDN URL
+            audio_url = cdn_service.get_cdn_url(f"podcasts/{filename}", "audio")
+            
+            print(f"✅ File uploaded successfully: {audio_url}")
+            print(f"📊 Optimization info: {optimization_info}")
             
             # Calculate audio duration
             try:
