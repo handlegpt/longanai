@@ -198,15 +198,12 @@ async def generate_podcast(
             # Create unique filename
             filename = f"podcast_{uuid.uuid4()}.mp3"
             
-            # 使用云存储服务
-            from app.services.cloud_storage import cloud_storage_service
-            from app.services.file_optimizer import file_optimizer
-            from app.services.cdn_service import cdn_service
-            
+            # 暂时使用本地存储，避免云存储初始化问题
             print(f"📁 Audio file path: {filename}")
             
-            # 生成音频内容
-            audio_content = None
+            # 创建文件路径
+            filepath = os.path.join("static", filename)
+            os.makedirs("static", exist_ok=True)
             
             try:
                 # 尝试Edge TTS
@@ -214,26 +211,13 @@ async def generate_podcast(
                 print(f"🔍 Debug: Text to synthesize: {tts_text[:100]}...")
                 print(f"🔍 Debug: Voice: {tts_voice}")
                 
-                # 创建临时文件路径
-                temp_filepath = os.path.join("static", filename)
-                os.makedirs("static", exist_ok=True)
-                
                 loop = asyncio.get_event_loop()
                 await asyncio.wait_for(
-                    loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(temp_filepath))),
+                    loop.run_in_executor(executor, lambda: asyncio.run(communicate.save(filepath))),
                     timeout=180.0
                 )
                 
-                # 读取生成的音频文件
-                if os.path.exists(temp_filepath):
-                    with open(temp_filepath, 'rb') as f:
-                        audio_content = f.read()
-                    
-                    # 删除临时文件
-                    os.remove(temp_filepath)
-                    print("✅ Edge TTS audio generated successfully")
-                else:
-                    raise Exception("Edge TTS file not found")
+                print("✅ Edge TTS audio generated successfully")
                 
             except asyncio.TimeoutError:
                 raise HTTPException(status_code=408, detail="生成超时，请稍后重试或减少文本长度")
@@ -253,32 +237,21 @@ async def generate_podcast(
                         speaking_rate=1.0,
                         pitch=0.0
                     )
-                    print("✅ Google TTS fallback successful")
+                    
+                    # 保存音频文件
+                    audio_url = tts_service.save_audio_to_file(audio_content, filename)
+                    print(f"✅ Google TTS fallback successful: {audio_url}")
+                    
+                    # 更新文件路径为 Google TTS 保存的路径
+                    filepath = os.path.join("uploads", "tts", filename)
+                    print(f"🔄 Updated filepath for Google TTS: {filepath}")
                     
                 except Exception as google_error:
                     print(f"❌ Google TTS fallback also failed: {google_error}")
                     raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
             
-            if not audio_content:
-                raise HTTPException(status_code=500, detail="音频生成失败，请稍后重试")
-            
-            # 优化音频文件
-            print("🔧 Optimizing audio file...")
-            optimized_audio, optimization_info = await file_optimizer.optimize_audio(audio_content, filename)
-            
-            # 上传到云存储
-            print("☁️ Uploading to cloud storage...")
-            uploaded_path = await cloud_storage_service.upload_file(
-                optimized_audio, 
-                f"podcasts/{filename}", 
-                "audio/mpeg"
-            )
-            
-            # 获取CDN URL
-            audio_url = cdn_service.get_cdn_url(f"podcasts/{filename}", "audio")
-            
-            print(f"✅ File uploaded successfully: {audio_url}")
-            print(f"📊 Optimization info: {optimization_info}")
+            # 生成音频URL
+            audio_url = f"/static/{filename}"
             
             # Calculate audio duration
             try:
