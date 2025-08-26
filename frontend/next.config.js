@@ -4,21 +4,30 @@ const nextConfig = {
     domains: ['localhost'],
   },
   async rewrites() {
+    console.log('🔧 Next.js rewrites configuration loaded');
+    console.log('🔧 Backend URL:', process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000');
+    
     return [
       {
         source: '/api/:path*',
-        destination: 'http://backend:8000/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000'}/api/:path*`,
       },
       {
         source: '/static/:path*',
-        destination: 'http://backend:8000/static/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000'}/static/:path*`,
       },
       {
         source: '/uploads/:path*',
-        destination: 'http://backend:8000/uploads/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000'}/uploads/:path*`,
       },
     ];
   },
+  // 添加调试信息
+  experimental: {
+    logging: {
+      level: 'verbose'
+    }
+  }
 }
 
 module.exports = nextConfig 
