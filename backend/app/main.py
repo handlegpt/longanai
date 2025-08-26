@@ -7,6 +7,17 @@ import uvicorn
 from app.routers import podcast, auth, files, translate, admin, tts, social, notifications, search, user
 from app.core.config import settings
 from app.core.database import init_db
+from app.core.exceptions import LonganAIException
+from app.core.error_handlers import (
+    longan_ai_exception_handler,
+    validation_exception_handler,
+    sqlalchemy_exception_handler,
+    general_exception_handler,
+    http_exception_handler
+)
+from app.middleware.rate_limit import rate_limit_middleware
+from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import SQLAlchemyError
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,6 +51,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 添加速率限制中间件
+app.middleware("http")(rate_limit_middleware)
+
+# 注册异常处理器
+app.add_exception_handler(LonganAIException, longan_ai_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
+app.add_exception_handler(Exception, general_exception_handler)
+app.add_exception_handler(HTTPException, http_exception_handler)
 # 在现有的路由注册后面添加：
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["认证"])

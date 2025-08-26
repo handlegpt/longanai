@@ -1,0 +1,433 @@
+/* 移动端优化样式 */
+
+/* 基础移动端优化 */
+@media (max-width: 768px) {
+  /* 优化触摸目标大小 */
+  button, 
+  [role="button"], 
+  input[type="submit"], 
+  input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+    font-size: 16px; /* 防止iOS缩放 */
+  }
+
+  /* 优化链接触摸区域 */
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 优化输入框 */
+  input, 
+  textarea, 
+  select {
+    font-size: 16px; /* 防止iOS缩放 */
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  /* 优化卡片布局 */
+  .card {
+    margin: 8px;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 优化网格布局 */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* 优化导航栏 */
+  .navbar {
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+
+  /* 优化模态框 */
+  .modal {
+    padding: 20px;
+    margin: 20px;
+    border-radius: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* 优化底部导航 */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    padding: 8px 0;
+    z-index: 1000;
+  }
+
+  /* 优化侧边栏 */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* 优化触摸手势 */
+  .touch-gesture-handler {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* 优化滚动 */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* 优化图片 */
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  /* 优化音频播放器 */
+  audio {
+    width: 100%;
+    height: 60px;
+  }
+
+  /* 优化进度条 */
+  .progress-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #e5e7eb;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transition: width 0.3s ease;
+  }
+
+  /* 优化加载状态 */
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* 优化通知 */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+  }
+
+  /* 优化搜索框 */
+  .search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 24px;
+    font-size: 16px;
+    background: white;
+  }
+
+  .search-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+  }
+
+  /* 优化标签 */
+  .tag {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 4px;
+    background: #f3f4f6;
+    border-radius: 16px;
+    font-size: 14px;
+    color: #374151;
+  }
+
+  /* 优化头像 */
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .avatar.small {
+    width: 32px;
+    height: 32px;
+  }
+
+  .avatar.large {
+    width: 64px;
+    height: 64px;
+  }
+
+  /* 优化列表 */
+  .list-item {
+    padding: 16px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .list-item:last-child {
+    border-bottom: none;
+  }
+
+  /* 优化表单 */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .form-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+  }
+
+  /* 优化按钮组 */
+  .button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .button-group .btn {
+    flex: 1;
+  }
+
+  /* 优化分页 */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+  }
+
+  .pagination button {
+    min-width: 44px;
+    height: 44px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pagination button.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
+
+  /* 优化空状态 */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+  }
+
+  .empty-state-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    opacity: 0.5;
+  }
+
+  /* 优化错误状态 */
+  .error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #ef4444;
+  }
+
+  .error-state-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    color: #ef4444;
+  }
+
+  /* 优化成功状态 */
+  .success-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #10b981;
+  }
+
+  .success-state-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    color: #10b981;
+  }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 480px) {
+  .card {
+    margin: 4px;
+    padding: 12px;
+  }
+
+  .modal {
+    margin: 10px;
+    padding: 16px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .pagination {
+    gap: 4px;
+  }
+
+  .pagination button {
+    min-width: 40px;
+    height: 40px;
+  }
+}
+
+/* 横屏优化 */
+@media (max-width: 768px) and (orientation: landscape) {
+  .navbar {
+    padding: 8px 16px;
+  }
+
+  .modal {
+    max-height: 80vh;
+  }
+
+  .bottom-nav {
+    padding: 4px 0;
+  }
+}
+
+/* 高分辨率屏幕优化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .avatar,
+  .loading-spinner,
+  .empty-state-icon,
+  .error-state-icon,
+  .success-state-icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* 减少动画（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .card {
+    border: 2px solid #000;
+  }
+
+  .form-input {
+    border: 2px solid #000;
+  }
+
+  .button {
+    border: 2px solid #000;
+  }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  .navbar {
+    background-color: rgba(31, 41, 55, 0.95);
+  }
+
+  .modal {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  .form-input {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+
+  .search-input {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+}
