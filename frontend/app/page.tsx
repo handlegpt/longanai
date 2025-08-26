@@ -1308,7 +1308,7 @@ export default function Home() {
     // return () => {
     //   clearInterval(interval);
     // };
-  }, [userStats]);
+  }, []); // 移除 userStats 依赖，避免无限循环
 
   // Handle URL parameters for OAuth callback
   useEffect(() => {
