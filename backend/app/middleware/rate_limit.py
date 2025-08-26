@@ -14,13 +14,13 @@ class RateLimiter:
     
     def __init__(self):
         self.rate_limits = {
-            # API端点限制
-            "api": {"requests": 100, "window": 3600},  # 每小时100次
-            "auth": {"requests": 10, "window": 3600},  # 每小时10次
-            "podcast_generation": {"requests": 20, "window": 3600},  # 每小时20次
-            "file_upload": {"requests": 50, "window": 3600},  # 每小时50次
-            "search": {"requests": 200, "window": 3600},  # 每小时200次
-            "social": {"requests": 300, "window": 3600},  # 每小时300次
+            # API端点限制 - 大幅提高限制
+            "api": {"requests": 10000, "window": 3600},  # 每小时10000次
+            "auth": {"requests": 100, "window": 3600},  # 每小时100次
+            "podcast_generation": {"requests": 100, "window": 3600},  # 每小时100次
+            "file_upload": {"requests": 200, "window": 3600},  # 每小时200次
+            "search": {"requests": 1000, "window": 3600},  # 每小时1000次
+            "social": {"requests": 2000, "window": 3600},  # 每小时2000次
         }
     
     def get_client_identifier(self, request: Request) -> str:
@@ -42,6 +42,7 @@ class RateLimiter:
         """根据请求路径确定端点类型"""
         path = request.url.path
         
+        # 对读取类API放宽限制
         if path.startswith("/api/auth"):
             return "auth"
         elif path.startswith("/api/podcast/generate"):
@@ -52,6 +53,9 @@ class RateLimiter:
             return "search"
         elif path.startswith("/api/social"):
             return "social"
+        elif path.startswith("/api/podcast/public") or path.startswith("/api/podcast/user") or path.startswith("/api/tts/voices"):
+            # 对公开播客和用户播客查询使用更宽松的限制
+            return "api"
         else:
             return "api"
     
@@ -101,6 +105,11 @@ rate_limiter = RateLimiter()
 
 async def rate_limit_middleware(request: Request, call_next):
     """速率限制中间件"""
+    # 临时禁用速率限制，直到问题解决
+    return await call_next(request)
+    
+    # 以下是原始代码，暂时注释掉
+    """
     try:
         # 检查速率限制
         allowed, rate_info = rate_limiter.check_rate_limit(request)
@@ -145,6 +154,7 @@ async def rate_limit_middleware(request: Request, call_next):
         logger.error(f"Rate limit middleware error: {e}")
         # 如果速率限制检查失败，允许请求继续
         return await call_next(request)
+    """
 
 # 装饰器形式的速率限制
 def rate_limit(endpoint_type: str = "api"):

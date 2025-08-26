@@ -1293,21 +1293,22 @@ export default function Home() {
       if (token && email) {
         setIsLoggedIn(true);
         setUserEmail(email);
-        // Fetch user stats
-        fetchUserStats(email);
+        // Fetch user stats only once
+        if (!userStats) {
+          fetchUserStats(email);
+        }
       }
     };
 
     // 初始检查
     checkLoginStatus();
 
-    // 添加定期检查，确保状态同步
-    const interval = setInterval(checkLoginStatus, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+    // 移除定期检查，避免无限循环
+    // const interval = setInterval(checkLoginStatus, 1000);
+    // return () => {
+    //   clearInterval(interval);
+    // };
+  }, [userStats]);
 
   // Handle URL parameters for OAuth callback
   useEffect(() => {
