@@ -25,17 +25,17 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
-    # 社交功能关系
-    following = relationship("UserFollow", foreign_keys="UserFollow.follower_id", back_populates="follower")
-    followers = relationship("UserFollow", foreign_keys="UserFollow.following_id", back_populates="following")
-    comments = relationship("PodcastComment", back_populates="user")
-    likes = relationship("PodcastLike", back_populates="user")
-    shares = relationship("PodcastShare", back_populates="user")
-    created_communities = relationship("Community", back_populates="creator")
-    community_memberships = relationship("CommunityMember", back_populates="user")
-    community_posts = relationship("CommunityPost", back_populates="user")
+    # 暂时禁用社交功能关系，避免数据库表不存在的问题
+    # following = relationship("UserFollow", foreign_keys="UserFollow.follower_id", back_populates="follower")
+    # followers = relationship("UserFollow", foreign_keys="UserFollow.following_id", back_populates="following")
+    # comments = relationship("PodcastComment", back_populates="user")
+    # likes = relationship("PodcastLike", back_populates="user")
+    # shares = relationship("PodcastShare", back_populates="user")
+    # created_communities = relationship("Community", back_populates="creator")
+    # community_memberships = relationship("CommunityMember", back_populates="user")
+    # community_posts = relationship("CommunityPost", back_populates="user")
     
-    # 通知功能关系
-    notifications = relationship("Notification", foreign_keys="Notification.user_email", back_populates="user")
-    sent_notifications = relationship("Notification", foreign_keys="Notification.sender_email", back_populates="sender")
-    notification_settings = relationship("NotificationSetting", back_populates="user") 
+    # 暂时禁用通知功能关系，避免数据库表不存在的问题
+    # notifications = relationship("Notification", foreign_keys="Notification.user_email", back_populates="user")
+    # sent_notifications = relationship("Notification", foreign_keys="Notification.sender_email", back_populates="sender")
+    # notification_settings = relationship("NotificationSetting", back_populates="user") 
