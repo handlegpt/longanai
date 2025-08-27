@@ -1045,11 +1045,11 @@ export default function Home() {
       detail: { token, email } 
     }));
     
-    // 获取用户统计信息
-    if (!hasFetchedStats.current) {
-      hasFetchedStats.current = true;
-      fetchUserStats(email);
-    }
+    // 暂时禁用用户统计获取，避免无限循环
+    // if (!hasFetchedStats.current) {
+    //   hasFetchedStats.current = true;
+    //   fetchUserStats(email);
+    // }
   };
 
   // Handle user logout
@@ -1297,11 +1297,11 @@ export default function Home() {
       if (token && email) {
         setIsLoggedIn(true);
         setUserEmail(email);
-        // Fetch user stats only once, use a ref to track if we've already fetched
-        if (!userStats && !hasFetchedStats.current) {
-          hasFetchedStats.current = true;
-          fetchUserStats(email);
-        }
+        // 暂时禁用用户统计获取，避免无限循环
+        // if (!userStats && !hasFetchedStats.current) {
+        //   hasFetchedStats.current = true;
+        //   fetchUserStats(email);
+        // }
       }
     };
 
@@ -1336,11 +1336,11 @@ export default function Home() {
         detail: { token: accessToken, email } 
       }));
       
-      // Fetch user stats only once
-      if (!hasFetchedStats.current) {
-        hasFetchedStats.current = true;
-        fetchUserStats(email);
-      }
+      // 暂时禁用用户统计获取，避免无限循环
+      // if (!hasFetchedStats.current) {
+      //   hasFetchedStats.current = true;
+      //   fetchUserStats(email);
+      // }
     }
   }, []);
 
