@@ -24,7 +24,7 @@ if (typeof window !== "undefined") {
   }
 }
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from 'framer-motion';
 import { Mic, Download, Share2, History, Upload, User, LogOut, Globe, Play, Pause, Trash2, Lock } from 'lucide-react';
@@ -740,6 +740,7 @@ export default function Home() {
     remaining_generations: number;
     is_unlimited: boolean;
   } | null>(null);
+  const hasFetchedStats = useRef(false);
   const [publicPodcasts, setPublicPodcasts] = useState<Array<{ id: number; audioUrl: string; title: string; duration?: string; createdAt: string; image?: string; coverImageUrl?: string; description?: string; userEmail?: string; userDisplayName?: string; tags?: string }>>([]);
   const [loadingPublic, setLoadingPublic] = useState(false);
   const [systemStatus, setSystemStatus] = useState<{
@@ -1293,8 +1294,9 @@ export default function Home() {
       if (token && email) {
         setIsLoggedIn(true);
         setUserEmail(email);
-        // Fetch user stats only once
-        if (!userStats) {
+        // Fetch user stats only once, use a ref to track if we've already fetched
+        if (!userStats && !hasFetchedStats.current) {
+          hasFetchedStats.current = true;
           fetchUserStats(email);
         }
       }
