@@ -1046,7 +1046,10 @@ export default function Home() {
     }));
     
     // 获取用户统计信息
-    fetchUserStats(email);
+    if (!hasFetchedStats.current) {
+      hasFetchedStats.current = true;
+      fetchUserStats(email);
+    }
   };
 
   // Handle user logout
@@ -1333,8 +1336,11 @@ export default function Home() {
         detail: { token: accessToken, email } 
       }));
       
-      // Fetch user stats
-      fetchUserStats(email);
+      // Fetch user stats only once
+      if (!hasFetchedStats.current) {
+        hasFetchedStats.current = true;
+        fetchUserStats(email);
+      }
     }
   }, []);
 
