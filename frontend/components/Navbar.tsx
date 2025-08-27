@@ -148,13 +148,13 @@ export default function Navbar() {
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('userLogin', handleUserLogin as EventListener);
     
-    // 添加定期检查，确保状态同步
-    const interval = setInterval(handleStorageChange, 1000);
+    // 移除定期检查，避免无限循环
+    // const interval = setInterval(handleStorageChange, 1000);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('userLogin', handleUserLogin as EventListener);
-      clearInterval(interval);
+      // clearInterval(interval);
     };
   }, []);
 
