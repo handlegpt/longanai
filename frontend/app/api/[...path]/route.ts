@@ -11,7 +11,8 @@ export async function GET(
   const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000';
   const targetUrl = `${backendUrl}/api/${path}${queryString}`;
   
-  console.log(`🔧 Proxying GET request to: ${targetUrl}`);
+  // 暂时禁用日志输出，减少日志噪音
+  // console.log(`🔧 Proxying GET request to: ${targetUrl}`);
   
   try {
     const response = await fetch(targetUrl, {
@@ -43,7 +44,8 @@ export async function POST(
   const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000';
   const targetUrl = `${backendUrl}/api/${path}${queryString}`;
   
-  console.log(`🔧 Proxying POST request to: ${targetUrl}`);
+  // 暂时禁用日志输出，减少日志噪音
+  // console.log(`🔧 Proxying POST request to: ${targetUrl}`);
   
   try {
     const body = await request.json();
@@ -77,7 +79,8 @@ export async function PUT(
   const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000';
   const targetUrl = `${backendUrl}/api/${path}${queryString}`;
   
-  console.log(`🔧 Proxying PUT request to: ${targetUrl}`);
+  // 暂时禁用日志输出，减少日志噪音
+  // console.log(`🔧 Proxying PUT request to: ${targetUrl}`);
   
   try {
     const body = await request.json();
@@ -111,7 +114,8 @@ export async function DELETE(
   const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://backend:8000';
   const targetUrl = `${backendUrl}/api/${path}${queryString}`;
   
-  console.log(`🔧 Proxying DELETE request to: ${targetUrl}`);
+  // 暂时禁用日志输出，减少日志噪音
+  // console.log(`🔧 Proxying DELETE request to: ${targetUrl}`);
   
   try {
     const response = await fetch(targetUrl, {
