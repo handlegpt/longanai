@@ -23,5 +23,5 @@ RUN npm run build
 # Expose the port
 EXPOSE 3008
 
-# Start the application on port 3008
-CMD ["npm", "start", "--", "-p", "3008"] 
+# Start the application on port 3008, listening on all interfaces (IPv4 and IPv6)
+CMD ["npm", "start", "--", "-p", "3008", "-H", "0.0.0.0"] 
